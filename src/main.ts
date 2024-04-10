@@ -2,6 +2,7 @@ import { CustomClient } from './types/customClient';
 import dotenv from 'dotenv';
 import { loadCommands } from './loadCommands';
 import { setupEventHandlers } from './events/eventHandler';
+import initializeFirestore from './usecases/initFirestore';
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ async function main() {
         process.exit(1);
     }
 
+    const db = initializeFirestore();
     await loadCommands(client);
     setupEventHandlers(client);
 
