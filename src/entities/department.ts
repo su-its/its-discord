@@ -1,8 +1,8 @@
-enum department {
+enum Department {
     "CS",
     "BI",
     "IA",
     "OTHERS",
 }
 
-export default department;
+export default Department;
