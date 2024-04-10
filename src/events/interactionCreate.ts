@@ -1,14 +1,7 @@
 import { Events } from 'discord.js';
-import { CustomClient } from './types/customClient';
+import { CustomClient } from '../types/customClient';
 
-export function setupEventHandlers(client: CustomClient) {
-    client.once(Events.ClientReady, () => {
-        console.log('Ready!');
-        if (client.user) {
-            console.log(`Logged in as ${client.user.tag}`);
-        }
-    });
-
+export function setupInteractionCreateHandler(client: CustomClient) {
     client.on(Events.InteractionCreate, async interaction => {
         if (!interaction.isChatInputCommand()) return;
 
@@ -25,10 +18,5 @@ export function setupEventHandlers(client: CustomClient) {
             const replyContent = { content: 'There was an error while executing this command!', ephemeral: true };
             interaction.replied || interaction.deferred ? await interaction.followUp(replyContent) : await interaction.reply(replyContent);
         }
-    });
-
-    client.on(Events.GuildMemberAdd, async member => {
-        member.send(`ようこそ ${member.displayName} さん！...`)
-            .catch(console.error);
     });
 }

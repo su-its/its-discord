@@ -1,7 +1,7 @@
 import { CustomClient } from './types/customClient';
 import dotenv from 'dotenv';
 import { loadCommands } from './loadCommands';
-import { setupEventHandlers } from './eventHandler';
+import { setupEventHandlers } from './events/eventHandler';
 
 dotenv.config();
 
