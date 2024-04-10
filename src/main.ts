@@ -2,7 +2,6 @@ import { CustomClient } from './types/customClient';
 import dotenv from 'dotenv';
 import { loadCommands } from './loadCommands';
 import { setupEventHandlers } from './events/eventHandler';
-import { getAllMembers } from './controllers/MemberController';
 
 dotenv.config();
 
