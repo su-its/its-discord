@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, CommandInteraction } from "discord.js";
 import { Command } from "../types/command";
 
+//TODO: 中身を実装する
 const authCommand: Command = {
     data: new SlashCommandBuilder()
         .setName('auth')
