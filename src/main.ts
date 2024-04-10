@@ -56,6 +56,12 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 });
 
+client.on(Events.GuildMemberAdd, async member => {
+    member.send(`ようこそ ${member.displayName} さん！私たちのサーバーに参加してくれてありがとう！何か質問があればお気軽にどうぞ！`)
+        .then(() => console.log(`Sent a welcome message to ${member.displayName}.`))
+        .catch(console.error); // DMを送信できない場合（例: ユーザーがDMを受け取らない設定にしている場合）はエラーをキャッチ
+});
+
 const token = process.env.TOKEN;
 if (!token) {
     console.error('Missing environment variables.');
