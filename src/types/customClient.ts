@@ -8,10 +8,9 @@ export class CustomClient extends Client {
         super({
             intents: [
                 GatewayIntentBits.DirectMessages,
-                GatewayIntentBits.Guilds,
                 GatewayIntentBits.GuildMembers,
                 GatewayIntentBits.GuildMessages,
-                GatewayIntentBits.MessageContent,
+                GatewayIntentBits.GuildInvites,
             ],
             partials: [Partials.Message, Partials.Channel],
         });

@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, CommandInteraction } from "discord.js";
+import { Command } from "../types/command";
 
-const command = {
+const authCommand: Command = {
     data: new SlashCommandBuilder()
         .setName('auth')
         .setDescription('認証コマンド'),
@@ -9,4 +10,4 @@ const command = {
     }
 };
 
-export default command;
+export default authCommand;
