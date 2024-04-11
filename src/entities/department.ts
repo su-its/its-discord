@@ -1,8 +1,8 @@
 enum Department {
-    "CS",
-    "BI",
-    "IA",
-    "OTHERS",
+    CS = "CS",
+    BI = "BI",
+    IA = "IA",
+    OTHERS = "OTHERS",
 }
 
 export default Department;

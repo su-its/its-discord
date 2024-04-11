@@ -1,8 +1,7 @@
 import Member from "../entities/member";
-import initializeFirestore from "./initFirestore";
+import { db } from "../infra/firebase";
 
 async function getMembers() {
-    const db = initializeFirestore();
     const snapshot = await db.collection('members').get();
     const members: Member[] = snapshot.docs.map(doc => convertToMember({
         id: doc.id,

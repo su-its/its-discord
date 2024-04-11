@@ -1,9 +1,8 @@
 import Member from "../entities/member";
 import { v4 as uuidv4 } from 'uuid';
-import initializeFirestore from "./initFirestore";
+import { db } from "../infra/firebase";
 
 async function insertMember(member: Member) {
-    const db: FirebaseFirestore.Firestore = initializeFirestore();
     const uniqueId = uuidv4();
     const docRef = db.collection('members').doc(uniqueId);
     await docRef.set({
