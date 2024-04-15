@@ -1,9 +1,11 @@
-import { ChannelType, Events, Message } from 'discord.js';
+import { ChannelType, Events, Guild, Message } from 'discord.js';
 import { CustomClient } from '../types/customClient';
+import { Role } from 'discord.js';
 import AuthData from '../types/authData';
 import Department from '../entities/department';
-import { addNewMember } from '../controllers/MemberController';
 import authMember from '../utils/authMember';
+import createRoleIfNotFound from '../utils/createRoleNotFound';
+import sendAuthMailController from '../controllers/authController';
 
 export function setupMessageCreate(client: CustomClient, userStates: Map<string, AuthData>) {
     client.on(Events.MessageCreate, async (message: Message) => {
@@ -37,11 +39,11 @@ async function setUserInfoAndReply(userStates: Map<string, AuthData>, userId: st
 
 async function validateAndSetStudentNumber(message: Message, userInfo: AuthData, userStates: Map<string, AuthData>, userId: string, reply: (message: string) => Promise<Message>) {
     const studentNumber = message.content;
-    // 例えば、特定のフォーマットに一致するかどうかを検証することができます
-    // if (!validateStudentNumberFormat(studentNumber)) {
-    //     await reply('学籍番号の形式が正しくありません。');
-    //     return;
-    // }
+    // 学籍番号の形式が正しいかどうか曖昧にチェック
+    if (!/^[a-zA-Z0-9]{8}$/.test(studentNumber)) {
+        await reply('学籍番号の形式が正しくありません。');
+        return;
+    }
     await setUserInfoAndReply(userStates, userId, { student_number: studentNumber }, '学科を以下から教えてください: CS, BI, IA, OTHERS', reply);
 }
 
@@ -60,6 +62,9 @@ async function validateAndRegisterUser(message: Message, userInfo: AuthData, use
         userInfo.mail = mail;
         console.log(userInfo);
         if (await authMember(userInfo)) {
+            await sendAuthMailController(mail);
+            //ロールを付与
+            await giveAuthorizedRole(message);
             await reply('認証が完了しました。ありがとうございます！');
         } else {
             await reply('認証に失敗しました。もう一度やり直してください');
@@ -69,4 +74,11 @@ async function validateAndRegisterUser(message: Message, userInfo: AuthData, use
     } else {
         await reply('メールアドレスの形式が正しくありません。もう一度お願いします');
     }
+}
+
+async function giveAuthorizedRole(message: Message) {
+    const guild: Guild = message.client.guilds.cache.first() as Guild;
+    const role: Role = await createRoleIfNotFound({ guild, roleName: 'Authorized', color: 'Green', reason: 'Authorized members role' });
+    await message.member?.roles.add(role);
+    console.log(`Authorized role has been assigned to ${message.author.username}.`)
 }
