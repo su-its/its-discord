@@ -1,8 +1,9 @@
+import AuthData from "../types/authData";
 import sendAuthMail from "../usecases/sendAuthMail";
 
-async function sendAuthMailController(mail: string) {
+async function sendAuthMailController(userInfo: AuthData) {
     try {
-        await sendAuthMail(mail);
+        await sendAuthMail(userInfo.mail!, userInfo.student_number!, userInfo.department!);
     } catch (e) {
         console.error(e);
     }

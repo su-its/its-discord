@@ -62,7 +62,7 @@ async function validateAndRegisterUser(message: Message, userInfo: AuthData, use
         userInfo.mail = mail;
         console.log(userInfo);
         if (await authMember(userInfo)) {
-            await sendAuthMailController(mail);
+            await sendAuthMailController(userInfo);
             //ロールを付与
             await giveAuthorizedRole(message);
             await reply('認証が完了しました。ありがとうございます！');
