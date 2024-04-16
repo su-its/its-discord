@@ -1,6 +1,9 @@
 # 環境変数
+
 ## .env
+
 .envファイルには以下の情報を記載して下さい
+
 ```.env
 TOKEN=
 APP_ID=
@@ -17,5 +20,6 @@ FIREBASE_MESUREMENT_ID=
 ```
 
 ## firebase-admin
+
 firestoreを使用するためにfirestoreから提供されるコンフィグファイルをルートに設置してください
 現状`infra/firebase.ts`で読み込んでいますが、分かりにくいので将来的に分離します

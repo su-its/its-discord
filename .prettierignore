@@ -1,0 +1,10 @@
+node_modules/
+out/
+
+.eslintrc.json
+eslint.config.js
+package-lock.json
+yarn.lock
+src/libs/api/v1.d.ts
+.env
+its-discord-auth-firebase-adminsdk-wn2uo-ac781d8325.json
