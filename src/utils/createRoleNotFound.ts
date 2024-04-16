@@ -1,5 +1,10 @@
 import { ColorResolvable, Guild, Role } from 'discord.js';
-import createRoleNotFoundParams from '../types/createRoleNotFoundParams';
+import CustomRole from '../types/customRole';
+
+type createRoleNotFoundParams = {
+    guild: Guild;
+    customRole: CustomRole,
+};
 
 async function createRoleIfNotFound({ guild, customRole }: createRoleNotFoundParams): Promise<Role> {
     const roles = await guild.roles.fetch()

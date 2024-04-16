@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, CommandInteraction, AllowedMentionsTypes, Guild, Role } from "discord.js";
+import { SlashCommandBuilder, CommandInteraction, Guild, Role } from "discord.js";
 import { Command } from "../types/command";
 import { adminAuth } from "../infra/firebase";
 import { getMemberByDiscordId } from "../controllers/MemberController";
@@ -10,25 +10,27 @@ const authCommand: Command = {
     data: new SlashCommandBuilder()
         .setName('auth')
         .setDescription('認証コマンド'),
-    async execute(interaction: CommandInteraction) {
-        const member = await getMemberByDiscordId(interaction.user.id);
-        if (!member) {
-            await interaction.reply('認証されていません');
-            return;
-        }
-
-        const user = await adminAuth.getUserByEmail(member.mail);
-        if (user.emailVerified) {
-            try {
-                await giveAuthorizedRole(interaction);
-            } catch (error) {
-                await interaction.reply("認証に失敗しました");
-            }
-        } else {
-            await interaction.reply('メール認証が完了していません');
-        }
-    }
+    execute: authCommandHandler,
 };
+
+async function authCommandHandler(interaction: CommandInteraction) {
+    const member = await getMemberByDiscordId(interaction.user.id);
+    if (!member) {
+        await interaction.reply('認証されていません');
+        return;
+    }
+
+    const user = await adminAuth.getUserByEmail(member.mail);
+    if (user.emailVerified) {
+        try {
+            await giveAuthorizedRole(interaction);
+        } catch (error) {
+            await interaction.reply("認証に失敗しました");
+        }
+    } else {
+        await interaction.reply('メール認証が完了していません');
+    }
+}
 
 async function giveAuthorizedRole(interaction: CommandInteraction) {
     try {

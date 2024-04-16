@@ -12,8 +12,7 @@ export function setupGuildMemberAddHandler(client: CustomClient) {
 
 async function sendDM(member: GuildMember) {
     try {
-        await member.send(`ようこそ ${member.displayName} さん！`)
-        await member.send('ITS discord 認証botです');
+        await member.send(`ようこそ ${member.displayName} さん！ ITS discord 認証botです!`)
         await member.send('名前(フルネーム)を教えてください');
         console.log(`Welcome message sent to ${member.displayName}.`);
     } catch (error) {
