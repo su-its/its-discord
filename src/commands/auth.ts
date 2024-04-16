@@ -20,17 +20,8 @@ const authCommand: Command = {
         const user = await adminAuth.getUserByEmail(member.mail);
         if (user.emailVerified) {
             try {
-                const guild: Guild = interaction.guild!;
-                const authorizedRole: Role = await createRoleIfNotFound({ guild, customRole: authorizedRoleProperty });
-                const unAuthorizedRole: Role = await createRoleIfNotFound({ guild, customRole: unAuthorizedRoleProperty });
-
-                const guildMember = await guild.members.fetch(interaction.user.id);
-                await guildMember.roles.add(authorizedRole);
-                await guildMember.roles.remove(unAuthorizedRole);
-
-                await interaction.reply('認証しました!' + member.mail);
+                await giveAuthorizedRole(interaction);
             } catch (error) {
-                console.error('Error creating Authorized role:', error);
                 await interaction.reply("認証に失敗しました");
             }
         } else {
@@ -38,5 +29,21 @@ const authCommand: Command = {
         }
     }
 };
+
+async function giveAuthorizedRole(interaction: CommandInteraction) {
+    try {
+        const guild: Guild = interaction.guild!;
+        const authorizedRole: Role = await createRoleIfNotFound({ guild, customRole: authorizedRoleProperty });
+        const unAuthorizedRole: Role = await createRoleIfNotFound({ guild, customRole: unAuthorizedRoleProperty });
+
+        const guildMember = await guild.members.fetch(interaction.user.id);
+        await guildMember.roles.add(authorizedRole);
+        await guildMember.roles.remove(unAuthorizedRole);
+
+        await interaction.reply('認証しました!');
+    } catch (error) {
+        console.error("Failed to give Authorized Role")
+    }
+}
 
 export default authCommand;
