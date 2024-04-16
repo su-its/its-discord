@@ -3,6 +3,7 @@ import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import serviceAccount from '../../its-discord-auth-firebase-adminsdk-wn2uo-ac781d8325.json';
 import dotenv from 'dotenv';
+import { APIDMInteraction } from 'discord.js';
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
@@ -25,4 +26,5 @@ const firebaseConfig = {
 const app: FirebaseApp = initializeApp(firebaseConfig);
 
 export const db: admin.firestore.Firestore = admin.firestore();
+export const adminAuth = admin.auth();
 export const auth = getAuth(app);

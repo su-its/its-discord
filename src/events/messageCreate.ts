@@ -1,6 +1,6 @@
 import { ChannelType, Events, Guild, Message } from 'discord.js';
 import { CustomClient } from '../types/customClient';
-import { Role } from 'discord.js';
+import clearAuthData from '../utils/clearAuthData';
 import AuthData from '../types/authData';
 import Department from '../entities/department';
 import authMember from '../utils/authMember';
@@ -60,13 +60,20 @@ async function validateAndRegisterUser(message: Message, userInfo: AuthData, use
     const mail = message.content;
     if (mail.endsWith('@shizuoka.ac.jp')) {
         userInfo.mail = mail;
-        console.log(userInfo);
         if (await authMember(userInfo)) {
-            await sendAuthMailController(userInfo);
+            try {
+                userInfo.discordId = message.author.id;
+                await sendAuthMailController(userInfo);
+            } catch (e) {
+                userInfo = clearAuthData();
+                await reply('認証に失敗しました。もう一度やり直してください');
+                await reply('名前(フルネーム)を教えてください');
+                return;
+            }
             //ロールを付与
-            await giveAuthorizedRole(message);
             await reply('認証が完了しました。ありがとうございます！');
         } else {
+            userInfo = clearAuthData();
             await reply('認証に失敗しました。もう一度やり直してください');
             await reply('名前(フルネーム)を教えてください');
         }
@@ -74,11 +81,4 @@ async function validateAndRegisterUser(message: Message, userInfo: AuthData, use
     } else {
         await reply('メールアドレスの形式が正しくありません。もう一度お願いします');
     }
-}
-
-async function giveAuthorizedRole(message: Message) {
-    const guild: Guild = message.client.guilds.cache.first() as Guild;
-    const role: Role = await createRoleIfNotFound({ guild, roleName: 'Authorized', color: 'Green', reason: 'Authorized members role' });
-    await message.member?.roles.add(role);
-    console.log(`Authorized role has been assigned to ${message.author.username}.`)
 }

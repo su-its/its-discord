@@ -1,7 +1,7 @@
 import Member from "../entities/member";
 import { db } from "../infra/firebase";
 
-async function getMembers() {
+async function getMembers(): Promise<Member[]> {
     const snapshot = await db.collection('members').get();
     const members: Member[] = snapshot.docs.map(doc => convertToMember({
         id: doc.id,
