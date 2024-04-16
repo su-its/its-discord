@@ -1,7 +1,9 @@
 # its-discord bot
+
 ITSのディスコードサーバーで使用するbotです
 
 # Getting started
+
 ```bash
 npm install
 npm run dev

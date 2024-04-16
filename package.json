@@ -8,7 +8,8 @@
     "test": "ts-node src/main.ts",
     "start": "node build/main.js",
     "deploy-commands": "ts-node src/deployCommands.ts",
-    "compile": "tsc -p ."
+    "compile": "tsc -p .",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": "",
