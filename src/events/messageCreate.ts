@@ -58,8 +58,7 @@ async function validateAndSetDepartment(message: Message, userInfo: AuthData, us
 
 async function validateAndRegisterUser(message: Message, userInfo: AuthData, userStates: Map<string, AuthData>, userId: string, reply: (message: string) => Promise<Message>) {
     const mail = message.content;
-    // if (mail.endsWith('@shizuoka.ac.jp')) {
-    if (mail.endsWith("com")) {
+    if (mail.endsWith('@shizuoka.ac.jp')) {
         userInfo.mail = mail;
         if (await authMember(userInfo)) {
             try {
@@ -71,8 +70,7 @@ async function validateAndRegisterUser(message: Message, userInfo: AuthData, use
                 await reply('名前(フルネーム)を教えてください');
                 return;
             }
-            //ロールを付与
-            await reply('認証が完了しました。ありがとうございます！');
+            await reply('認証メールを送信しました。静大メールから認証を行い、Discordサーバーで`\\auth`コマンドを実行してください');
         } else {
             userInfo = clearAuthData();
             await reply('認証に失敗しました。もう一度やり直してください');

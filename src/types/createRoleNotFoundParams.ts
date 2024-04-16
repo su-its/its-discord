@@ -1,5 +1,5 @@
 import { Guild } from "discord.js";
-import CustomRole from "./customRoke";
+import CustomRole from "./customRole";
 
 type createRoleNotFoundParams = {
     guild: Guild;
