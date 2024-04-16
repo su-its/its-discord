@@ -32,6 +32,16 @@ export async function getMemberByEamil(email: string): Promise<Member | undefine
     }
 };
 
+export async function getMemberByDiscordId(discordId: string): Promise<Member | undefined> {
+    try {
+        const members = await getMembers();
+        const member = members.find((m) => m.discordId === discordId);
+        return member ? member : undefined;
+    } catch (error) {
+        console.error('Error getting member by discord id:', error);
+    }
+}
+
 // memberにdiscordIdを追加する
 export async function addDiscordId(member: Member, discordId: string): Promise<void> {
     try {

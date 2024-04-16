@@ -1,5 +1,4 @@
 
-import Member from "../entities/member";
 import { db } from "../infra/firebase";
 
 async function setDiscordId(memberId: string, discordId: string) {

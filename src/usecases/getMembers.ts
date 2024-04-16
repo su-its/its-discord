@@ -17,6 +17,7 @@ function convertToMember(docData: FirebaseFirestore.DocumentData): Member {
         student_number: docData.student_number,
         department: docData.department,
         mail: docData.mail,
+        discordId: docData.discordId,
     };
 };
 

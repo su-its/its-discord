@@ -58,7 +58,8 @@ async function validateAndSetDepartment(message: Message, userInfo: AuthData, us
 
 async function validateAndRegisterUser(message: Message, userInfo: AuthData, userStates: Map<string, AuthData>, userId: string, reply: (message: string) => Promise<Message>) {
     const mail = message.content;
-    if (mail.endsWith('@shizuoka.ac.jp')) {
+    // if (mail.endsWith('@shizuoka.ac.jp')) {
+    if (mail.endsWith("com")) {
         userInfo.mail = mail;
         if (await authMember(userInfo)) {
             try {

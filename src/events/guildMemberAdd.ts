@@ -1,6 +1,7 @@
 import { Events, Guild, GuildMember, Role } from 'discord.js';
 import { CustomClient } from '../types/customClient';
 import createRoleIfNotFound from '../utils/createRoleNotFound';
+import { unAuthorizedRoleProperty } from '../roles/unAuthorized';
 
 export function setupGuildMemberAddHandler(client: CustomClient) {
     client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
@@ -23,7 +24,7 @@ async function sendDM(member: GuildMember) {
 async function giveUnauthorizedRole(member: GuildMember) {
     try {
         const guild: Guild = member.guild;
-        const role: Role = await createRoleIfNotFound({ guild, roleName: 'Unauthorized', color: 'Grey', reason: 'Unauthorized role for new members.' });
+        const role: Role = await createRoleIfNotFound({ guild, customRole: unAuthorizedRoleProperty });
         await member.roles.add(role);
         console.log(`Unauthorized role has been assigned to ${member.displayName}.`);
     } catch (error) {

@@ -6,6 +6,7 @@ interface Member {
     student_number: string,
     department: department
     mail: string,
+    discordId?: string
 }
 
 export default Member;
