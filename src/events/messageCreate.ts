@@ -4,7 +4,6 @@ import clearAuthData from "../utils/clearAuthData";
 import AuthData from "../types/authData";
 import Department from "../entities/department";
 import authMember from "../utils/authMember";
-import createRoleIfNotFound from "../utils/createRoleNotFound";
 import sendAuthMailController from "../controllers/authController";
 
 export function setupMessageCreate(client: CustomClient, userStates: Map<string, AuthData>) {
