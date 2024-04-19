@@ -5,9 +5,9 @@ import { administratorRoleProperty } from "../roles/administrator";
 import { addMember } from "../controllers/MemberController";
 import Department from "../entities/department";
 
-const addMemberCommand: CommandWithArgs = {
+const registerCommand: CommandWithArgs = {
     data: new SlashCommandBuilder()
-        .setName("add_member")
+        .setName("register")
         .setDescription("認証コマンド")
         .addStringOption(option =>
             option.setName("mail")
@@ -68,4 +68,4 @@ function validateDepartment(department: string): boolean {
     return Object.values(Department).includes(department as Department);
 }
 
-export default addMemberCommand;
+export default registerCommand;
