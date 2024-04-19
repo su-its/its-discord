@@ -9,13 +9,15 @@ export function setupClientReadyHandler(client: CustomClient) {
       console.log(`Logged in as ${client.user.tag}`);
 
 
-      // ロールを初期化
-      const guild: Guild | undefined = client.guilds.cache.first();
-      if (!guild) {
+      //guildのリストを取得
+      const guilds = client.guilds.cache;
+      if (guilds.size == 0) {
         console.error("No guild found.");
         throw new Error("No guild found.");
       } else {
-        initializeRoles(guild);
+        for (const [id, guild] of guilds) {
+          initializeRoles(guild);
+        }
       }
     }
   });
