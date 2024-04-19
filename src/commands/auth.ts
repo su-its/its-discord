@@ -3,8 +3,8 @@ import { Command } from "../types/command";
 import { adminAuth } from "../infra/firebase";
 import { getMemberByDiscordId } from "../controllers/MemberController";
 import createRoleIfNotFound from "../utils/createRoleNotFound";
-import { authorizedRoleProperty } from "../roles/authorized";
-import { unAuthorizedRoleProperty } from "../roles/unAuthorized";
+import authorizedRoleProperty from "../roles/authorized";
+import unAuthorizedRoleProperty from "../roles/unAuthorized";
 
 const authCommand: Command = {
   data: new SlashCommandBuilder().setName("auth").setDescription("認証コマンド"),
@@ -12,9 +12,13 @@ const authCommand: Command = {
 };
 
 async function authCommandHandler(interaction: CommandInteraction) {
+  //DMでは実行できないようにする
+  if (!interaction.guild) return await interaction.reply("このコマンドはサーバーでのみ実行可能です");
+
+  // Firestoreからメンバー情報を取得
   const member = await getMemberByDiscordId(interaction.user.id);
   if (!member) {
-    await interaction.reply("認証されていません");
+    await interaction.reply("メンバー情報が見つかりませんでした");
     return;
   }
 
