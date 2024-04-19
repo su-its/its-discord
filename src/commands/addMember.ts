@@ -1,5 +1,7 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import CommandWithArgs from "../types/commandWithArgs";
+import Member from "../entities/member";
+import { administratorRoleProperty } from "../roles/administrator";
 
 const addMemberCommand: CommandWithArgs = {
     data: new SlashCommandBuilder()
@@ -25,6 +27,14 @@ const addMemberCommand: CommandWithArgs = {
 };
 
 async function addMemberCommandHandler(interaction: CommandInteraction) {
+    //DMでは使用不可
+    if (!interaction.guild) return await interaction.reply('このコマンドはサーバー内でのみ使用可能です。');
+
+    //adminロールを持っているか確認
+    const member = await interaction.guild.members.fetch(interaction.user.id);
+    const isAdmin: boolean = member.roles.cache.some(role => role.name === administratorRoleProperty.roleName);
+    if (!isAdmin) return await interaction.reply('このコマンドは管理者のみ使用可能です。');
+
     await interaction.reply(`name: ${interaction.options.get("name")?.value}`);
 }
 
