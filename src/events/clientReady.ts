@@ -8,7 +8,6 @@ export function setupClientReadyHandler(client: CustomClient) {
     if (client.user) {
       console.log(`Logged in as ${client.user.tag}`);
 
-
       //guildのリストを取得
       const guilds = client.guilds.cache;
       if (guilds.size == 0) {
