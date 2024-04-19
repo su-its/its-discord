@@ -3,15 +3,6 @@ import Member from "../entities/member";
 import getMembers from "../usecases/getMembers";
 import setDiscordId from "../usecases/setDiscordId";
 
-export async function addNewMember(memberData: Member): Promise<void> {
-  try {
-    await insertMember(memberData);
-    console.log("Member successfully added");
-  } catch (error) {
-    console.error("Error adding new member:", error);
-  }
-}
-
 export async function getAllMembers() {
   try {
     const members = await getMembers();
@@ -48,5 +39,14 @@ export async function addDiscordId(member: Member, discordId: string): Promise<v
     await setDiscordId(member.id!, discordId);
   } catch (error) {
     console.error("Error adding discord id:", error);
+  }
+}
+
+export async function addMember(memberData: Member): Promise<void> {
+  try {
+    await insertMember(memberData);
+    console.log("Member successfully added");
+  } catch (error) {
+    console.error("Error adding member:", error);
   }
 }
