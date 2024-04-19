@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
-import { readdirSync, statSync } from 'fs';
-import { join, resolve } from 'path';
+import { readdirSync, statSync } from "fs";
+import { join, resolve } from "path";
 import createRoleIfNotFound from "./createRoleNotFound";
 import CustomRole from "../types/customRole";
 
@@ -11,7 +11,7 @@ async function readRolesFromDirectory(directoryPath: string, guild: Guild) {
     const fullPath = join(directoryPath, file);
     if (statSync(fullPath).isDirectory()) {
       await readRolesFromDirectory(fullPath, guild);
-    } else if (fullPath.endsWith('ts')) {
+    } else if (fullPath.endsWith("ts")) {
       try {
         const exported = require(fullPath);
         const roleConfig = exported.default || exported;
@@ -32,7 +32,7 @@ async function initializeRole(roleConfig: CustomRole, guild: Guild) {
 }
 
 async function initializeRoles(guild: Guild) {
-  const rolesDirectory = resolve(__dirname, '../roles');
+  const rolesDirectory = resolve(__dirname, "../roles");
   await readRolesFromDirectory(rolesDirectory, guild);
 }
 

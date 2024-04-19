@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon --exec ts-node src/main.ts",
     "test": "ts-node src/main.ts",
-    "start": "node build/main.js",
+    "start": "node build/src/main.js",
     "deploy-commands": "ts-node src/deployCommands.ts",
     "compile": "tsc -p .",
     "format": "prettier --write ."
