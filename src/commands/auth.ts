@@ -12,9 +12,13 @@ const authCommand: Command = {
 };
 
 async function authCommandHandler(interaction: CommandInteraction) {
+  //DMでは実行できないようにする
+  if (!interaction.guild) return await interaction.reply("このコマンドはサーバーでのみ実行可能です");
+
+  // Firestoreからメンバー情報を取得
   const member = await getMemberByDiscordId(interaction.user.id);
   if (!member) {
-    await interaction.reply("認証されていません");
+    await interaction.reply("メンバー情報が見つかりませんでした");
     return;
   }
 
