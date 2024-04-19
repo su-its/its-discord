@@ -3,8 +3,8 @@ import { Command } from "../types/command";
 import { adminAuth } from "../infra/firebase";
 import { getMemberByDiscordId } from "../controllers/MemberController";
 import createRoleIfNotFound from "../utils/createRoleNotFound";
-import { authorizedRoleProperty } from "../roles/authorized";
-import { unAuthorizedRoleProperty } from "../roles/unAuthorized";
+import authorizedRoleProperty from "../roles/authorized";
+import unAuthorizedRoleProperty from "../roles/unAuthorized";
 
 const authCommand: Command = {
   data: new SlashCommandBuilder().setName("auth").setDescription("認証コマンド"),

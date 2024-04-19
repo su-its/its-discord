@@ -1,7 +1,7 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import CommandWithArgs from "../types/commandWithArgs";
 import Member from "../entities/member";
-import { administratorRoleProperty } from "../roles/administrator";
+import administratorRoleProperty from "../roles/administrator";
 import { addMember } from "../controllers/MemberController";
 import Department from "../entities/department";
 
@@ -39,7 +39,7 @@ async function addMemberCommandHandler(interaction: CommandInteraction) {
     student_number: interaction.options.get("student_number")?.value as string,
   } as Member);
 
-  await interaction.reply(`name: ${interaction.options.get("name")?.value}`);
+  await interaction.reply(`${interaction.options.get("name")?.value}さんを登録しました`);
 }
 
 async function checkIsAdmin(interaction: CommandInteraction): Promise<boolean> {
