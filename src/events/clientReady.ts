@@ -1,4 +1,4 @@
-import { Events, Guild } from "discord.js";
+import { Events } from "discord.js";
 import { CustomClient } from "../types/customClient";
 import initializeRoles from "../utils/initializeRoles";
 
