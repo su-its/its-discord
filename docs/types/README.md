@@ -1,4 +1,7 @@
 # Types
 本ディレクトリは定義済みの型についてのドキュメントを保持します
-* [authData.md]
-* [command.md]
+* [AuthData](authData.md)
+* [Command](command.md)
+* [CommandWithArgs](commandsWithArgs.md)
+* [CustomClient](customClient.md)
+* [customRole](customRole.md)

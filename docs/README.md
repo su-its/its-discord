@@ -1,4 +1,4 @@
 # Docs
-* [getting-started.md]
-* [env.md]
-* [directory-strategy.md]
+* [Getting Started](getting-started.md)
+* [.envについて](env.md)
+* [ディレクトリ戦略](directory-strategy.md)
