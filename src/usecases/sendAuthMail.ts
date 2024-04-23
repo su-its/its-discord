@@ -10,7 +10,7 @@ import setDiscordId from "./setDiscordId";
 
 async function sendAuthMail(mail: string, student_number: string, department: string) {
   const actionCodeSettings: ActionCodeSettings = {
-    url: "https://discord.com",
+    url: "https://discord.com/channels/1224047445714010143/1224047445714010146",
     handleCodeInApp: true,
   };
 
