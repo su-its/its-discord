@@ -1,6 +1,6 @@
 import AuthData from "../types/authData";
 import sendAuthMail from "../usecases/sendAuthMail";
-import { getMemberByEamil } from "./MemberController";
+import { getMemberByEmail } from "./MemberController";
 import setDiscordId from "../usecases/setDiscordId";
 import Member from "../entities/member";
 
@@ -11,7 +11,7 @@ async function sendAuthMailController(userInfo: AuthData) {
     }
     await sendAuthMail(userInfo.mail!, userInfo.student_number!, userInfo.department!);
 
-    const member = await getMemberByEamil(userInfo.mail!);
+    const member = await getMemberByEmail(userInfo.mail!);
     checkMember(member);
 
     await setDiscordId(member!.id!, userInfo.discordId!);
