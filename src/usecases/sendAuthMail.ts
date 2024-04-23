@@ -1,4 +1,4 @@
-import { getMemberByEamil } from "../controllers/MemberController";
+import { getMemberByEmail } from "../controllers/MemberController";
 import { auth } from "../infra/firebase";
 import {
   ActionCodeSettings,
