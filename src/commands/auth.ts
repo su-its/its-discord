@@ -50,8 +50,8 @@ async function authCommandHandler(interaction: CommandInteraction) {
 
 async function changeNickName(interaction: CommandInteraction, member: Member) {
   const guild: Guild = interaction.guild!;
-  const guildMember = await guild.members.fetch(interaction.user.id);
-  const realName = member.name;
+  const guildMember: GuildMember = await guild.members.fetch(interaction.user.id);
+  const realName: string = member.name;
   await guildMember.setNickname(realName);
 }
 
