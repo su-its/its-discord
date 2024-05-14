@@ -15,6 +15,7 @@ import csRole from "../roles/departments/cs";
 import iaRole from "../roles/departments/ia";
 import authorizedRoleProperty from "../roles/authorized";
 import unAuthorizedRoleProperty from "../roles/unAuthorized";
+import Member from "../entities/member";
 
 const authCommand: Command = {
   data: new SlashCommandBuilder().setName("auth").setDescription("認証コマンド"),
@@ -36,6 +37,7 @@ async function authCommandHandler(interaction: CommandInteraction) {
   const user = await adminAuth.getUserByEmail(member.mail);
   if (user.emailVerified) {
     try {
+      await changeNickName(interaction, member);
       await giveRoles(interaction);
     } catch (error) {
       await interaction.reply("認証に失敗しました");
@@ -43,6 +45,13 @@ async function authCommandHandler(interaction: CommandInteraction) {
   } else {
     await interaction.reply("メール認証が完了していません");
   }
+}
+
+async function changeNickName(interaction: CommandInteraction, member: Member) {
+  const guild: Guild = interaction.guild!;
+  const guildMember = await guild.members.fetch(interaction.user.id);
+  const realName = member.name;
+  await guildMember.setNickname(realName);
 }
 
 async function giveRoles(interaction: CommandInteraction) {
