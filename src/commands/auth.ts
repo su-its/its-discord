@@ -40,6 +40,7 @@ async function authCommandHandler(interaction: CommandInteraction) {
       await changeNickName(interaction, member);
       await giveRoles(interaction);
     } catch (error) {
+      console.error("Failed to auth", error);
       await interaction.reply("認証に失敗しました");
     }
   } else {
