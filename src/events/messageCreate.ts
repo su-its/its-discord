@@ -81,7 +81,7 @@ async function validateAndSetDepartment(
       reply
     );
   } else {
-    await reply("形式が正しくありません。学科を以下から教えてください: CS, BI, IA, OTHERS");
+    await reply("形式が正しくありません。学科を以下から教えてください: CS, BI, IA, GRADUATE, OTHERS");
   }
 }
 
