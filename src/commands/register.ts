@@ -1,9 +1,9 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import CommandWithArgs from "../types/commandWithArgs";
 import Member from "../entities/member";
-import administratorRoleProperty from "../roles/administrator";
 import { addMember } from "../controllers/MemberController";
 import Department from "../entities/department";
+import checkIsAdmin from "../utils/checkMemberRole";
 
 const registerCommand: CommandWithArgs = {
   data: new SlashCommandBuilder()
@@ -42,11 +42,6 @@ async function addMemberCommandHandler(interaction: CommandInteraction) {
   await interaction.reply(`${interaction.options.get("name")?.value}さんを登録しました`);
 }
 
-async function checkIsAdmin(interaction: CommandInteraction): Promise<boolean> {
-  const member = await interaction.guild!.members.fetch(interaction.user.id);
-  const isAdmin: boolean = member.roles.cache.some((role) => role.name === administratorRoleProperty.roleName);
-  return isAdmin;
-}
 
 function validateArgs(mail: string, department: string, studentNumber: string): boolean {
   return validateEmail(mail) && validateStudentNumber(studentNumber) && validateDepartment(department);
