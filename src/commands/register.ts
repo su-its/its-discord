@@ -42,7 +42,6 @@ async function addMemberCommandHandler(interaction: CommandInteraction) {
   await interaction.reply(`${interaction.options.get("name")?.value}さんを登録しました`);
 }
 
-
 function validateArgs(mail: string, department: string, studentNumber: string): boolean {
   return validateEmail(mail) && validateStudentNumber(studentNumber) && validateDepartment(department);
 }

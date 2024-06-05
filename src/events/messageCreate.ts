@@ -1,4 +1,4 @@
-import { ChannelType, Events, Guild, Message } from "discord.js";
+import { ChannelType, Events, Message } from "discord.js";
 import { CustomClient } from "../types/customClient";
 import clearAuthData from "../utils/clearAuthData";
 import AuthData from "../types/authData";
