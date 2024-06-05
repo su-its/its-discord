@@ -11,6 +11,6 @@
   "bracketSameLine": false,
   "arrowParens": "always",
   "proseWrap": "preserve",
-  "endOfLine": "lf",
-  "embeddedLanguageFormatting": "off",
+  "endOfLine": "auto",
+  "embeddedLanguageFormatting": "off"
 }
