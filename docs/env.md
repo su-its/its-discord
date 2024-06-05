@@ -5,9 +5,9 @@
 .envファイルには以下の情報を記載して下さい
 
 ```.env
-TOKEN=
-APP_ID=
-GUILD_ID=
+TOKEN= Discord Botのトークン
+APP_ID= Discord BotのID
+GUILD_ID= 運用するDiscord ServerのID
 
 FIREBASE_API_KEY=
 FIREBASE_AUTH_DOMAIN=
