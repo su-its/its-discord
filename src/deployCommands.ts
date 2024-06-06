@@ -12,12 +12,13 @@ const commandData: SlashCommandBuilder[] = [];
 function readCommands(directory: string): void {
   const filesOrFolders = fs.readdirSync(directory);
 
-  filesOrFolders.forEach((entry) => {
+  filesOrFolders.forEach(async (entry) => {
     const absolutePath = path.join(directory, entry);
     if (fs.statSync(absolutePath).isDirectory()) {
       readCommands(absolutePath);
     } else if (entry.endsWith(".ts")) {
-      const command: Command = require(absolutePath).default;
+      const module = await import(absolutePath);
+      const command: Command = module.default;
       if ("data" in command && "execute" in command) {
         commandHandlers.push(command);
         commandData.push(command.data);

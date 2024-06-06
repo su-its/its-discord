@@ -14,7 +14,7 @@ export function setupClientReadyHandler(client: CustomClient) {
         console.error("No guild found.");
         throw new Error("No guild found.");
       } else {
-        for (const [id, guild] of guilds) {
+        for (const [, guild] of guilds) {
           initializeRoles(guild);
         }
       }

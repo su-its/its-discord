@@ -7,4 +7,5 @@ package-lock.json
 yarn.lock
 src/libs/api/v1.d.ts
 .env
+.prettierrc
 its-discord-auth-firebase-adminsdk-wn2uo-ac781d8325.json

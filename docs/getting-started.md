@@ -3,12 +3,12 @@
 ## デバッグ
 
 ```
-npm install
-npm run dev
+yarn
+yarn dev
 ```
 
 ## コマンドのデプロイ
 
 ```
-npm run deploy-commands
+yarn run deploy-commands
 ```
