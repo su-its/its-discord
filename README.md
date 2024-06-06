@@ -5,8 +5,8 @@ ITSのディスコードサーバーで使用するbotです
 # Getting started
 
 ```bash
-npm install
-npm run dev
+corepack enable
+yarn
 ```
 
 その他詳細は`docs`ディレクトリを参照してください
