@@ -13,7 +13,7 @@ export async function getAllMembers() {
 }
 
 // Emailでメンバーを取得する 見つからなければundefinedを返す
-export async function getMemberByEamil(email: string): Promise<Member | undefined> {
+export async function getMemberByEmail(email: string): Promise<Member | undefined> {
   try {
     const members = await getMembers();
     const member = members.find((m) => m.mail === email);

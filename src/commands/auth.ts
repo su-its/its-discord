@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, CommandInteraction, Guild, Role, GuildMember } from "discord.js";
 import { Command } from "../types/command";
 import { adminAuth } from "../infra/firebase";
-import { getMemberByDiscordId } from "../controllers/MemberController";
+import { getMemberByDiscordId, getMemberByEmail } from "../controllers/MemberController";
 import { UserRecord } from "firebase-admin/lib/auth/user-record";
 import createRoleIfNotFound from "../utils/createRoleNotFound";
 import addRoleToMember from "../utils/addRoleToMember";
@@ -34,7 +34,7 @@ async function authCommandHandler(interaction: CommandInteraction) {
   }
 
   // メール認証が完了しているか確認
-  const user = await adminAuth.getUserByEmail(member.mail);
+  const user: UserRecord = await adminAuth.getUserByEmail(member.mail);
   if (user.emailVerified) {
     try {
       await changeNickName(interaction, member);
@@ -58,18 +58,17 @@ async function changeNickName(interaction: CommandInteraction, member: Member) {
 async function giveRoles(interaction: CommandInteraction) {
   const user = await adminAuth.getUserByEmail(interaction.user.tag);
   const guild: Guild = interaction.guild!;
-  const guildMember = await guild.members.fetch(interaction.user.id);
+  const guildMember: GuildMember = await guild.members.fetch(interaction.user.id);
 
-  await giveAuthorizedRole(interaction, guild);
+  await giveAuthorizedRole(interaction, guild, guildMember);
   await giveDepartmentRole(interaction, user, guildMember);
 }
 
-async function giveAuthorizedRole(interaction: CommandInteraction, guild: Guild) {
+async function giveAuthorizedRole(interaction: CommandInteraction, guild: Guild, guildMember: GuildMember) {
   try {
     const authorizedRole: Role = await createRoleIfNotFound({ guild, customRole: authorizedRoleProperty });
     const unAuthorizedRole: Role = await createRoleIfNotFound({ guild, customRole: unAuthorizedRoleProperty });
 
-    const guildMember = await guild.members.fetch(interaction.user.id);
     await guildMember.roles.add(authorizedRole);
     await guildMember.roles.remove(unAuthorizedRole);
 
@@ -79,10 +78,18 @@ async function giveAuthorizedRole(interaction: CommandInteraction, guild: Guild)
   }
 }
 
-async function giveDepartmentRole(interaction: CommandInteraction, user: UserRecord, guildMember: GuildMember) {
+async function giveDepartmentRole(interaction: CommandInteraction, userAccount: UserRecord, guildMember: GuildMember) {
   const guild: Guild = interaction.guild!;
-  const department: string = user.customClaims?.department;
-  switch (department) {
+
+  //認証用のアカウントから、メンバー情報を取得
+  const member: Member | undefined = await getMemberByEmail(userAccount.email!);
+  if (!member) {
+    throw new Error("Member not found");
+    return;
+  }
+
+  //TODO: 要リファクタリング
+  switch (member.department) {
     case Department.CS:
       await addRoleToMember(guild, guildMember, csRole);
       break;
@@ -98,6 +105,8 @@ async function giveDepartmentRole(interaction: CommandInteraction, user: UserRec
     case Department.OTHERS:
       await addRoleToMember(guild, guildMember, othersRole);
       break;
+    default:
+      throw new Error("Department not found");
   }
 }
 

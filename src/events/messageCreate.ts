@@ -106,7 +106,7 @@ async function validateAndRegisterUser(
         return;
       }
       await reply(
-        "認証メールを送信しました。静大メールから認証を行い、Discordサーバーで`\\auth`コマンドを実行してください"
+        "認証メールを送信しました。静大メールから認証を行い、Discordサーバーで`/auth`コマンドを実行してください"
       );
     } else {
       userInfo = clearAuthData();
