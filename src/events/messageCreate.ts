@@ -1,4 +1,4 @@
-import { ChannelType, Events, Guild, Message } from "discord.js";
+import { ChannelType, Events, Message } from "discord.js";
 import { CustomClient } from "../types/customClient";
 import clearAuthData from "../utils/clearAuthData";
 import AuthData from "../types/authData";
@@ -81,7 +81,7 @@ async function validateAndSetDepartment(
       reply
     );
   } else {
-    await reply("形式が正しくありません。学科を以下から教えてください: CS, BI, IA, OTHERS");
+    await reply("形式が正しくありません。学科を以下から教えてください: CS, BI, IA, GRADUATE, OTHERS");
   }
 }
 

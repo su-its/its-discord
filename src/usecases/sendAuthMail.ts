@@ -1,16 +1,9 @@
-import { getMemberByEmail } from "../controllers/MemberController";
 import { auth } from "../infra/firebase";
-import {
-  ActionCodeSettings,
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  sendSignInLinkToEmail,
-} from "firebase/auth";
-import setDiscordId from "./setDiscordId";
+import { ActionCodeSettings, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 
 async function sendAuthMail(mail: string, student_number: string, department: string) {
   const actionCodeSettings: ActionCodeSettings = {
-    url: "https://discord.com",
+    url: "https://discord.com/channels/1224047445714010143/1224047445714010146",
     handleCodeInApp: true,
   };
 

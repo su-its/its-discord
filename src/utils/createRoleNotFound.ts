@@ -1,4 +1,4 @@
-import { ColorResolvable, Guild, Role } from "discord.js";
+import { Guild, Role } from "discord.js";
 import CustomRole from "../types/customRole";
 
 type createRoleNotFoundParams = {

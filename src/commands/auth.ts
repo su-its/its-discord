@@ -37,9 +37,10 @@ async function authCommandHandler(interaction: CommandInteraction) {
   const user: UserRecord = await adminAuth.getUserByEmail(member.mail);
   if (user.emailVerified) {
     try {
-      await giveRoles(interaction, user);
+      await changeNickName(interaction, member);
+      await giveRoles(interaction);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to auth", error);
       await interaction.reply("認証に失敗しました");
     }
   } else {
@@ -47,7 +48,15 @@ async function authCommandHandler(interaction: CommandInteraction) {
   }
 }
 
-async function giveRoles(interaction: CommandInteraction, user: UserRecord) {
+async function changeNickName(interaction: CommandInteraction, member: Member) {
+  const guild: Guild = interaction.guild!;
+  const guildMember: GuildMember = await guild.members.fetch(interaction.user.id);
+  const realName: string = member.name;
+  await guildMember.setNickname(realName);
+}
+
+async function giveRoles(interaction: CommandInteraction) {
+  const user = await adminAuth.getUserByEmail(interaction.user.tag);
   const guild: Guild = interaction.guild!;
   const guildMember: GuildMember = await guild.members.fetch(interaction.user.id);
 

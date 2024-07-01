@@ -1,9 +1,9 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import CommandWithArgs from "../types/commandWithArgs";
 import Member from "../entities/member";
-import administratorRoleProperty from "../roles/administrator";
 import { addMember } from "../controllers/MemberController";
 import Department from "../entities/department";
+import checkIsAdmin from "../utils/checkMemberRole";
 
 const registerCommand: CommandWithArgs = {
   data: new SlashCommandBuilder()
@@ -12,7 +12,9 @@ const registerCommand: CommandWithArgs = {
     .addStringOption((option) => option.setName("mail").setDescription("メールアドレス").setRequired(true))
     .addStringOption((option) => option.setName("name").setDescription("名前").setRequired(true))
     .addStringOption((option) => option.setName("department").setDescription("学部").setRequired(true))
-    .addStringOption((option) => option.setName("student_number").setDescription("学籍番号").setRequired(true)),
+    .addStringOption((option) =>
+      option.setName("student_number").setDescription("学籍番号").setRequired(true)
+    ) as SlashCommandBuilder,
   execute: addMemberCommandHandler,
 };
 
@@ -40,12 +42,6 @@ async function addMemberCommandHandler(interaction: CommandInteraction) {
   } as Member);
 
   await interaction.reply(`${interaction.options.get("name")?.value}さんを登録しました`);
-}
-
-async function checkIsAdmin(interaction: CommandInteraction): Promise<boolean> {
-  const member = await interaction.guild!.members.fetch(interaction.user.id);
-  const isAdmin: boolean = member.roles.cache.some((role) => role.name === administratorRoleProperty.roleName);
-  return isAdmin;
 }
 
 function validateArgs(mail: string, department: string, studentNumber: string): boolean {
