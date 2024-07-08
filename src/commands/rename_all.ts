@@ -4,7 +4,7 @@ import checkIsAdmin from "../utils/checkMemberRole";
 import { getMemberByDiscordId } from "../controllers/MemberController";
 
 const renameALL: Command = {
-  data: new SlashCommandBuilder(),
+  data: new SlashCommandBuilder().setName("rename_all").setDescription("全員のニックネームを変更する"),
   execute: renameALLHandler,
 };
 

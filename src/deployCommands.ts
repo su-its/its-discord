@@ -22,6 +22,7 @@ function readCommands(directory: string): void {
       if ("data" in command && "execute" in command) {
         commandHandlers.push(command);
         commandData.push(command.data);
+        console.log(`[INFO] Loaded command: ${command.data.name}`);
       } else {
         console.log(`[WARNING] The command at ${absolutePath} is missing a required "data" or "execute" property.`);
       }
