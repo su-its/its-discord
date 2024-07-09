@@ -24,9 +24,9 @@ async function renameALLHandler(interaction: CommandInteraction) {
 
     try {
       await member.setNickname(memberOnFirebase.name);
-      console.log(`[NOTE] Changed nickname of ${member.id}, ${memberOnFirebase.name}`);
+      console.log(`[NOTE] Changed nickname of ${member.nickname}, ${memberOnFirebase.name}`);
     } catch (error) {
-      console.error(`[ERROR] Failed to rename ${member.id}: ${error}`);
+      console.error(`[ERROR] Failed to rename ${member.nickname}: ${error}`);
     }
   });
 
