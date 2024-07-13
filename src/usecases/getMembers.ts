@@ -3,9 +3,10 @@ import Member from "../entities/member";
 import { db } from "../infra/firebase";
 
 const firestore = getFirestore();
+const collectionName = "members";
 
 async function getAllMembers(): Promise<Member[]> {
-  const snapshot = await db.collection("members").get();
+  const snapshot = await db.collection(collectionName).get();
   const members: Member[] = snapshot.docs.map((doc) =>
     convertToMember({
       id: doc.id,
@@ -16,7 +17,7 @@ async function getAllMembers(): Promise<Member[]> {
 }
 
 async function getMembersByField(fieldName: string, value: string): Promise<Member[]> {
-  const membersRef = collection(firestore, "members");
+  const membersRef = collection(firestore, collectionName);
   const q = query(membersRef, where(fieldName, "==", value));
   const querySnapshot = await getDocs(q);
   
