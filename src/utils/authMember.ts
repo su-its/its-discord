@@ -1,9 +1,9 @@
 import Member from "../entities/member";
 import AuthData from "../types/authData";
-import getMembers from "../usecases/getMembers";
+import getAllMembers from "../usecases/getMembers";
 
 async function authMember(authData: AuthData): Promise<boolean> {
-  const members: Member[] = await getMembers();
+  const members: Member[] = await getAllMembers();
   //membersの中からauthDataと一致するものがあるかどうかを確認する
   const authMember: Member | undefined = members.find((member) => {
     return (
