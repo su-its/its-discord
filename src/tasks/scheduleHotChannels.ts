@@ -1,6 +1,6 @@
 import { CronJob } from "cron";
 import { CustomClient } from "../types/customClient";
-import { getHotChannels } from "../usecases/getHotChannels";
+import { generateChannelActivityRanking } from "../usecases/getHotChannels";
 import { TextChannel } from "discord.js";
 
 export function scheduleHotChannels(client: CustomClient, channelId: string, time: string): void {
@@ -8,11 +8,11 @@ export function scheduleHotChannels(client: CustomClient, channelId: string, tim
     console.log("Job started");
     const guild = client.guilds.cache.first();
     if (guild) {
-      const ranking = await getHotChannels(guild);
+      const ranking = await generateChannelActivityRanking(guild);
       const channel = guild.channels.cache.find((ch) => ch.id === channelId) as TextChannel;
 
       if (channel) {
-        await channel.send(ranking);
+        await channel.send({ embeds: [ranking] });
       }
     }
   });
