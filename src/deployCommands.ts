@@ -9,24 +9,26 @@ const commandHandlers: Command[] = [];
 // Discord APIに登録するためのコマンドデータの配列
 const commandData: SlashCommandBuilder[] = [];
 
-function readCommands(directory: string): void {
+
+async function readCommands(directory: string): Promise<void> {
   const filesOrFolders = fs.readdirSync(directory);
 
-  filesOrFolders.forEach(async (entry) => {
+  for (const entry of filesOrFolders) {
     const absolutePath = path.join(directory, entry);
     if (fs.statSync(absolutePath).isDirectory()) {
-      readCommands(absolutePath);
+      await readCommands(absolutePath);
     } else if (entry.endsWith(".ts")) {
       const module = await import(absolutePath);
       const command: Command = module.default;
       if ("data" in command && "execute" in command) {
         commandHandlers.push(command);
         commandData.push(command.data);
+        console.log(`[INFO] Loaded command: ${command.data.name}`);
       } else {
         console.log(`[WARNING] The command at ${absolutePath} is missing a required "data" or "execute" property.`);
       }
     }
-  });
+  }
 }
 
 function checkEnvVariables() {
@@ -54,9 +56,12 @@ async function deployCommands(token: string, clientId: string, guildId: string) 
   }
 }
 
-// メイン処理
-const commandsPath = path.join(__dirname, "commands");
-readCommands(commandsPath);
+async function main() {
+  const commandsPath = path.join(__dirname, "commands");
+  await readCommands(commandsPath);
 
-const { token, clientId, guildId } = checkEnvVariables();
-deployCommands(token, clientId, guildId).catch(console.error);
+  const { token, clientId, guildId } = checkEnvVariables();
+  await deployCommands(token, clientId, guildId);
+}
+
+main().catch(console.error);
