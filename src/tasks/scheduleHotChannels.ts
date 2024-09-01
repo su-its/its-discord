@@ -5,17 +5,27 @@ import { TextChannel } from "discord.js";
 
 export function scheduleHotChannels(client: CustomClient, channelId: string, time: string): void {
   const job = new CronJob(time, async () => {
-    console.log("Job started");
-    const guild = client.guilds.cache.first();
-    if (guild) {
-      const ranking = await generateChannelActivityRanking(guild);
-      const channel = guild.channels.cache.find((ch) => ch.id === channelId) as TextChannel;
-
-      if (channel) {
-        await channel.send({ embeds: [ranking] });
+    try {
+      console.log("[INFO] Posting hot channels cron job started");
+      const guild = client.guilds.cache.first();
+      if (guild) {
+        console.log("[INFO] Generating hot channels ranking");
+        const ranking = await generateChannelActivityRanking(guild);
+        console.log("[INFO] Generated hot channels ranking");
+        console.log("[INFO] Finding hot channels channel");
+        const channel = guild.channels.cache.find((ch) => ch.id === channelId) as TextChannel;
+        if (channel) {
+          console.log("[INFO] Found hot channels channel");
+          await channel.send({ embeds: [ranking] });
+        } else {
+          console.error("[ERROR] Hot channels channel not found");
+        }
+      } else {
+        console.error("[ERROR] Guild not found");
       }
+    } catch (error) {
+      console.error("[ERROR] An error occurred in the hot channels cron job:", error);
     }
   });
-
   job.start();
 }
