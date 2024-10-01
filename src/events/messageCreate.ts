@@ -117,24 +117,24 @@ async function validateAndRegisterUser(
 ) {
 	const mail = message.content;
 	if (mail.endsWith("@shizuoka.ac.jp")) {
-		userInfo.mail = mail;
-		if (await authMember(userInfo)) {
+		const updatedUserInfo = { ...userInfo, mail };
+		if (await authMember(updatedUserInfo)) {
 			try {
-				userInfo.discordId = message.author.id;
-				await sendAuthMailController(userInfo);
+				updatedUserInfo.discordId = message.author.id;
+				await sendAuthMailController(updatedUserInfo);
 			} catch (e) {
-				userInfo = clearAuthData();
 				await reply("認証に失敗しました。もう一度やり直してください");
 				await reply("名前(フルネーム)を教えてください");
+				userStates.set(userId, clearAuthData());
 				return;
 			}
 			await reply(
 				"認証メールを送信しました。静大メールから認証を行い、Discordサーバーで`/auth`コマンドを実行してください",
 			);
 		} else {
-			userInfo = clearAuthData();
 			await reply("認証に失敗しました。もう一度やり直してください");
 			await reply("名前(フルネーム)を教えてください");
+			userStates.set(userId, clearAuthData());
 		}
 		userStates.delete(userId); // 登録後は状態をクリア
 	} else {

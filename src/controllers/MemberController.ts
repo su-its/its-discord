@@ -3,25 +3,24 @@ import type Member from "../entities/member";
 import getMembers from "../usecases/getMembers";
 import setDiscordId from "../usecases/setDiscordId";
 
-export async function getAllMembers() {
+export async function getAllMembers(): Promise<Member[] | undefined> {
 	try {
-		const members = await getMembers();
-		return members;
+		return await getMembers();
 	} catch (error) {
 		console.error("Error getting members:", error);
+		return undefined;
 	}
 }
 
-// Emailでメンバーを取得する 見つからなければundefinedを返す
 export async function getMemberByEmail(
 	email: string,
 ): Promise<Member | undefined> {
 	try {
 		const members = await getMembers();
-		const member = members.find((m) => m.mail === email);
-		return member ? member : undefined;
+		return members.find((m) => m.mail === email);
 	} catch (error) {
 		console.error("Error getting member by email:", error);
+		return undefined;
 	}
 }
 
@@ -30,30 +29,38 @@ export async function getMemberByDiscordId(
 ): Promise<Member | undefined> {
 	try {
 		const members = await getMembers();
-		const member = members.find((m) => m.discordId === discordId);
-		return member ? member : undefined;
+		return members.find((m) => m.discordId === discordId);
 	} catch (error) {
 		console.error("Error getting member by discord id:", error);
+		return undefined;
 	}
 }
 
-// memberにdiscordIdを追加する
 export async function addDiscordId(
 	member: Member,
 	discordId: string,
-): Promise<void> {
+): Promise<boolean> {
+	if (!member.id) {
+		console.error("Member ID is undefined");
+		return false;
+	}
+
 	try {
-		await setDiscordId(member.id!, discordId);
+		await setDiscordId(member.id, discordId);
+		return true;
 	} catch (error) {
 		console.error("Error adding discord id:", error);
+		return false;
 	}
 }
 
-export async function addMember(memberData: Member): Promise<void> {
+export async function addMember(memberData: Member): Promise<boolean> {
 	try {
 		await insertMember(memberData);
 		console.log("Member successfully added");
+		return true;
 	} catch (error) {
 		console.error("Error adding member:", error);
+		return false;
 	}
 }

@@ -32,7 +32,9 @@ export async function generateChannelActivityRanking(guild: Guild) {
 					if (messages.size === 0) break;
 					totalMessages += messages.size;
 					lastId = messages.last()?.id;
-					if (messages.last()!.createdTimestamp < oneDayAgoSnowflake) break;
+					const lastMessage = messages.last();
+					if (lastMessage && lastMessage.createdTimestamp < oneDayAgoSnowflake)
+						break;
 				}
 				return {
 					id: channel.id,
