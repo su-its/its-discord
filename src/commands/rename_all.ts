@@ -40,7 +40,7 @@ async function renameALLHandler(interaction: CommandInteraction) {
 
 	await Promise.all(renamePromises);
 	await interaction.followUp("ニックネームの変更が完了しました。");
-	console.log(`[NOTE] Completed changing nicknames`);
+	console.log("[NOTE] Completed changing nicknames");
 }
 
 export default renameALL;
