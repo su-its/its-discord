@@ -1,32 +1,39 @@
-import { Events, Guild, GuildMember, Role } from "discord.js";
-import { CustomClient } from "../types/customClient";
+import { Events, type Guild, type GuildMember, type Role } from "discord.js";
+import type { CustomClient } from "../types/customClient";
 import createRoleIfNotFound from "../utils/createRoleNotFound";
 import unAuthorizedRoleProperty from "../roles/unAuthorized";
 
 export function setupGuildMemberAddHandler(client: CustomClient) {
-  client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
-    await sendDM(member);
-    await giveUnauthorizedRole(member);
-  });
+	client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
+		await sendDM(member);
+		await giveUnauthorizedRole(member);
+	});
 }
 
 async function sendDM(member: GuildMember) {
-  try {
-    await member.send(`ようこそ ${member.displayName} さん！ ITS discord 認証botです!`);
-    await member.send("名前(フルネーム)を教えてください");
-    console.log(`Welcome message sent to ${member.displayName}.`);
-  } catch (error) {
-    console.error("Error sending DM:", error);
-  }
+	try {
+		await member.send(
+			`ようこそ ${member.displayName} さん！ ITS discord 認証botです!`,
+		);
+		await member.send("名前(フルネーム)を教えてください");
+		console.log(`Welcome message sent to ${member.displayName}.`);
+	} catch (error) {
+		console.error("Error sending DM:", error);
+	}
 }
 
 async function giveUnauthorizedRole(member: GuildMember) {
-  try {
-    const guild: Guild = member.guild;
-    const role: Role = await createRoleIfNotFound({ guild, customRole: unAuthorizedRoleProperty });
-    await member.roles.add(role);
-    console.log(`Unauthorized role has been assigned to ${member.displayName}.`);
-  } catch (error) {
-    console.error("Error creating Unauthorized role:", error);
-  }
+	try {
+		const guild: Guild = member.guild;
+		const role: Role = await createRoleIfNotFound({
+			guild,
+			customRole: unAuthorizedRoleProperty,
+		});
+		await member.roles.add(role);
+		console.log(
+			`Unauthorized role has been assigned to ${member.displayName}.`,
+		);
+	} catch (error) {
+		console.error("Error creating Unauthorized role:", error);
+	}
 }

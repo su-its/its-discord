@@ -1,9 +1,9 @@
-import CustomRole from "../types/customRole";
+import type CustomRole from "../types/customRole";
 
 const administratorRoleProperty: CustomRole = {
-  roleName: "Administrator",
-  color: "Red",
-  reason: "Role for administrators.",
+	roleName: "Administrator",
+	color: "Red",
+	reason: "Role for administrators.",
 };
 
 export default administratorRoleProperty;
