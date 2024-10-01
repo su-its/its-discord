@@ -14,7 +14,7 @@ async function authMember(authData: AuthData): Promise<boolean> {
 		);
 	});
 
-	return authMember ? true : false;
+	return !!authMember;
 }
 
 export default authMember;

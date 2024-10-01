@@ -115,7 +115,6 @@ async function giveDepartmentRole(
 	const member: Member | undefined = await getMemberByEmail(userAccount.email!);
 	if (!member) {
 		throw new Error("Member not found");
-		return;
 	}
 
 	//TODO: 要リファクタリング

@@ -1,6 +1,6 @@
 import { type SlashCommandBuilder, REST, Routes } from "discord.js";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import type { Command } from "./types/command";
 import dotenv from "dotenv";
 

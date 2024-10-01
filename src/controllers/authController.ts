@@ -36,7 +36,8 @@ function checkAuthData(userInfo: AuthData): boolean {
 function checkMember(member: Member | undefined): void {
 	if (!member) {
 		throw new Error("Member not found");
-	} else if (!member.id) {
+	}
+	if (!member.id) {
 		throw new Error("Member id is not provided");
 	}
 }

@@ -10,13 +10,12 @@ export function setupClientReadyHandler(client: CustomClient) {
 
 			//guildのリストを取得
 			const guilds = client.guilds.cache;
-			if (guilds.size == 0) {
+			if (guilds.size === 0) {
 				console.error("No guild found.");
 				throw new Error("No guild found.");
-			} else {
-				for (const [, guild] of guilds) {
-					initializeRoles(guild);
-				}
+			}
+			for (const [, guild] of guilds) {
+				initializeRoles(guild);
 			}
 		}
 	});

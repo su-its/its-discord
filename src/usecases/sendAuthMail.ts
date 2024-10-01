@@ -3,6 +3,7 @@ import {
 	type ActionCodeSettings,
 	createUserWithEmailAndPassword,
 	sendEmailVerification,
+	type UserCredential,
 } from "firebase/auth";
 
 async function sendAuthMail(
@@ -16,14 +17,18 @@ async function sendAuthMail(
 	};
 
 	try {
-		const user = await createUserWithEmailAndPassword(
+		const userCredential: UserCredential = await createUserWithEmailAndPassword(
 			auth,
 			mail,
 			student_number + department,
 		);
-		await sendEmailVerification(user.user!, actionCodeSettings);
 
-		console.log("Send mail to " + mail + " successfully");
+		if (userCredential.user) {
+			await sendEmailVerification(userCredential.user, actionCodeSettings);
+			console.log(`Send mail to ${mail} successfully`);
+		} else {
+			console.error("User object is null after creation");
+		}
 	} catch (e) {
 		console.error(e);
 	}

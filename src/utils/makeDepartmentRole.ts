@@ -13,9 +13,9 @@ function makeDepartmentRole({
 	reason,
 }: makeDepartmentRoleProps): CustomRole {
 	const role: CustomRole = {
-		roleName: "DP:" + department,
+		roleName: `DP:${department}`,
 		color: color,
-		reason: reason ? reason : department + "Department Role",
+		reason: reason ? reason : `${department}Department Role`,
 	};
 
 	return role;
