@@ -1,10 +1,10 @@
 import { ChannelType, Events, type Message } from "discord.js";
-import type { CustomClient } from "../types/customClient";
-import clearAuthData from "../utils/clearAuthData";
-import type AuthData from "../types/authData";
-import Department from "../entities/department";
-import authMember from "../utils/authMember";
 import sendAuthMailController from "../controllers/authController";
+import Department from "../entities/department";
+import type AuthData from "../types/authData";
+import type { CustomClient } from "../types/customClient";
+import authMember from "../utils/authMember";
+import clearAuthData from "../utils/clearAuthData";
 
 export function setupMessageCreate(
 	client: CustomClient,

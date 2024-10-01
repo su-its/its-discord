@@ -1,5 +1,5 @@
-import type Member from "../entities/member";
 import { v4 as uuidv4 } from "uuid";
+import type Member from "../entities/member";
 import { db } from "../infra/firebase";
 
 async function insertMember(member: Member) {

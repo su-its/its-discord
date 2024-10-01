@@ -1,8 +1,8 @@
-import { type SlashCommandBuilder, REST, Routes } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
-import type { Command } from "./types/command";
+import { REST, Routes, type SlashCommandBuilder } from "discord.js";
 import dotenv from "dotenv";
+import type { Command } from "./types/command";
 
 const commandHandlers: Command[] = [];
 

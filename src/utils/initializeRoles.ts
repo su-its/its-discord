@@ -1,8 +1,8 @@
 import { readdirSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
-import createRoleIfNotFound from "./createRoleNotFound";
-import type CustomRole from "../types/customRole";
 import type { Guild } from "discord.js";
+import type CustomRole from "../types/customRole";
+import createRoleIfNotFound from "./createRoleNotFound";
 
 async function readRolesFromDirectory(directoryPath: string, guild: Guild) {
 	const files = readdirSync(directoryPath);

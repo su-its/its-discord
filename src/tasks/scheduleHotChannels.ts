@@ -1,7 +1,7 @@
 import { CronJob } from "cron";
+import type { TextChannel } from "discord.js";
 import type { CustomClient } from "../types/customClient";
 import { generateChannelActivityRanking } from "../usecases/getHotChannels";
-import type { TextChannel } from "discord.js";
 
 export function scheduleHotChannels(
 	client: CustomClient,

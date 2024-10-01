@@ -1,10 +1,10 @@
 import {
-	ChannelType,
-	type Guild,
-	type TextChannel,
-	SnowflakeUtil,
-	EmbedBuilder,
 	type APIEmbedField,
+	ChannelType,
+	EmbedBuilder,
+	type Guild,
+	SnowflakeUtil,
+	type TextChannel,
 } from "discord.js";
 
 export async function generateChannelActivityRanking(guild: Guild) {

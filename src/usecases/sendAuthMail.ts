@@ -1,10 +1,10 @@
-import { auth } from "../infra/firebase";
 import {
 	type ActionCodeSettings,
+	type UserCredential,
 	createUserWithEmailAndPassword,
 	sendEmailVerification,
-	type UserCredential,
 } from "firebase/auth";
+import { auth } from "../infra/firebase";
 
 async function sendAuthMail(
 	mail: string,

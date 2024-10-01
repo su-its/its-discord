@@ -1,9 +1,9 @@
+import dotenv from "dotenv";
 import * as admin from "firebase-admin";
-import { initializeApp, type FirebaseApp } from "firebase/app";
+import { type FirebaseApp, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 //TODO: コンフィグの読み込みを分離
 import serviceAccount from "../../its-discord-auth-firebase-adminsdk-wn2uo-ac781d8325.json";
-import dotenv from "dotenv";
 
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),

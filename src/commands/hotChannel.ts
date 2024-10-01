@@ -1,8 +1,4 @@
-import {
-	SlashCommandBuilder,
-	type CommandInteraction,
-	Guild,
-} from "discord.js";
+import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
 import type { Command } from "../types/command";
 import { generateChannelActivityRanking } from "../usecases/getHotChannels";
 import checkIsAdmin from "../utils/checkMemberRole";

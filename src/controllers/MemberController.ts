@@ -1,6 +1,6 @@
-import insertMember from "../usecases/insertMember";
 import type Member from "../entities/member";
 import getMembers from "../usecases/getMembers";
+import insertMember from "../usecases/insertMember";
 import setDiscordId from "../usecases/setDiscordId";
 
 export async function getAllMembers(): Promise<Member[] | undefined> {

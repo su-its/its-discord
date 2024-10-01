@@ -1,8 +1,8 @@
+import type Member from "../entities/member";
 import type AuthData from "../types/authData";
 import sendAuthMail from "../usecases/sendAuthMail";
-import { getMemberByEmail } from "./MemberController";
 import setDiscordId from "../usecases/setDiscordId";
-import type Member from "../entities/member";
+import { getMemberByEmail } from "./MemberController";
 
 async function sendAuthMailController(userInfo: AuthData) {
 	try {

@@ -1,31 +1,31 @@
 import {
-	SlashCommandBuilder,
 	type CommandInteraction,
 	type Guild,
-	type Role,
 	type GuildMember,
+	type Role,
+	SlashCommandBuilder,
 } from "discord.js";
-import type { Command } from "../types/command";
-import { adminAuth } from "../infra/firebase";
+import type { UserRecord } from "firebase-admin/lib/auth/user-record";
 import {
 	getMemberByDiscordId,
 	getMemberByEmail,
 } from "../controllers/MemberController";
-import type { UserRecord } from "firebase-admin/lib/auth/user-record";
-import createRoleIfNotFound from "../utils/createRoleNotFound";
-import addRoleToMember from "../utils/addRoleToMember";
 import Department from "../entities/department";
+import { adminAuth } from "../infra/firebase";
+import type { Command } from "../types/command";
+import addRoleToMember from "../utils/addRoleToMember";
+import createRoleIfNotFound from "../utils/createRoleNotFound";
 
+import type Member from "../entities/member";
+import authorizedRoleProperty from "../roles/authorized";
 //以下は、ロールのimport
 import biRole from "../roles/departments/bi";
-import graduateRole from "../roles/departments/graduate";
-import othersRole from "../roles/departments/others";
-import obogRole from "../roles/departments/obog";
 import csRole from "../roles/departments/cs";
+import graduateRole from "../roles/departments/graduate";
 import iaRole from "../roles/departments/ia";
-import authorizedRoleProperty from "../roles/authorized";
+import obogRole from "../roles/departments/obog";
+import othersRole from "../roles/departments/others";
 import unAuthorizedRoleProperty from "../roles/unAuthorized";
-import type Member from "../entities/member";
 
 const authCommand: Command = {
 	data: new SlashCommandBuilder()
