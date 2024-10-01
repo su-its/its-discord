@@ -1580,7 +1580,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"discord.js@npm:^14.15.3":
+"discord.js@npm:^14.16.3":
   version: 14.16.3
   resolution: "discord.js@npm:14.16.3"
   dependencies:
@@ -1752,7 +1752,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firebase-admin@npm:^12.4.0":
+"firebase-admin@npm:^12.6.0":
   version: 12.6.0
   resolution: "firebase-admin@npm:12.6.0"
   dependencies:
@@ -1776,7 +1776,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firebase@npm:^10.13.1":
+"firebase@npm:^10.14.0":
   version: 10.14.0
   resolution: "firebase@npm:10.14.0"
   dependencies:
@@ -2187,14 +2187,14 @@ __metadata:
     "@biomejs/biome": "npm:1.9.2"
     "@types/uuid": "npm:^10.0.0"
     cron: "npm:^3.1.7"
-    discord.js: "npm:^14.15.3"
+    discord.js: "npm:^14.16.3"
     dotenv: "npm:^16.4.5"
-    firebase: "npm:^10.13.1"
-    firebase-admin: "npm:^12.4.0"
+    firebase: "npm:^10.14.0"
+    firebase-admin: "npm:^12.6.0"
     globals: "npm:^15.9.0"
-    nodemon: "npm:^3.1.4"
+    nodemon: "npm:^3.1.7"
     ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.5.4"
+    typescript: "npm:^5.6.2"
     uuid: "npm:^10.0.0"
   languageName: unknown
   linkType: soft
@@ -2658,7 +2658,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemon@npm:^3.1.4":
+"nodemon@npm:^3.1.7":
   version: 3.1.7
   resolution: "nodemon@npm:3.1.7"
   dependencies:
@@ -3157,7 +3157,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.5.4":
+"typescript@npm:^5.6.2":
   version: 5.6.2
   resolution: "typescript@npm:5.6.2"
   bin:
@@ -3167,7 +3167,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.5.4#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.6.2#optional!builtin<compat/typescript>":
   version: 5.6.2
   resolution: "typescript@patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=b45daf"
   bin:

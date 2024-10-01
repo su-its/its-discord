@@ -19,16 +19,16 @@
 		"@biomejs/biome": "1.9.2",
 		"@types/uuid": "^10.0.0",
 		"globals": "^15.9.0",
-		"nodemon": "^3.1.4",
+		"nodemon": "^3.1.7",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.5.4"
+		"typescript": "^5.6.2"
 	},
 	"dependencies": {
 		"cron": "^3.1.7",
-		"discord.js": "^14.15.3",
+		"discord.js": "^14.16.3",
 		"dotenv": "^16.4.5",
-		"firebase": "^10.13.1",
-		"firebase-admin": "^12.4.0",
+		"firebase": "^10.14.0",
+		"firebase-admin": "^12.6.0",
 		"uuid": "^10.0.0"
 	},
 	"packageManager": "yarn@4.2.2"
