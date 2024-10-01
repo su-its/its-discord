@@ -6,11 +6,11 @@ import { setupInteractionCreateHandler } from "./interactionCreate";
 import { setupMessageCreate } from "./messageCreate";
 
 export function setupEventHandlers(
-	client: CustomClient,
-	userStates: Map<string, AuthData>,
+  client: CustomClient,
+  userStates: Map<string, AuthData>,
 ) {
-	setupClientReadyHandler(client);
-	setupInteractionCreateHandler(client);
-	setupGuildMemberAddHandler(client);
-	setupMessageCreate(client, userStates);
+  setupClientReadyHandler(client);
+  setupInteractionCreateHandler(client);
+  setupGuildMemberAddHandler(client);
+  setupMessageCreate(client, userStates);
 }

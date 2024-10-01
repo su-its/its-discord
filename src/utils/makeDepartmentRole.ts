@@ -2,23 +2,23 @@ import type { ColorResolvable } from "discord.js";
 import type CustomRole from "../types/customRole";
 
 interface makeDepartmentRoleProps {
-	department: string;
-	color: ColorResolvable;
-	reason?: string;
+  department: string;
+  color: ColorResolvable;
+  reason?: string;
 }
 
 function makeDepartmentRole({
-	department,
-	color,
-	reason,
+  department,
+  color,
+  reason,
 }: makeDepartmentRoleProps): CustomRole {
-	const role: CustomRole = {
-		roleName: `DP:${department}`,
-		color: color,
-		reason: reason ? reason : `${department}Department Role`,
-	};
+  const role: CustomRole = {
+    roleName: `DP:${department}`,
+    color: color,
+    reason: reason ? reason : `${department}Department Role`,
+  };
 
-	return role;
+  return role;
 }
 
 export default makeDepartmentRole;

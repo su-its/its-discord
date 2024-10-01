@@ -14,17 +14,17 @@ const horChannelId = process.env.HOT_CHANNEL_ID;
 const postHotChannelTime = process.env.POST_HOT_CHANNEL_TIME;
 
 async function main() {
-	if (!token || !horChannelId || !postHotChannelTime) {
-		console.error("Missing environment variables.");
-		process.exit(1);
-	}
+  if (!token || !horChannelId || !postHotChannelTime) {
+    console.error("Missing environment variables.");
+    process.exit(1);
+  }
 
-	await loadCommands(client);
-	setupEventHandlers(client, userStates);
-	scheduleHotChannels(client, horChannelId, postHotChannelTime);
+  await loadCommands(client);
+  setupEventHandlers(client, userStates);
+  scheduleHotChannels(client, horChannelId, postHotChannelTime);
 
-	await client.login(token);
-	console.log("Bot is running...");
+  await client.login(token);
+  console.log("Bot is running...");
 }
 
 main().catch(console.error);

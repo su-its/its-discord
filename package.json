@@ -1,35 +1,35 @@
 {
-	"name": "its-discord-auth",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"start": "nodemon --exec ts-node src/main.ts",
-		"test": "ts-node src/main.ts",
-		"deploy-commands": "ts-node src/deployCommands.ts",
-		"format": "biome format --write",
-		"lint": "biome lint --write",
-		"lint:fix": "eslint --ignore-pattern .gitignore './**/*.{js,ts}' --fix",
-		"check": "biome check --write"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"devDependencies": {
-		"@biomejs/biome": "1.9.2",
-		"@types/uuid": "^10.0.0",
-		"globals": "^15.9.0",
-		"nodemon": "^3.1.7",
-		"ts-node": "^10.9.2",
-		"typescript": "^5.6.2"
-	},
-	"dependencies": {
-		"cron": "^3.1.7",
-		"discord.js": "^14.16.3",
-		"dotenv": "^16.4.5",
-		"firebase": "^10.14.0",
-		"firebase-admin": "^12.6.0",
-		"uuid": "^10.0.0"
-	},
-	"packageManager": "yarn@4.2.2"
+  "name": "its-discord-auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exec ts-node src/main.ts",
+    "test": "ts-node src/main.ts",
+    "deploy-commands": "ts-node src/deployCommands.ts",
+    "format": "biome format --write",
+    "lint": "biome lint --write",
+    "lint:fix": "eslint --ignore-pattern .gitignore './**/*.{js,ts}' --fix",
+    "check": "biome check --write"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "1.9.2",
+    "@types/uuid": "^10.0.0",
+    "globals": "^15.9.0",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "cron": "^3.1.7",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5",
+    "firebase": "^10.14.0",
+    "firebase-admin": "^12.6.0",
+    "uuid": "^10.0.0"
+  },
+  "packageManager": "yarn@4.2.2"
 }
