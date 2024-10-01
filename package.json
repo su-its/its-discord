@@ -9,7 +9,8 @@
 		"deploy-commands": "ts-node src/deployCommands.ts",
 		"format": "biome format --write",
 		"lint": "biome lint --write",
-		"lint:fix": "eslint --ignore-pattern .gitignore './**/*.{js,ts}' --fix"
+		"lint:fix": "eslint --ignore-pattern .gitignore './**/*.{js,ts}' --fix",
+		"check": "biome check --write"
 	},
 	"keywords": [],
 	"author": "",
