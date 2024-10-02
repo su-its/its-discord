@@ -1,6 +1,9 @@
-import { CommandInteraction, SlashCommandBuilder } from "discord.js";
+import type { CommandInteraction, SlashCommandBuilder } from "discord.js";
 
-type OmittedSlashCommandBuilder = Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
+type OmittedSlashCommandBuilder = Omit<
+  SlashCommandBuilder,
+  "addSubcommand" | "addSubcommandGroup"
+>;
 
 interface CommandWithArgs {
   data: OmittedSlashCommandBuilder;

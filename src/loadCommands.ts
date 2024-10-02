@@ -1,6 +1,6 @@
-import fs from "fs/promises";
-import path from "path";
-import { CustomClient } from "./types/customClient";
+import fs from "node:fs/promises";
+import path from "node:path";
+import type { CustomClient } from "./types/customClient";
 
 export async function loadCommands(client: CustomClient) {
   const commandsFoldersPath = path.resolve("src", "commands");
@@ -13,7 +13,9 @@ export async function loadCommands(client: CustomClient) {
       client.commands.set(command.data.name, command);
       console.log(`[INFO] Loaded command: ${command.data.name}`);
     } else {
-      console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+      console.log(
+        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
+      );
     }
   }
 }

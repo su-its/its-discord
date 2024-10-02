@@ -1,22 +1,39 @@
-import AuthData from "../types/authData";
+import type Member from "../entities/member";
+import type AuthData from "../types/authData";
 import sendAuthMail from "../usecases/sendAuthMail";
-import { getMemberByEmail } from "./MemberController";
 import setDiscordId from "../usecases/setDiscordId";
-import Member from "../entities/member";
+import { getMemberByEmail } from "./MemberController";
 
 async function sendAuthMailController(userInfo: AuthData) {
   try {
     if (!checkAuthData(userInfo)) {
       throw new Error("Invalid AuthData");
     }
-    await sendAuthMail(userInfo.mail!, userInfo.student_number!, userInfo.department!);
 
-    const member = await getMemberByEmail(userInfo.mail!);
+    const { mail, student_number, department, discordId } = userInfo;
+
+    if (!mail || !student_number || !department || !discordId) {
+      throw new Error("Missing required fields in AuthData");
+    }
+
+    await sendAuthMail(mail, student_number, department);
+
+    const member = await getMemberByEmail(mail);
+
+    if (!member) {
+      throw new Error("Member not found");
+    }
+
     checkMember(member);
 
-    await setDiscordId(member!.id!, userInfo.discordId!);
+    if (!member.id) {
+      throw new Error("Member ID is missing");
+    }
+
+    await setDiscordId(member.id, discordId);
   } catch (e) {
     console.error(e);
+    throw e; // エラーを上位に伝播させる
   }
 }
 
@@ -32,7 +49,8 @@ function checkAuthData(userInfo: AuthData): boolean {
 function checkMember(member: Member | undefined): void {
   if (!member) {
     throw new Error("Member not found");
-  } else if (!member.id) {
+  }
+  if (!member.id) {
     throw new Error("Member id is not provided");
   }
 }

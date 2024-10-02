@@ -1,4 +1,4 @@
-import CustomRole from "../types/customRole";
+import type CustomRole from "../types/customRole";
 
 const administratorRoleProperty: CustomRole = {
   roleName: "Administrator",

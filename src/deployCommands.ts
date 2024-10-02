@@ -1,14 +1,13 @@
-import { SlashCommandBuilder, REST, Routes } from "discord.js";
-import fs from "fs";
-import path from "path";
-import { Command } from "./types/command";
+import fs from "node:fs";
+import path from "node:path";
+import { REST, Routes, type SlashCommandBuilder } from "discord.js";
 import dotenv from "dotenv";
+import type { Command } from "./types/command";
 
 const commandHandlers: Command[] = [];
 
 // Discord APIに登録するためのコマンドデータの配列
 const commandData: SlashCommandBuilder[] = [];
-
 
 async function readCommands(directory: string): Promise<void> {
   const filesOrFolders = fs.readdirSync(directory);
@@ -25,7 +24,9 @@ async function readCommands(directory: string): Promise<void> {
         commandData.push(command.data);
         console.log(`[INFO] Loaded command: ${command.data.name}`);
       } else {
-        console.log(`[WARNING] The command at ${absolutePath} is missing a required "data" or "execute" property.`);
+        console.log(
+          `[WARNING] The command at ${absolutePath} is missing a required "data" or "execute" property.`,
+        );
       }
     }
   }
@@ -45,12 +46,22 @@ function checkEnvVariables() {
 }
 
 // コマンドをデプロイする関数
-async function deployCommands(token: string, clientId: string, guildId: string) {
+async function deployCommands(
+  token: string,
+  clientId: string,
+  guildId: string,
+) {
   const rest = new REST({ version: "10" }).setToken(token);
   try {
-    console.log(`Started refreshing ${commandData.length} application (/) commands.`);
-    await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commandData });
-    console.log(`Successfully reloaded ${commandData.length} application (/) commands.`);
+    console.log(
+      `Started refreshing ${commandData.length} application (/) commands.`,
+    );
+    await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
+      body: commandData,
+    });
+    console.log(
+      `Successfully reloaded ${commandData.length} application (/) commands.`,
+    );
   } catch (error) {
     console.error(error);
   }

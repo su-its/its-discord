@@ -1,4 +1,4 @@
-import CustomRole from "../types/customRole";
+import type CustomRole from "../types/customRole";
 
 const unAuthorizedRoleProperty: CustomRole = {
   roleName: "Unauthorized",

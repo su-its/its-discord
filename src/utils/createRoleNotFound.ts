@@ -1,14 +1,19 @@
-import { Guild, Role } from "discord.js";
-import CustomRole from "../types/customRole";
+import type { Guild, Role } from "discord.js";
+import type CustomRole from "../types/customRole";
 
 type createRoleNotFoundParams = {
   guild: Guild;
   customRole: CustomRole;
 };
 
-async function createRoleIfNotFound({ guild, customRole }: createRoleNotFoundParams): Promise<Role> {
+async function createRoleIfNotFound({
+  guild,
+  customRole,
+}: createRoleNotFoundParams): Promise<Role> {
   const roles = await guild.roles.fetch();
-  let role: Role | undefined = roles.find((r) => r.name === customRole.roleName);
+  let role: Role | undefined = roles.find(
+    (r) => r.name === customRole.roleName,
+  );
   if (!role) {
     try {
       role = await guild.roles.create({
