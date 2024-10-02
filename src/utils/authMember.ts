@@ -1,5 +1,5 @@
-import Member from "../entities/member";
-import AuthData from "../types/authData";
+import type Member from "../entities/member";
+import type AuthData from "../types/authData";
 import getMembers from "../usecases/getMembers";
 
 async function authMember(authData: AuthData): Promise<boolean> {
@@ -14,7 +14,7 @@ async function authMember(authData: AuthData): Promise<boolean> {
     );
   });
 
-  return authMember ? true : false;
+  return !!authMember;
 }
 
 export default authMember;

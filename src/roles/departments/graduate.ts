@@ -1,4 +1,4 @@
-import CustomRole from "../../types/customRole";
+import type CustomRole from "../../types/customRole";
 import makeDepartmentRole from "../../utils/makeDepartmentRole";
 
 const graduateRole: CustomRole = makeDepartmentRole({

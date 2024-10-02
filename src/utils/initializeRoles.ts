@@ -1,8 +1,8 @@
-import { readdirSync, statSync } from "fs";
-import { join, resolve } from "path";
+import { readdirSync, statSync } from "node:fs";
+import { join, resolve } from "node:path";
+import type { Guild } from "discord.js";
+import type CustomRole from "../types/customRole";
 import createRoleIfNotFound from "./createRoleNotFound";
-import CustomRole from "../types/customRole";
-import { Guild } from "discord.js";
 
 async function readRolesFromDirectory(directoryPath: string, guild: Guild) {
   const files = readdirSync(directoryPath);
@@ -14,7 +14,7 @@ async function readRolesFromDirectory(directoryPath: string, guild: Guild) {
       try {
         const module = await import(fullPath);
         const roleConfig = module.default || module;
-        if (roleConfig && roleConfig.roleName && roleConfig.color && roleConfig.reason) {
+        if (roleConfig?.roleName && roleConfig.color && roleConfig.reason) {
           await initializeRole(roleConfig, guild);
         } else {
           console.error(`Failed to load a valid role config from ${fullPath}`);

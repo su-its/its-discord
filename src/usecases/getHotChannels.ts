@@ -1,12 +1,22 @@
-import { ChannelType, Guild, TextChannel, SnowflakeUtil, EmbedBuilder, APIEmbedField } from "discord.js";
+import {
+  type APIEmbedField,
+  ChannelType,
+  EmbedBuilder,
+  type Guild,
+  SnowflakeUtil,
+  type TextChannel,
+} from "discord.js";
 
 export async function generateChannelActivityRanking(guild: Guild) {
   const now = new Date();
-  const oneDayAgoSnowflake = SnowflakeUtil.generate({ timestamp: now.getTime() - 24 * 60 * 60 * 1000 });
+  const oneDayAgoSnowflake = SnowflakeUtil.generate({
+    timestamp: now.getTime() - 24 * 60 * 60 * 1000,
+  });
 
   const channels = await guild.channels.fetch();
   const textChannels = channels.filter(
-    (channel): channel is TextChannel => channel !== null && channel.type === ChannelType.GuildText
+    (channel): channel is TextChannel =>
+      channel !== null && channel.type === ChannelType.GuildText,
   );
 
   const channelStats = await Promise.all(
@@ -22,7 +32,9 @@ export async function generateChannelActivityRanking(guild: Guild) {
           if (messages.size === 0) break;
           totalMessages += messages.size;
           lastId = messages.last()?.id;
-          if (messages.last()!.createdTimestamp < oneDayAgoSnowflake) break;
+          const lastMessage = messages.last();
+          if (lastMessage && lastMessage.createdTimestamp < oneDayAgoSnowflake)
+            break;
         }
         return {
           id: channel.id,
@@ -30,19 +42,27 @@ export async function generateChannelActivityRanking(guild: Guild) {
           count: totalMessages,
         };
       } catch (error) {
-        console.error(`Error fetching messages for channel ${channel.name}:`, error);
+        console.error(
+          `Error fetching messages for channel ${channel.name}:`,
+          error,
+        );
         return {
           id: channel.id,
           name: channel.name,
           count: 0,
         };
       }
-    })
+    }),
   );
 
   const targetChannels = channelStats.filter((channel) => channel.count > 0);
-  const sortedStats = targetChannels.sort((a, b) => b.count - a.count).slice(0, 20);
-  const totalMessages = sortedStats.reduce((sum, channel) => sum + channel.count, 0);
+  const sortedStats = targetChannels
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 20);
+  const totalMessages = sortedStats.reduce(
+    (sum, channel) => sum + channel.count,
+    0,
+  );
 
   const embed = new EmbedBuilder()
     .setColor(0x0099ff)

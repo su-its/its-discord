@@ -1,4 +1,4 @@
-import department from "./department";
+import type department from "./department";
 
 interface Member {
   id?: string;

@@ -1,4 +1,4 @@
-import Department from "../entities/department";
+import type Department from "../entities/department";
 
 interface AuthData {
   name?: string;
