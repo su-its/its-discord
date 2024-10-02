@@ -1,4 +1,4 @@
-import Member from "../entities/member";
+import type Member from "../entities/member";
 import { db } from "../infra/firebase";
 
 async function getMembers(): Promise<Member[]> {
@@ -7,7 +7,7 @@ async function getMembers(): Promise<Member[]> {
     convertToMember({
       id: doc.id,
       ...doc.data(),
-    })
+    }),
   );
   return members;
 }

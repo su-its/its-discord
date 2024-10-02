@@ -1,5 +1,5 @@
-import { ColorResolvable } from "discord.js";
-import CustomRole from "../types/customRole";
+import type { ColorResolvable } from "discord.js";
+import type CustomRole from "../types/customRole";
 
 interface makeDepartmentRoleProps {
   department: string;
@@ -7,11 +7,15 @@ interface makeDepartmentRoleProps {
   reason?: string;
 }
 
-function makeDepartmentRole({ department, color, reason }: makeDepartmentRoleProps): CustomRole {
+function makeDepartmentRole({
+  department,
+  color,
+  reason,
+}: makeDepartmentRoleProps): CustomRole {
   const role: CustomRole = {
-    roleName: "DP:" + department,
+    roleName: `DP:${department}`,
     color: color,
-    reason: reason ? reason : department + "Department Role",
+    reason: reason ? reason : `${department}Department Role`,
   };
 
   return role;
