@@ -1,5 +1,6 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
 import type CommandWithArgs from "../types/commandWithArgs";
+import checkIsAdmin from "../utils/checkMemberRole";
 
 const killCommand: CommandWithArgs = {
   data: new SlashCommandBuilder()
@@ -15,6 +16,11 @@ const killCommand: CommandWithArgs = {
 };
 
 async function killCommandHandler(interaction: CommandInteraction) {
+  //adminロールを持っているか確認
+  const isAdmin: boolean = await checkIsAdmin(interaction);
+  if (!isAdmin)
+    return await interaction.reply("このコマンドは管理者のみ使用可能です。");
+
   const targetPid = interaction.options.get("pid")?.value as string;
   const currentPid = process.pid.toString();
 
