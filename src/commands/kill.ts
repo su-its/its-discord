@@ -5,21 +5,28 @@ const killCommand: CommandWithArgs = {
   data: new SlashCommandBuilder()
     .setName("kill")
     .setDescription("指定されたボットプロセスを終了します")
-    .addStringOption((option) => option.setName("pid").setDescription("終了するプロセスのPID").setRequired(true)),
+    .addStringOption((option) =>
+      option
+        .setName("pid")
+        .setDescription("終了するプロセスのPID")
+        .setRequired(true),
+    ) as SlashCommandBuilder,
   execute: killCommandHandler,
 };
 
 async function killCommandHandler(interaction: CommandInteraction) {
-  const targetPid = interaction.options.get("pid");
+  const targetPid = interaction.options.get("pid")?.value as string;
   const currentPid = process.pid.toString();
 
   if (!targetPid) return await interaction.reply("PIDを指定してください");
-  if (targetPid === currentPid) {
+  if (targetPid && targetPid === currentPid) {
     console.log(`Killing process ${currentPid}`);
     await interaction.reply(`プロセス ${currentPid} を終了します...`);
     process.exit(0);
   } else {
-    await interaction.reply(`PID ${targetPid} は現在のプロセスではありません。`);
+    await interaction.reply(
+      `PID ${targetPid} は現在のプロセスではありません。`,
+    );
   }
 }
 
