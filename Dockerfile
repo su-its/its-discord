@@ -8,6 +8,6 @@ WORKDIR /usr/src/app
 COPY . .
 
 RUN yarn install
+RUN yarn deploy-commands
 
 CMD ["yarn", "start"]
-
