@@ -3,6 +3,7 @@
 .env
 its-*.json
 /.vscode
+/tex_png
 
 .pnp.*
 .yarn/*
