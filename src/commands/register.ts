@@ -1,7 +1,8 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { addMember } from "../controllers/MemberController";
+import { addMemberController } from "../controllers/MemberController";
 import Department from "../entities/department";
 import type Member from "../entities/member";
+import type { MemberCreateInput } from "../infra/repository/IMemberRepository";
 import type CommandWithArgs from "../types/commandWithArgs";
 import checkIsAdmin from "../utils/checkMemberRole";
 
@@ -47,12 +48,12 @@ async function addMemberCommandHandler(interaction: CommandInteraction) {
   );
   if (!isArgsValid) return await interaction.reply("引数が不正です。");
 
-  await addMember({
+  await addMemberController({
     mail: interaction.options.get("mail")?.value as string,
     name: interaction.options.get("name")?.value as string,
     department: interaction.options.get("department")?.value as string,
     student_number: interaction.options.get("student_number")?.value as string,
-  } as Member);
+  } as MemberCreateInput);
 
   await interaction.reply(
     `${interaction.options.get("name")?.value}さんを登録しました`,

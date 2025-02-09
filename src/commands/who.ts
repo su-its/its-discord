@@ -3,7 +3,7 @@ import {
   SlashCommandBuilder,
   type User,
 } from "discord.js";
-import { getMemberByDiscordId } from "../controllers/MemberController";
+import { getMemberByDiscordIdController } from "../controllers/MemberController";
 import type CommandWithArgs from "../types/commandWithArgs";
 
 const whoCommand: CommandWithArgs = {
@@ -34,7 +34,7 @@ async function whoCommandHandler(interaction: CommandInteraction) {
   }
 
   const user: User = userOption.user;
-  const member = await getMemberByDiscordId(user.id);
+  const member = await getMemberByDiscordIdController(user.id);
 
   if (!member) {
     await interaction.reply("メンバー情報が見つかりませんでした。");

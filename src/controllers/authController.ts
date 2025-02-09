@@ -1,39 +1,43 @@
 import type Member from "../entities/member";
+import prismaClient from "../infra/prisma";
+import MemberRepository from "../infra/repository/memberRepository";
 import type AuthData from "../types/authData";
+import setDiscordId from "../usecases/member/connectDiscordAccount";
+import connectDiscordAccount from "../usecases/member/connectDiscordAccount";
+import getMemberByEmail from "../usecases/member/getMemberByEmail";
 import sendAuthMail from "../usecases/sendAuthMail";
-import setDiscordId from "../usecases/setDiscordId";
-import { getMemberByEmail } from "./MemberController";
 
+const memberRepository = new MemberRepository(prismaClient);
+
+// TODO: メールの送信だけでなく、DiscordAccountとの紐づけも行ってしまっている https://github.com/su-its/its-discord/issues/72
 async function sendAuthMailController(userInfo: AuthData) {
   try {
     if (!checkAuthData(userInfo)) {
+      console.error("Invalid AuthData");
       throw new Error("Invalid AuthData");
     }
 
     const { mail, student_number, department, discordId } = userInfo;
 
     if (!mail || !student_number || !department || !discordId) {
+      console.error("Missing required fields in AuthData");
       throw new Error("Missing required fields in AuthData");
     }
 
     await sendAuthMail(mail, student_number, department);
 
-    const member = await getMemberByEmail(mail);
+    const member = await getMemberByEmail(memberRepository, mail);
 
-    if (!member) {
-      throw new Error("Member not found");
-    }
+    const validatedMember = validateMemberExists(member);
 
-    checkMember(member);
-
-    if (!member.id) {
-      throw new Error("Member ID is missing");
-    }
-
-    await setDiscordId(member.id, discordId);
+    await connectDiscordAccount(
+      memberRepository,
+      validatedMember.id,
+      discordId,
+    );
   } catch (e) {
     console.error(e);
-    throw e; // エラーを上位に伝播させる
+    throw e;
   }
 }
 
@@ -46,13 +50,16 @@ function checkAuthData(userInfo: AuthData): boolean {
   );
 }
 
-function checkMember(member: Member | undefined): void {
+function validateMemberExists(member: Member | undefined | null): Member {
   if (!member) {
+    console.error("Member not found");
     throw new Error("Member not found");
   }
   if (!member.id) {
+    console.error("Member id is not provided");
     throw new Error("Member id is not provided");
   }
+  return member;
 }
 
 export default sendAuthMailController;

@@ -1,7 +1,7 @@
 import type department from "./department";
 
 interface Member {
-  id?: string;
+  id: string;
   name: string;
   student_number: string;
   department: department;

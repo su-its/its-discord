@@ -1,66 +1,98 @@
 import type Member from "../entities/member";
-import getMembers from "../usecases/getMembers";
-import insertMember from "../usecases/insertMember";
-import setDiscordId from "../usecases/setDiscordId";
+import type {
+  CreateDiscordAccountInput,
+  MemberCreateInput,
+} from "../infra/repository/IMemberRepository";
 
-export async function getAllMembers(): Promise<Member[] | undefined> {
+import connectDiscordAccount from "../usecases/member/connectDiscordAccount";
+// UseCase のインポート
+import getAllMembers from "../usecases/member/getAllMembers";
+import getMemberByDiscordId from "../usecases/member/getMemberByDiscordId";
+import getMemberByEmail from "../usecases/member/getMemberByEmail";
+import insertMember from "../usecases/member/insertMember";
+
+import prismaClient from "../infra/prisma";
+// リポジトリの実装と Prisma のインスタンス（インフラ層）
+import MemberRepository from "../infra/repository/memberRepository";
+
+// リポジトリインスタンスの生成（DI）
+const memberRepository = new MemberRepository(prismaClient);
+
+/**
+ * 全メンバー取得エンドポイント
+ */
+export async function getAllMembersController(): Promise<Member[]> {
   try {
-    return await getMembers();
+    return await getAllMembers(memberRepository);
   } catch (error) {
     console.error("Error getting members:", error);
-    return undefined;
+    throw error;
   }
 }
 
-export async function getMemberByEmail(
+/**
+ * メールアドレスからメンバーを取得するエンドポイント
+ */
+export async function getMemberByEmailController(
   email: string,
 ): Promise<Member | undefined> {
   try {
-    const members = await getMembers();
-    return members.find((m) => m.mail === email);
+    const member = await getMemberByEmail(memberRepository, email);
+    if (!member) {
+      return undefined;
+    }
+    return member;
   } catch (error) {
     console.error("Error getting member by email:", error);
-    return undefined;
+    throw error;
   }
 }
 
-export async function getMemberByDiscordId(
+/**
+ * Discord IDからメンバーを取得するエンドポイント
+ */
+export async function getMemberByDiscordIdController(
   discordId: string,
 ): Promise<Member | undefined> {
   try {
-    const members = await getMembers();
-    return members.find((m) => m.discordId === discordId);
+    const member = await getMemberByDiscordId(memberRepository, discordId);
+    if (!member) {
+      return undefined;
+    }
+    return member;
   } catch (error) {
     console.error("Error getting member by discord id:", error);
-    return undefined;
+    throw error;
   }
 }
 
-export async function addDiscordId(
-  member: Member,
-  discordId: string,
-): Promise<boolean> {
-  if (!member.id) {
-    console.error("Member ID is undefined");
-    return false;
-  }
-
+/**
+ * 新規メンバー作成エンドポイント
+ */
+export async function addMemberController(
+  input: MemberCreateInput,
+): Promise<Member> {
   try {
-    await setDiscordId(member.id, discordId);
-    return true;
-  } catch (error) {
-    console.error("Error adding discord id:", error);
-    return false;
-  }
-}
-
-export async function addMember(memberData: Member): Promise<boolean> {
-  try {
-    await insertMember(memberData);
+    const member = await insertMember(memberRepository, input);
     console.log("Member successfully added");
-    return true;
+    return member;
   } catch (error) {
     console.error("Error adding member:", error);
-    return false;
+    throw error;
+  }
+}
+
+/**
+ * Discordアカウントをメンバーに紐付けるエンドポイント
+ */
+export async function addDiscordAccountController(
+  memberId: string,
+  discordId: string,
+): Promise<Member> {
+  try {
+    return await connectDiscordAccount(memberRepository, memberId, discordId);
+  } catch (error) {
+    console.error("Error connecting discord account:", error);
+    throw error;
   }
 }

@@ -7,8 +7,8 @@ import {
 } from "discord.js";
 import type { UserRecord } from "firebase-admin/lib/auth/user-record";
 import {
-  getMemberByDiscordId,
-  getMemberByEmail,
+  getMemberByDiscordIdController,
+  getMemberByEmailController,
 } from "../controllers/MemberController";
 import Department from "../entities/department";
 import { adminAuth } from "../infra/firebase";
@@ -40,7 +40,7 @@ async function authCommandHandler(interaction: CommandInteraction) {
     return await interaction.reply("このコマンドはサーバーでのみ実行可能です");
 
   // Firestoreからメンバー情報を取得
-  const member = await getMemberByDiscordId(interaction.user.id);
+  const member = await getMemberByDiscordIdController(interaction.user.id);
   if (!member) {
     await interaction.reply("メンバー情報が見つかりませんでした");
     return;
@@ -121,7 +121,7 @@ async function giveDepartmentRole(
   }
 
   // 認証用のアカウントから、メンバー情報を取得
-  const member = await getMemberByEmail(userAccount.email);
+  const member = await getMemberByEmailController(userAccount.email);
   if (!member) {
     throw new Error("Member not found");
   }
