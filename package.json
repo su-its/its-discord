@@ -5,13 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exec ts-node src/main.ts",
-    "test": "ts-node src/main.ts && vitest",
+    "test": "vitest run",
     "deploy-commands": "ts-node src/deployCommands.ts",
     "format": "biome format --write",
     "lint": "biome lint --write",
-    "lint:fix": "eslint --ignore-pattern .gitignore './**/*.{js,ts}' --fix",
     "check": "biome check --write",
-    "ci": "yarn lint && yarn check"
+    "ci": "yarn lint && yarn check && yarn check && yarn test"
   },
   "keywords": [],
   "author": "",
