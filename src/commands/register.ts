@@ -2,9 +2,9 @@ import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { addMemberController } from "../controllers/MemberController";
 import Department from "../entities/department";
 import type Member from "../entities/member";
+import type { MemberCreateInput } from "../infra/repository/IMemberRepository";
 import type CommandWithArgs from "../types/commandWithArgs";
 import checkIsAdmin from "../utils/checkMemberRole";
-import { MemberCreateInput } from "../infra/repository/IMemberRepository";
 
 const registerCommand: CommandWithArgs = {
   data: new SlashCommandBuilder()

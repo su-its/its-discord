@@ -1,6 +1,6 @@
+import { getAllMembersController } from "../controllers/MemberController";
 import type Member from "../entities/member";
 import type AuthData from "../types/authData";
-import { getAllMembersController } from "../controllers/MemberController";
 
 async function authMember(authData: AuthData): Promise<boolean> {
   const members: Member[] = await getAllMembersController();

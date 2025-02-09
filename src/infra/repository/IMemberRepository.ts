@@ -1,5 +1,5 @@
-import type Member from "../../entities/member";
 import type Department from "../../entities/department";
+import type Member from "../../entities/member";
 
 export type MemberCreateInput = {
   name: string;

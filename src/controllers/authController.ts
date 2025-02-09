@@ -1,11 +1,11 @@
 import type Member from "../entities/member";
-import type AuthData from "../types/authData";
-import sendAuthMail from "../usecases/sendAuthMail";
-import setDiscordId from "../usecases/member/connectDiscordAccount";
-import MemberRepository from "../infra/repository/memberRepository";
 import prismaClient from "../infra/prisma";
+import MemberRepository from "../infra/repository/memberRepository";
+import type AuthData from "../types/authData";
+import setDiscordId from "../usecases/member/connectDiscordAccount";
 import connectDiscordAccount from "../usecases/member/connectDiscordAccount";
 import getMemberByEmail from "../usecases/member/getMemberByEmail";
+import sendAuthMail from "../usecases/sendAuthMail";
 
 const memberRepository = new MemberRepository(prismaClient);
 

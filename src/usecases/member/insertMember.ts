@@ -1,8 +1,8 @@
+import type Member from "../../entities/member";
 import type {
   IMemberRepository,
   MemberCreateInput,
 } from "../../infra/repository/IMemberRepository";
-import type Member from "../../entities/member";
 
 /**
  * 新規メンバーを作成するユースケース

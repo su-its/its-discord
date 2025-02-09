@@ -1,16 +1,16 @@
+import type { PrismaClient } from "@shizuoka-its/core";
 import type {
+  DiscordAccount as PrismaDiscordAccount,
+  Member as PrismaMember,
+} from "@shizuoka-its/core";
+import type Department from "../../entities/department";
+import type Member from "../../entities/member";
+import type {
+  ConnectDiscordAccountInput,
   IMemberRepository,
   MemberCreateInput,
   MemberUpdateInput,
-  ConnectDiscordAccountInput,
 } from "./IMemberRepository";
-import type Member from "../../entities/member";
-import type { PrismaClient } from "@shizuoka-its/core";
-import type {
-  Member as PrismaMember,
-  DiscordAccount as PrismaDiscordAccount,
-} from "@shizuoka-its/core";
-import type Department from "../../entities/department";
 
 export default class MemberRepository implements IMemberRepository {
   private prisma: PrismaClient;
