@@ -1,5 +1,5 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { getMemberByDiscordId } from "../controllers/MemberController";
+import { getMemberByDiscordIdController } from "../controllers/MemberController";
 import type { Command } from "../types/command";
 import checkIsAdmin from "../utils/checkMemberRole";
 
@@ -25,7 +25,7 @@ async function renameALLHandler(interaction: CommandInteraction) {
 
   const members = await interaction.guild.members.fetch();
   const renamePromises = members.map(async (member) => {
-    const memberOnFirebase = await getMemberByDiscordId(member.id);
+    const memberOnFirebase = await getMemberByDiscordIdController(member.id);
     if (!memberOnFirebase) return;
 
     try {
