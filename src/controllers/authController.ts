@@ -9,6 +9,7 @@ import sendAuthMail from "../usecases/sendAuthMail";
 
 const memberRepository = new MemberRepository(prismaClient);
 
+// TODO: メールの送信だけでなく、DiscordAccountとの紐づけも行ってしまっている https://github.com/su-its/its-discord/issues/72
 async function sendAuthMailController(userInfo: AuthData) {
   try {
     if (!checkAuthData(userInfo)) {
@@ -27,19 +28,13 @@ async function sendAuthMailController(userInfo: AuthData) {
 
     const member = await getMemberByEmail(memberRepository, mail);
 
-    if (!member) {
-      console.error("Member not found");
-      throw new Error("Member not found");
-    }
+    const validatedMember = validateMemberExists(member);
 
-    checkMember(member);
-
-    if (!member.id) {
-      console.error("Member ID is missing");
-      throw new Error("Member ID is missing");
-    }
-
-    await connectDiscordAccount(memberRepository, member.id, discordId);
+    await connectDiscordAccount(
+      memberRepository,
+      validatedMember.id,
+      discordId,
+    );
   } catch (e) {
     console.error(e);
     throw e;
@@ -55,7 +50,7 @@ function checkAuthData(userInfo: AuthData): boolean {
   );
 }
 
-function checkMember(member: Member | undefined): void {
+function validateMemberExists(member: Member | undefined | null): Member {
   if (!member) {
     console.error("Member not found");
     throw new Error("Member not found");
@@ -64,6 +59,7 @@ function checkMember(member: Member | undefined): void {
     console.error("Member id is not provided");
     throw new Error("Member id is not provided");
   }
+  return member;
 }
 
 export default sendAuthMailController;
