@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exec ts-node src/main.ts",
-    "test": "ts-node src/main.ts",
+    "test": "ts-node src/main.ts && vitest",
     "deploy-commands": "ts-node src/deployCommands.ts",
     "format": "biome format --write",
     "lint": "biome lint --write",
@@ -21,9 +21,11 @@
     "globals": "^15.9.0",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "vitest": "^3.0.5"
   },
   "dependencies": {
+    "@shizuoka-its/core": "^1.1.0-alpha.0",
     "cron": "^3.1.7",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
