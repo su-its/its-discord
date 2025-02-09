@@ -1,6 +1,6 @@
 import type Member from "../entities/member";
-import prismaClient from "../infra/prisma";
-import MemberRepository from "../infra/repository/memberRepository";
+import prismaClient from "../infrastructure/prisma";
+import MemberRepository from "../infrastructure/repository/memberRepository";
 import type AuthData from "../types/authData";
 import setDiscordId from "../usecases/member/connectDiscordAccount";
 import connectDiscordAccount from "../usecases/member/connectDiscordAccount";

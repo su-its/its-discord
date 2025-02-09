@@ -1,5 +1,5 @@
 import type Member from "../../entities/member";
-import type { IMemberRepository } from "../../infra/repository/IMemberRepository";
+import type { IMemberRepository } from "../../infrastructure/repository/IMemberRepository";
 
 /**
  * メールアドレスから該当メンバーを取得するユースケース

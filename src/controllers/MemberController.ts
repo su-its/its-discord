@@ -2,7 +2,7 @@ import type Member from "../entities/member";
 import type {
   CreateDiscordAccountInput,
   MemberCreateInput,
-} from "../infra/repository/IMemberRepository";
+} from "../infrastructure/repository/IMemberRepository";
 
 import connectDiscordAccount from "../usecases/member/connectDiscordAccount";
 // UseCase のインポート
@@ -11,9 +11,9 @@ import getMemberByDiscordId from "../usecases/member/getMemberByDiscordId";
 import getMemberByEmail from "../usecases/member/getMemberByEmail";
 import insertMember from "../usecases/member/insertMember";
 
-import prismaClient from "../infra/prisma";
+import prismaClient from "../infrastructure/prisma";
 // リポジトリの実装と Prisma のインスタンス（インフラ層）
-import MemberRepository from "../infra/repository/memberRepository";
+import MemberRepository from "../infrastructure/repository/memberRepository";
 
 // リポジトリインスタンスの生成（DI）
 const memberRepository = new MemberRepository(prismaClient);

@@ -2,7 +2,7 @@ import type Member from "../../entities/member";
 import type {
   IMemberRepository,
   MemberCreateInput,
-} from "../../infra/repository/IMemberRepository";
+} from "../../infrastructure/repository/IMemberRepository";
 
 /**
  * 新規メンバーを作成するユースケース

@@ -2,7 +2,7 @@ import type Member from "../../entities/member";
 import type {
   ConnectDiscordAccountInput,
   IMemberRepository,
-} from "../../infra/repository/IMemberRepository";
+} from "../../infrastructure/repository/IMemberRepository";
 
 /**
  * メンバーに Discord アカウントを紐付けるユースケース
