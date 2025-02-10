@@ -1,5 +1,5 @@
 import type { ColorResolvable } from "discord.js";
-import type CustomRole from "../types/customRole";
+import type CustomRole from "../domain/types/customRole";
 
 interface makeDepartmentRoleProps {
   department: string;

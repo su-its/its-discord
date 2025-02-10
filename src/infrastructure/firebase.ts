@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import * as admin from "firebase-admin";
 import { type FirebaseApp, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-//TODO: コンフィグの読み込みを分離
+//TODO: コンフィグの読み込みを分離 https://github.com/su-its/its-discord/issues/16
 import serviceAccount from "../../its-discord-auth-firebase-adminsdk-wn2uo-ac781d8325.json";
 
 admin.initializeApp({

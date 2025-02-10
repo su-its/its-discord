@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
-import { setupEventHandlers } from "./events/eventHandler";
-import { loadCommands } from "./loadCommands";
-import { scheduleHotChannels } from "./tasks/scheduleHotChannels";
-import type AuthData from "./types/authData";
-import { CustomClient } from "./types/customClient";
+import { setupEventHandlers } from "./application/events/eventHandler";
+import { scheduleHotChannels } from "./application/tasks/scheduleHotChannels";
+import type AuthData from "./domain/types/authData";
+import { CustomClient } from "./domain/types/customClient";
+import { loadCommands } from "./scripts/loadCommands";
 
 dotenv.config();
 
