@@ -1,7 +1,7 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import type { Command } from "../../domain/types/command";
-import checkIsAdmin from "../../utils/checkMemberRole";
-import { getMemberByDiscordIdController } from "../controllers/MemberController";
+import type { Command } from "../../../domain/types/command";
+import checkIsAdmin from "../../../utils/checkMemberRole";
+import { getMemberByDiscordIdController } from "../../controllers/MemberController";
 
 const renameALL: Command = {
   data: new SlashCommandBuilder()
@@ -11,14 +11,18 @@ const renameALL: Command = {
 };
 
 async function renameALLHandler(interaction: CommandInteraction) {
-  if (!interaction.guild)
-    return await interaction.reply(
+  if (!interaction.guild) {
+    await interaction.reply(
       "このコマンドはサーバー内でのみ使用可能です。",
     );
+    return;
+  }
 
   const isAdmin = await checkIsAdmin(interaction);
-  if (!isAdmin)
-    return await interaction.reply("このコマンドは管理者のみ使用可能です。");
+  if (!isAdmin) {
+    await interaction.reply("このコマンドは管理者のみ使用可能です。");
+    return;
+  }
 
   // 応答がタイムアウトしないように遅延させる
   await interaction.deferReply();

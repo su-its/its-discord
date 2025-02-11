@@ -1,11 +1,11 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import Department from "../../domain/entities/department";
-import type CommandWithArgs from "../../domain/types/commandWithArgs";
-import checkIsAdmin from "../../utils/checkMemberRole";
-import { addMemberController } from "../controllers/MemberController";
-import type { MemberCreateInput } from "../repository/IMemberRepository";
+import { addMemberController } from "../../controllers/MemberController";
+import Department from "../../../domain/entities/department";
+import type { MemberCreateInput } from "../../repository/IMemberRepository";
+import type { Command } from "../../../domain/types/command";
+import checkIsAdmin from "../../../utils/checkMemberRole";
 
-const registerCommand: CommandWithArgs = {
+const registerCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("register")
     .setDescription("認証コマンド")
@@ -29,15 +29,19 @@ const registerCommand: CommandWithArgs = {
 
 async function addMemberCommandHandler(interaction: CommandInteraction) {
   //DMでは使用不可
-  if (!interaction.guild)
-    return await interaction.reply(
+  if (!interaction.guild) {
+    await interaction.reply(
       "このコマンドはサーバー内でのみ使用可能です。",
     );
+    return;
+  }
 
   //adminロールを持っているか確認
   const isAdmin: boolean = await checkIsAdmin(interaction);
-  if (!isAdmin)
-    return await interaction.reply("このコマンドは管理者のみ使用可能です。");
+  if (!isAdmin) {
+    await interaction.reply("このコマンドは管理者のみ使用可能です。");
+    return;
+  }
 
   //引数が正しいか確認
   const isArgsValid: boolean = validateArgs(
@@ -45,7 +49,10 @@ async function addMemberCommandHandler(interaction: CommandInteraction) {
     interaction.options.get("department")?.value as string,
     interaction.options.get("student_number")?.value as string,
   );
-  if (!isArgsValid) return await interaction.reply("引数が不正です。");
+  if (!isArgsValid) {
+    await interaction.reply("引数が不正です。");
+    return;
+  }
 
   await addMemberController({
     mail: interaction.options.get("mail")?.value as string,

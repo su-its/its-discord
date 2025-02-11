@@ -3,10 +3,10 @@ import {
   SlashCommandBuilder,
   type User,
 } from "discord.js";
-import type CommandWithArgs from "../../domain/types/commandWithArgs";
-import { getMemberByDiscordIdController } from "../controllers/MemberController";
+import type { Command } from "../../../domain/types/command";
+import { getMemberByDiscordIdController } from "../../controllers/MemberController";
 
-const whoCommand: CommandWithArgs = {
+const whoCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("who")
     .setDescription("ユーザー情報を表示します。")

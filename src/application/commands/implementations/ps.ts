@@ -1,9 +1,9 @@
 import * as os from "node:os";
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import type CommandWithArgs from "../../domain/types/commandWithArgs";
-import checkIsAdmin from "../../utils/checkMemberRole";
+import type { Command } from "../../../domain/types/command";
+import checkIsAdmin from "../../../utils/checkMemberRole";
 
-const psCommand: CommandWithArgs = {
+const psCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("ps")
     .setDescription("現在のボットプロセス情報を表示します"),
@@ -13,8 +13,10 @@ const psCommand: CommandWithArgs = {
 async function psCommandHandler(interaction: CommandInteraction) {
   //adminロールを持っているか確認
   const isAdmin: boolean = await checkIsAdmin(interaction);
-  if (!isAdmin)
-    return await interaction.reply("このコマンドは管理者のみ使用可能です。");
+  if (!isAdmin) {
+    await interaction.reply("このコマンドは管理者のみ使用可能です。");
+    return;
+  }
 
   const processInfo = await getProcessInfo();
   await interaction.reply(

@@ -6,26 +6,26 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import type { UserRecord } from "firebase-admin/lib/auth/user-record";
-import Department from "../../domain/entities/department";
-import type { Command } from "../../domain/types/command";
-import { adminAuth } from "../../infrastructure/firebase";
-import addRoleToMember from "../../utils/addRoleToMember";
-import createRoleIfNotFound from "../../utils/createRoleNotFound";
+import Department from "../../../domain/entities/department";
+import type { Command } from "../../../domain/types/command";
+import { adminAuth } from "../../../infrastructure/firebase";
+import addRoleToMember from "../../../utils/addRoleToMember";
+import createRoleIfNotFound from "../../../utils/createRoleNotFound";
 import {
   getMemberByDiscordIdController,
   getMemberByEmailController,
-} from "../controllers/MemberController";
+} from "../../controllers/MemberController";
 
-import type Member from "../../domain/entities/member";
-import authorizedRoleProperty from "../../domain/roles/authorized";
+import type Member from "../../../domain/entities/member";
+import authorizedRoleProperty from "../../../domain/roles/authorized";
 //以下は、ロールのimport
-import biRole from "../../domain/roles/departments/bi";
-import csRole from "../../domain/roles/departments/cs";
-import graduateRole from "../../domain/roles/departments/graduate";
-import iaRole from "../../domain/roles/departments/ia";
-import obogRole from "../../domain/roles/departments/obog";
-import othersRole from "../../domain/roles/departments/others";
-import unAuthorizedRoleProperty from "../../domain/roles/unAuthorized";
+import biRole from "../../../domain/roles/departments/bi";
+import csRole from "../../../domain/roles/departments/cs";
+import graduateRole from "../../../domain/roles/departments/graduate";
+import iaRole from "../../../domain/roles/departments/ia";
+import obogRole from "../../../domain/roles/departments/obog";
+import othersRole from "../../../domain/roles/departments/others";
+import unAuthorizedRoleProperty from "../../../domain/roles/unAuthorized";
 
 const authCommand: Command = {
   data: new SlashCommandBuilder()
@@ -36,8 +36,10 @@ const authCommand: Command = {
 
 async function authCommandHandler(interaction: CommandInteraction) {
   //DMでは実行できないようにする
-  if (!interaction.guild)
-    return await interaction.reply("このコマンドはサーバーでのみ実行可能です");
+  if (!interaction.guild) {
+    await interaction.reply("このコマンドはサーバーでのみ実行可能です");
+    return;
+  }
 
   // Firestoreからメンバー情報を取得
   const member = await getMemberByDiscordIdController(interaction.user.id);
