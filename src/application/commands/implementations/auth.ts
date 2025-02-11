@@ -7,7 +7,8 @@ import {
 } from "discord.js";
 import type { UserRecord } from "firebase-admin/lib/auth/user-record";
 import Department from "../../../domain/entities/department";
-import type { Command } from "../../../domain/types/command";
+import type Member from "../../../domain/entities/member";
+import type Command from "../../../domain/types/command";
 import { adminAuth } from "../../../infrastructure/firebase";
 import addRoleToMember from "../../../utils/addRoleToMember";
 import createRoleIfNotFound from "../../../utils/createRoleNotFound";
@@ -15,17 +16,8 @@ import {
   getMemberByDiscordIdController,
   getMemberByEmailController,
 } from "../../controllers/MemberController";
-
-import type Member from "../../../domain/entities/member";
-import authorizedRoleProperty from "../../../domain/roles/authorized";
-//以下は、ロールのimport
-import biRole from "../../../domain/roles/departments/bi";
-import csRole from "../../../domain/roles/departments/cs";
-import graduateRole from "../../../domain/roles/departments/graduate";
-import iaRole from "../../../domain/roles/departments/ia";
-import obogRole from "../../../domain/roles/departments/obog";
-import othersRole from "../../../domain/roles/departments/others";
-import unAuthorizedRoleProperty from "../../../domain/roles/unAuthorized";
+import roleRegistry from "../../roles";
+import { departmentRoleKeys } from "../../roles/implementations/categories/departments";
 
 const authCommand: Command = {
   data: new SlashCommandBuilder()
@@ -92,11 +84,11 @@ async function giveAuthorizedRole(
   try {
     const authorizedRole: Role = await createRoleIfNotFound({
       guild,
-      customRole: authorizedRoleProperty,
+      role: roleRegistry.getRole("Authorized"),
     });
     const unAuthorizedRole: Role = await createRoleIfNotFound({
       guild,
-      customRole: unAuthorizedRoleProperty,
+      role: roleRegistry.getRole("UnAuthorized"),
     });
 
     await guildMember.roles.add(authorizedRole);
@@ -129,12 +121,14 @@ async function giveDepartmentRole(
   }
 
   const departmentRoleMap = {
-    [Department.CS]: csRole,
-    [Department.IA]: iaRole,
-    [Department.BI]: biRole,
-    [Department.GRADUATE]: graduateRole,
-    [Department.OTHERS]: othersRole,
-    [Department.OBOG]: obogRole, // OBOGロールを追加
+    [Department.CS]: roleRegistry.getRole(departmentRoleKeys.csRoleKey),
+    [Department.IA]: roleRegistry.getRole(departmentRoleKeys.iaRoleKey),
+    [Department.BI]: roleRegistry.getRole(departmentRoleKeys.biRoleKey),
+    [Department.GRADUATE]: roleRegistry.getRole(
+      departmentRoleKeys.graduateRoleKey,
+    ),
+    [Department.OTHERS]: roleRegistry.getRole(departmentRoleKeys.othersRoleKey),
+    [Department.OBOG]: roleRegistry.getRole(departmentRoleKeys.obOgRoleKey), // OBOGロールを追加
   };
 
   const role = departmentRoleMap[member.department];

@@ -1,6 +1,6 @@
 import * as os from "node:os";
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import type { Command } from "../../../domain/types/command";
+import type Command from "../../../domain/types/command";
 import checkIsAdmin from "../../../utils/checkMemberRole";
 
 const psCommand: Command = {

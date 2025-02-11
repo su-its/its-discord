@@ -1,9 +1,9 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { addMemberController } from "../../controllers/MemberController";
 import Department from "../../../domain/entities/department";
-import type { MemberCreateInput } from "../../repository/IMemberRepository";
-import type { Command } from "../../../domain/types/command";
+import type Command from "../../../domain/types/command";
 import checkIsAdmin from "../../../utils/checkMemberRole";
+import { addMemberController } from "../../controllers/MemberController";
+import type { MemberCreateInput } from "../../repository/IMemberRepository";
 
 const registerCommand: Command = {
   data: new SlashCommandBuilder()
@@ -30,9 +30,7 @@ const registerCommand: Command = {
 async function addMemberCommandHandler(interaction: CommandInteraction) {
   //DMでは使用不可
   if (!interaction.guild) {
-    await interaction.reply(
-      "このコマンドはサーバー内でのみ使用可能です。",
-    );
+    await interaction.reply("このコマンドはサーバー内でのみ使用可能です。");
     return;
   }
 

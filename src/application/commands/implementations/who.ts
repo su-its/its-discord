@@ -3,7 +3,7 @@ import {
   SlashCommandBuilder,
   type User,
 } from "discord.js";
-import type { Command } from "../../../domain/types/command";
+import type Command from "../../../domain/types/command";
 import { getMemberByDiscordIdController } from "../../controllers/MemberController";
 
 const whoCommand: Command = {

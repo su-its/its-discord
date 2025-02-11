@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
+import registry from "./application/commands";
 import { setupEventHandlers } from "./application/events/eventHandler";
 import { scheduleHotChannels } from "./application/tasks/scheduleHotChannels";
 import type AuthData from "./domain/types/authData";
 import { CustomClient } from "./domain/types/customClient";
-import registry from "./application/commands";
 
 dotenv.config();
 

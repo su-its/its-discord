@@ -1,5 +1,5 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import type { Command } from "../../../domain/types/command";
+import type Command from "../../../domain/types/command";
 import checkIsAdmin from "../../../utils/checkMemberRole";
 
 const killCommand: Command = {

@@ -1,6 +1,8 @@
 import { Events } from "discord.js";
+import type { Guild } from "discord.js";
 import type { CustomClient } from "../../domain/types/customClient";
-import initializeRoles from "../../utils/initializeRoles";
+import createRoleIfNotFound from "../../utils/createRoleNotFound";
+import roleRegistry from "../roles";
 
 export function setupClientReadyHandler(client: CustomClient) {
   client.once(Events.ClientReady, () => {
@@ -19,4 +21,13 @@ export function setupClientReadyHandler(client: CustomClient) {
       }
     }
   });
+}
+
+function initializeRoles(guild: Guild) {
+  // RoleRegistry から登録済みの全ロールを取得
+  const roles = roleRegistry.getAllRoles();
+  for (const role of roles) {
+    // 各ロールについて、存在しなければ作成する処理を実行
+    createRoleIfNotFound({ guild, role });
+  }
 }

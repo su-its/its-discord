@@ -1,7 +1,7 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import type { Command } from "../../../domain/types/command";
-import { generateChannelActivityRanking } from "../../usecases/getHotChannels";
+import type Command from "../../../domain/types/command";
 import checkIsAdmin from "../../../utils/checkMemberRole";
+import { generateChannelActivityRanking } from "../../usecases/getHotChannels";
 
 const hotChannelsCommand: Command = {
   data: new SlashCommandBuilder()

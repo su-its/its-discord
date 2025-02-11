@@ -1,5 +1,5 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import type { Command } from "../../../domain/types/command";
+import type Command from "../../../domain/types/command";
 import checkIsAdmin from "../../../utils/checkMemberRole";
 import { getMemberByDiscordIdController } from "../../controllers/MemberController";
 
@@ -12,9 +12,7 @@ const renameALL: Command = {
 
 async function renameALLHandler(interaction: CommandInteraction) {
   if (!interaction.guild) {
-    await interaction.reply(
-      "このコマンドはサーバー内でのみ使用可能です。",
-    );
+    await interaction.reply("このコマンドはサーバー内でのみ使用可能です。");
     return;
   }
 
