@@ -1,5 +1,6 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
 import type Command from "../../../domain/types/command";
+import logger from "../../../infrastructure/logger";
 import checkIsAdmin from "../../../utils/checkMemberRole";
 import { getMemberByDiscordIdController } from "../../controllers/MemberController";
 
@@ -32,17 +33,17 @@ async function renameALLHandler(interaction: CommandInteraction) {
 
     try {
       await member.setNickname(memberOnFirebase.name);
-      console.log(
+      logger.info(
         `[NOTE] Changed nickname of ${member.nickname}, ${memberOnFirebase.name}`,
       );
     } catch (error) {
-      console.error(`[ERROR] Failed to rename ${member.nickname}: ${error}`);
+      logger.error(`[ERROR] Failed to rename ${member.nickname}: ${error}`);
     }
   });
 
   await Promise.all(renamePromises);
   await interaction.followUp("ニックネームの変更が完了しました。");
-  console.log("[NOTE] Completed changing nicknames");
+  logger.info("[NOTE] Completed changing nicknames");
 }
 
 export default renameALL;

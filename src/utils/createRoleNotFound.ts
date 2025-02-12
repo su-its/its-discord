@@ -1,6 +1,6 @@
 import type { Guild, Role as OriginalRole } from "discord.js";
 import type Role from "../domain/types/role";
-
+import logger from "../infrastructure/logger";
 type createRoleNotFoundParams = {
   guild: Guild;
   role: Role;
@@ -21,9 +21,13 @@ async function createRoleIfNotFound({
         color: role.color,
         reason: role.reason,
       });
-      console.log(`${role.name} role created.`);
-    } catch (error) {
-      console.error(`Error creating ${role.name} role:`, error);
+      logger.debug(`${role.name} role created.`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        logger.error(`Error creating ${role.name} role:`, error);
+      } else {
+        logger.error(`Error creating ${role.name} role:`, error);
+      }
       throw error;
     }
   }

@@ -1,5 +1,6 @@
 import type { Guild, GuildMember, Role as OriginalRole } from "discord.js";
 import type Role from "../domain/types/role";
+import logger from "../infrastructure/logger";
 import createRoleIfNotFound from "./createRoleNotFound";
 
 async function addRoleToMember(guild: Guild, member: GuildMember, role: Role) {
@@ -10,7 +11,8 @@ async function addRoleToMember(guild: Guild, member: GuildMember, role: Role) {
     });
     await member.roles.add(originalRole);
   } catch (error) {
-    console.error("Failed to add role to member");
+    logger.error("Failed to add role to member");
+    throw new Error("Failed to add role to member");
   }
 }
 

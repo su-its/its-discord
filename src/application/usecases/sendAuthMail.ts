@@ -5,6 +5,7 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { auth } from "../../infrastructure/firebase";
+import logger from "../../infrastructure/logger";
 
 async function sendAuthMail(
   mail: string,
@@ -25,12 +26,12 @@ async function sendAuthMail(
 
     if (userCredential.user) {
       await sendEmailVerification(userCredential.user, actionCodeSettings);
-      console.log(`Send mail to ${mail} successfully`);
+      logger.info(`Send mail to ${mail} successfully`);
     } else {
-      console.error("User object is null after creation");
+      logger.error("User object is null after creation");
     }
   } catch (e) {
-    console.error(e);
+    logger.error("Failed to send auth mail:", e);
   }
 }
 

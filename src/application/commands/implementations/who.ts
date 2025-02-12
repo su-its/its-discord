@@ -4,6 +4,7 @@ import {
   type User,
 } from "discord.js";
 import type Command from "../../../domain/types/command";
+import logger from "../../../infrastructure/logger";
 import { getMemberByDiscordIdController } from "../../controllers/MemberController";
 
 const whoCommand: Command = {
@@ -47,7 +48,7 @@ async function whoCommandHandler(interaction: CommandInteraction) {
 }
 
 function printLog(interaction: CommandInteraction) {
-  console.log(`[COMMAND] who command terminated by ${interaction.user}`);
+  logger.info(`[COMMAND] who command terminated by ${interaction.user}`);
 }
 
 export default whoCommand;

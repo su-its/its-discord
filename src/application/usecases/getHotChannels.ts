@@ -6,6 +6,7 @@ import {
   SnowflakeUtil,
   type TextChannel,
 } from "discord.js";
+import logger from "../../infrastructure/logger";
 
 export async function generateChannelActivityRanking(guild: Guild) {
   const now = new Date();
@@ -42,7 +43,7 @@ export async function generateChannelActivityRanking(guild: Guild) {
           count: totalMessages,
         };
       } catch (error) {
-        console.error(
+        logger.error(
           `Error fetching messages for channel ${channel.name}:`,
           error,
         );

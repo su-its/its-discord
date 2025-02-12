@@ -1,5 +1,6 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
 import type Command from "../../../domain/types/command";
+import logger from "../../../infrastructure/logger";
 import checkIsAdmin from "../../../utils/checkMemberRole";
 import { generateChannelActivityRanking } from "../../usecases/getHotChannels";
 
@@ -24,7 +25,7 @@ const hotChannelsCommand: Command = {
       const ranking = await generateChannelActivityRanking(interaction.guild);
       await interaction.reply({ embeds: [ranking] });
     } catch (error) {
-      console.error("Error generating channel activity ranking:", error);
+      logger.error("Error generating channel activity ranking:", error);
       await interaction.reply("ランキングの生成中にエラーが発生しました。");
     }
   },

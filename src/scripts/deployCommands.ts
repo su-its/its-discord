@@ -2,6 +2,7 @@ import { REST, Routes, type SlashCommandBuilder } from "discord.js";
 import dotenv from "dotenv";
 import registry from "../application/commands";
 import type Command from "../domain/types/command";
+import logger from "../infrastructure/logger";
 
 function checkEnvVariables() {
   dotenv.config();
@@ -10,7 +11,7 @@ function checkEnvVariables() {
   const guildId = process.env.GUILD_ID;
 
   if (!token || !clientId || !guildId) {
-    console.error("Missing environment variables.");
+    logger.error("Missing environment variables.");
     process.exit(1);
   }
   return { token, clientId, guildId };
@@ -32,18 +33,18 @@ async function deployCommands(
     (command) => command.data,
   );
 
-  console.log(
+  logger.info(
     `Started refreshing ${commandData.length} application (/) commands.`,
   );
   try {
     await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
       body: commandData,
     });
-    console.log(
+    logger.info(
       `Successfully reloaded ${commandData.length} application (/) commands.`,
     );
   } catch (error) {
-    console.error(error);
+    logger.error("Failed to deploy commands:", error);
   }
 }
 
@@ -52,4 +53,6 @@ async function main() {
   await deployCommands(token, clientId, guildId);
 }
 
-main().catch(console.error);
+main().catch((error) =>
+  logger.error("Failed to execute main function:", error),
+);

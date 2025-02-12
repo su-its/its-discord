@@ -10,6 +10,7 @@ import Department from "../../../domain/entities/department";
 import type Member from "../../../domain/entities/member";
 import type Command from "../../../domain/types/command";
 import { adminAuth } from "../../../infrastructure/firebase";
+import logger from "../../../infrastructure/logger";
 import addRoleToMember from "../../../utils/addRoleToMember";
 import createRoleIfNotFound from "../../../utils/createRoleNotFound";
 import {
@@ -47,7 +48,7 @@ async function authCommandHandler(interaction: CommandInteraction) {
       await changeNickName(interaction, member);
       await giveRoles(interaction);
     } catch (error) {
-      console.error("Failed to auth", error);
+      logger.error("Failed to auth", error);
       await interaction.reply("認証に失敗しました");
     }
   } else {
@@ -96,7 +97,7 @@ async function giveAuthorizedRole(
 
     await interaction.reply("認証しました!");
   } catch (error) {
-    console.error("Failed to give Authorized Role");
+    logger.error("Failed to give Authorized Role", error);
   }
 }
 

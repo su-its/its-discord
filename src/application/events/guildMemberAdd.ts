@@ -1,28 +1,50 @@
 import { Events, type Guild, type GuildMember, type Role } from "discord.js";
 import type { CustomClient } from "../../domain/types/customClient";
+import logger from "../../infrastructure/logger";
 import createRoleIfNotFound from "../../utils/createRoleNotFound";
 import roleRegistry from "../roles";
 import { unAuthorizedRoleKey } from "../roles/implementations/unAuthorized";
-export function setupGuildMemberAddHandler(client: CustomClient) {
+
+/**
+ * GuildMemberAdd イベントハンドラを設定する。
+ * 新規メンバーが参加した際、ウェルカムDMの送信と未承認ロールの付与を行う。
+ */
+export function setupGuildMemberAddHandler(client: CustomClient): void {
   client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
+    logger.info(`New member joined: ${member.displayName} (${member.id})`);
     await sendDM(member);
     await giveUnauthorizedRole(member);
   });
 }
 
-async function sendDM(member: GuildMember) {
+/**
+ * 新規メンバーへウェルカムDMを送信する。
+ */
+async function sendDM(member: GuildMember): Promise<void> {
   try {
     await member.send(
       `ようこそ ${member.displayName} さん！ ITS discord 認証botです!`,
     );
     await member.send("名前(フルネーム)を教えてください");
-    console.log(`Welcome message sent to ${member.displayName}.`);
-  } catch (error) {
-    console.error("Error sending DM:", error);
+    logger.info(`Sent welcome DM to ${member.displayName} (${member.id})`);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      logger.error(
+        `Failed to send DM to ${member.displayName} (${member.id}): ${error.message}`,
+      );
+    } else {
+      logger.error(
+        `Failed to send DM to ${member.displayName} (${member.id}) due to an unknown error`,
+      );
+      throw new Error("Unknown error in sendDM");
+    }
   }
 }
 
-async function giveUnauthorizedRole(member: GuildMember) {
+/**
+ * 新規メンバーに未承認ロールを付与する。
+ */
+async function giveUnauthorizedRole(member: GuildMember): Promise<void> {
   try {
     const guild: Guild = member.guild;
     const role: Role = await createRoleIfNotFound({
@@ -30,10 +52,19 @@ async function giveUnauthorizedRole(member: GuildMember) {
       role: roleRegistry.getRole(unAuthorizedRoleKey),
     });
     await member.roles.add(role);
-    console.log(
-      `Unauthorized role has been assigned to ${member.displayName}.`,
+    logger.info(
+      `Assigned Unauthorized role (${role.name}) to ${member.displayName} (${member.id})`,
     );
-  } catch (error) {
-    console.error("Error creating Unauthorized role:", error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      logger.error(
+        `Failed to assign Unauthorized role to ${member.displayName} (${member.id}): ${error.message}`,
+      );
+    } else {
+      logger.error(
+        `Failed to assign Unauthorized role to ${member.displayName} (${member.id}) due to an unknown error`,
+      );
+      throw new Error("Unknown error in giveUnauthorizedRole");
+    }
   }
 }

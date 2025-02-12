@@ -14,7 +14,6 @@ interface BuildRoleProps {
  * @returns 構築された Role オブジェクト
  */
 function buildRoleByCategory({ roleCategory, role }: BuildRoleProps): Role {
-  console.log(roleCategory);
   const fullName = `${roleCategory.prefix}${role.name}`;
   return {
     name: fullName,

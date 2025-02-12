@@ -11,6 +11,7 @@ import getMemberByDiscordId from "../usecases/member/getMemberByDiscordId";
 import getMemberByEmail from "../usecases/member/getMemberByEmail";
 import insertMember from "../usecases/member/insertMember";
 
+import logger from "../../infrastructure/logger";
 import prismaClient from "../../infrastructure/prisma";
 // リポジトリの実装と Prisma のインスタンス（インフラ層）
 import MemberRepository from "../repository/memberRepository";
@@ -25,7 +26,7 @@ export async function getAllMembersController(): Promise<Member[]> {
   try {
     return await getAllMembers(memberRepository);
   } catch (error) {
-    console.error("Error getting members:", error);
+    logger.error("Error getting members:", error);
     throw error;
   }
 }
@@ -43,7 +44,7 @@ export async function getMemberByEmailController(
     }
     return member;
   } catch (error) {
-    console.error("Error getting member by email:", error);
+    logger.error("Error getting member by email:", error);
     throw error;
   }
 }
@@ -61,7 +62,7 @@ export async function getMemberByDiscordIdController(
     }
     return member;
   } catch (error) {
-    console.error("Error getting member by discord id:", error);
+    logger.error("Error getting member by discord id:", error);
     throw error;
   }
 }
@@ -74,10 +75,10 @@ export async function addMemberController(
 ): Promise<Member> {
   try {
     const member = await insertMember(memberRepository, input);
-    console.log("Member successfully added");
+    logger.info("Member successfully added");
     return member;
   } catch (error) {
-    console.error("Error adding member:", error);
+    logger.error("Error adding member:", error);
     throw error;
   }
 }
@@ -92,7 +93,7 @@ export async function addDiscordAccountController(
   try {
     return await connectDiscordAccount(memberRepository, memberId, discordId);
   } catch (error) {
-    console.error("Error connecting discord account:", error);
+    logger.error("Error connecting discord account:", error);
     throw error;
   }
 }
