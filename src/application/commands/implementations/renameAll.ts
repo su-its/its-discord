@@ -1,8 +1,8 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
 import type Command from "../../../domain/types/command";
 import logger from "../../../infrastructure/logger";
-import checkIsAdmin from "../../utils/checkMemberRole";
 import { getMemberByDiscordIdController } from "../../controllers/MemberController";
+import checkIsAdmin from "../../utils/checkMemberRole";
 
 const renameALL: Command = {
   data: new SlashCommandBuilder()

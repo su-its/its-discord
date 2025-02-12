@@ -10,13 +10,13 @@ import Department from "../../../domain/entities/department";
 import type Member from "../../../domain/entities/member";
 import type Command from "../../../domain/types/command";
 import { adminAuth } from "../../../infrastructure/firebase";
-import addRoleToMember from "../../utils/addRoleToMember";
-import createRoleIfNotFound from "../../utils/createRoleNotFound";
 import {
   getMemberByDiscordIdController,
   getMemberByEmailController,
 } from "../../controllers/MemberController";
 import roleRegistry, { roleRegistryKeys } from "../../roles";
+import addRoleToMember from "../../utils/addRoleToMember";
+import createRoleIfNotFound from "../../utils/createRoleNotFound";
 
 const authCommand: Command = {
   data: new SlashCommandBuilder()
