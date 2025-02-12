@@ -1,7 +1,7 @@
 import { Events, type Guild, type GuildMember, type Role } from "discord.js";
 import type { CustomClient } from "../../domain/types/customClient";
 import logger from "../../infrastructure/logger";
-import createRoleIfNotFound from "../../utils/createRoleNotFound";
+import createRoleIfNotFound from "../utils/createRoleNotFound";
 import roleRegistry from "../roles";
 import { unAuthorizedRoleKey } from "../roles/implementations/unAuthorized";
 

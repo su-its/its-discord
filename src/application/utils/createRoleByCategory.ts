@@ -1,7 +1,7 @@
-import type Role from "../domain/types/role";
-import type RoleCategory from "../domain/types/roleCategory";
+import type Role from "../../domain/types/role";
+import type RoleCategory from "../../domain/types/roleCategory";
 
-interface BuildRoleProps {
+interface BuildRoleByCategoryProps {
   roleCategory: RoleCategory;
   role: Role;
 }
@@ -13,7 +13,10 @@ interface BuildRoleProps {
  * @param {Role} role - ロールオブジェクト
  * @returns 構築された Role オブジェクト
  */
-function buildRoleByCategory({ roleCategory, role }: BuildRoleProps): Role {
+function buildRoleByCategory({
+  roleCategory,
+  role,
+}: BuildRoleByCategoryProps): Role {
   const fullName = `${roleCategory.prefix}${role.name}`;
   return {
     name: fullName,

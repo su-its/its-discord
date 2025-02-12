@@ -2,7 +2,7 @@ import { Events } from "discord.js";
 import type { Guild } from "discord.js";
 import type { CustomClient } from "../../domain/types/customClient";
 import logger from "../../infrastructure/logger";
-import createRoleIfNotFound from "../../utils/createRoleNotFound";
+import createRoleIfNotFound from "../utils/createRoleNotFound";
 import roleRegistry from "../roles";
 
 /**
