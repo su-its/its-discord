@@ -8,44 +8,61 @@ import sendAuthMail from "../usecases/sendAuthMail";
 
 const memberRepository = new MemberRepository(prismaClient);
 
-// TODO: メールの送信だけでなく、DiscordAccountとの紐づけも行ってしまっている https://github.com/su-its/its-discord/issues/72
-async function sendAuthMailController(userInfo: AuthData) {
-  if (!checkAuthData(userInfo)) {
-    throw new Error("Invalid AuthData");
-  }
+/**
+ * メンバーの登録を行う
+ * @param {AuthData} userInfo メンバーの登録に必要なデータ
+ */
 
-  const { mail, student_number, department, discordId } = userInfo;
-
-  if (!mail || !student_number || !department || !discordId) {
-    throw new Error("Missing required fields in AuthData");
-  }
-
-  await sendAuthMail(mail, student_number, department);
-
-  const member = await getMemberByEmail(memberRepository, mail);
-
-  const validatedMember = validateMemberExists(member);
-
-  await connectDiscordAccount(memberRepository, validatedMember.id, discordId);
+// TODO: この型は何をするのかinlineドキュメント https://github.com/su-its/its-discord/issues/25
+// NOTE: AuthDataの設計意図がうまく組めなかったので、AuthDataに必須なデータ型をここだけで独自定義
+// NOTE: #25次第でこの型は不要になるかも
+interface MemberRegistrationInfo extends Omit<Member, "id" | "name"> {
+  discordId: string;
 }
 
-function checkAuthData(userInfo: AuthData): boolean {
-  return (
-    userInfo.mail !== undefined &&
-    userInfo.student_number !== undefined &&
-    userInfo.department !== undefined &&
-    userInfo.discordId !== undefined
+async function handleMemberRegistration(userInfo: AuthData) {
+  const memberRegistrationInfo =
+    convertAuthDataToMemberRegistrationInfo(userInfo);
+  await sendAuthMail(
+    memberRegistrationInfo.mail,
+    memberRegistrationInfo.student_number,
+    memberRegistrationInfo.department,
   );
-}
 
-function validateMemberExists(member: Member | undefined | null): Member {
+  const member = await getMemberByEmail(
+    memberRepository,
+    memberRegistrationInfo.mail,
+  );
   if (!member) {
     throw new Error("Member not found");
   }
-  if (!member.id) {
-    throw new Error("Member id is not provided");
-  }
-  return member;
+
+  await connectDiscordAccount(
+    memberRepository,
+    member.id,
+    memberRegistrationInfo.discordId,
+  );
 }
 
-export default sendAuthMailController;
+function convertAuthDataToMemberRegistrationInfo(
+  userInfo: AuthData,
+): MemberRegistrationInfo {
+  if (
+    !userInfo.mail ||
+    !userInfo.student_number ||
+    !userInfo.department ||
+    !userInfo.discordId
+  ) {
+    throw new Error(
+      `Missing required fields in AuthData: ${JSON.stringify(userInfo)}`,
+    );
+  }
+  return {
+    mail: userInfo.mail,
+    student_number: userInfo.student_number,
+    department: userInfo.department,
+    discordId: userInfo.discordId,
+  };
+}
+
+export default handleMemberRegistration;

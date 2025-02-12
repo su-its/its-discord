@@ -4,7 +4,7 @@ import type AuthData from "../../domain/types/authData";
 import type { CustomClient } from "../../domain/types/customClient";
 import authMember from "../../utils/authMember";
 import clearAuthData from "../../utils/clearAuthData";
-import sendAuthMailController from "../controllers/authController";
+import handleMemberRegistration from "../controllers/authController";
 
 export function setupMessageCreate(
   client: CustomClient,
@@ -121,7 +121,7 @@ async function validateAndRegisterUser(
     if (await authMember(updatedUserInfo)) {
       try {
         updatedUserInfo.discordId = message.author.id;
-        await sendAuthMailController(updatedUserInfo);
+        await handleMemberRegistration(updatedUserInfo);
       } catch (e) {
         await reply("認証に失敗しました。もう一度やり直してください");
         await reply("名前(フルネーム)を教えてください");
