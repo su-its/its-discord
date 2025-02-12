@@ -1,5 +1,5 @@
 import type { Guild, GuildMember, Role as OriginalRole } from "discord.js";
-import type Role from "../domain/types/role";
+import type Role from "../../domain/types/role";
 import createRoleIfNotFound from "./createRoleNotFound";
 
 async function addRoleToMember(guild: Guild, member: GuildMember, role: Role) {

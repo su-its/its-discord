@@ -2,9 +2,8 @@ import { ChannelType, Events, type Message } from "discord.js";
 import Department from "../../domain/entities/department";
 import type AuthData from "../../domain/types/authData";
 import type { CustomClient } from "../../domain/types/customClient";
-import authMember from "../../utils/authMember";
-import clearAuthData from "../../utils/clearAuthData";
 import handleMemberRegistration from "../controllers/authController";
+import authMember from "../utils/authMember";
 
 export function setupMessageCreate(
   client: CustomClient,
@@ -140,4 +139,14 @@ async function validateAndRegisterUser(
   } else {
     await reply("メールアドレスの形式が正しくありません。もう一度お願いします");
   }
+}
+
+function clearAuthData(): AuthData {
+  return {
+    name: undefined,
+    student_number: undefined,
+    department: undefined,
+    mail: undefined,
+    discordId: undefined,
+  };
 }

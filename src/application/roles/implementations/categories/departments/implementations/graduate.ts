@@ -1,5 +1,5 @@
 import type Role from "../../../../../../domain/types/role";
-import buildRoleByCategory from "../../../../../../utils/createRoleByCategory";
+import buildRoleByCategory from "../../../../../utils/createRoleByCategory";
 import { DepartmentRoleCategory } from "../departmentRoleCategory";
 
 const graduateRole: Role = buildRoleByCategory({

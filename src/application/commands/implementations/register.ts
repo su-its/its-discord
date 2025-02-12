@@ -1,9 +1,9 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
 import Department from "../../../domain/entities/department";
 import type Command from "../../../domain/types/command";
-import checkIsAdmin from "../../../utils/checkMemberRole";
 import { addMemberController } from "../../controllers/MemberController";
 import type { MemberCreateInput } from "../../repository/IMemberRepository";
+import checkIsAdmin from "../../utils/checkMemberRole";
 
 const registerCommand: Command = {
   data: new SlashCommandBuilder()
