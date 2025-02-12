@@ -10,9 +10,12 @@ const memberRepository = new MemberRepository(prismaClient);
 
 /**
  * メンバーの登録を行う
- * @param {MemberRegistrationInfo} userInfo DiscordアカウントをMemberに
+ * @param {AuthData} userInfo メンバーの登録に必要なデータ
  */
 
+// TODO: この型は何をするのかinlineドキュメント https://github.com/su-its/its-discord/issues/25
+// NOTE: AuthDataの設計意図がうまく組めなかったので、AuthDataに必須なデータ型をここだけで独自定義
+// NOTE: #25次第でこの型は不要になるかも
 interface MemberRegistrationInfo extends Omit<Member, "id" | "name"> {
   discordId: string;
 }

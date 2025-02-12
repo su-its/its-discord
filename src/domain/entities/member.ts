@@ -1,5 +1,6 @@
 import type department from "./department";
 
+// TODO: インラインドキュメント https://github.com/su-its/its-discord/issues/25
 interface Member {
   id: string;
   name: string;
