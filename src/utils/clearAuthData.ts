@@ -1,4 +1,4 @@
-import type AuthData from "../types/authData";
+import type AuthData from "../domain/types/authData";
 
 function clearAuthData(): AuthData {
   return {

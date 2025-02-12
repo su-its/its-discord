@@ -1,15 +1,14 @@
-import type { Guild, GuildMember } from "discord.js";
-import type CustomRole from "../types/customRole";
+import type { Guild, GuildMember, Role as OriginalRole } from "discord.js";
+import type Role from "../domain/types/role";
 import createRoleIfNotFound from "./createRoleNotFound";
 
-async function addRoleToMember(
-  guild: Guild,
-  member: GuildMember,
-  customRole: CustomRole,
-) {
+async function addRoleToMember(guild: Guild, member: GuildMember, role: Role) {
   try {
-    const role = await createRoleIfNotFound({ guild, customRole: customRole });
-    await member.roles.add(role);
+    const originalRole: OriginalRole = await createRoleIfNotFound({
+      guild,
+      role,
+    });
+    await member.roles.add(originalRole);
   } catch (error) {
     console.error("Failed to add role to member");
   }

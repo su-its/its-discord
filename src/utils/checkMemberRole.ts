@@ -1,5 +1,5 @@
 import type { CommandInteraction } from "discord.js";
-import administratorRoleProperty from "../roles/administrator";
+import administratorRoleProperty from "../application/roles/implementations/administrator";
 
 async function checkIsAdmin(interaction: CommandInteraction): Promise<boolean> {
   const guild = interaction.guild;
@@ -9,7 +9,7 @@ async function checkIsAdmin(interaction: CommandInteraction): Promise<boolean> {
 
   const member = await guild.members.fetch(interaction.user.id);
   const isAdmin: boolean = member.roles.cache.some(
-    (role) => role.name === administratorRoleProperty.roleName,
+    (role) => role.name === administratorRoleProperty.name,
   );
   return isAdmin;
 }

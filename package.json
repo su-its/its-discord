@@ -3,11 +3,10 @@
   "version": "2.0.0",
   "description": "A Discord authentication service built with TypeScript.",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "nodemon --exec ts-node src/main.ts",
     "dev": "nodemon --exec ts-node src/main.ts",
     "test": "vitest run --coverage",
-    "deploy-commands": "ts-node src/deployCommands.ts",
+    "deploy-commands": "ts-node src/scripts/deployCommands.ts",
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check",
