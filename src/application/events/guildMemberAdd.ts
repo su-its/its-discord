@@ -21,50 +21,24 @@ export function setupGuildMemberAddHandler(client: CustomClient): void {
  * 新規メンバーへウェルカムDMを送信する。
  */
 async function sendDM(member: GuildMember): Promise<void> {
-  try {
-    await member.send(
-      `ようこそ ${member.displayName} さん！ ITS discord 認証botです!`,
-    );
-    await member.send("名前(フルネーム)を教えてください");
-    logger.info(`Sent welcome DM to ${member.displayName} (${member.id})`);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      logger.error(
-        `Failed to send DM to ${member.displayName} (${member.id}): ${error.message}`,
-      );
-    } else {
-      logger.error(
-        `Failed to send DM to ${member.displayName} (${member.id}) due to an unknown error`,
-      );
-      throw new Error("Unknown error in sendDM");
-    }
-  }
+  await member.send(
+    `ようこそ ${member.displayName} さん！ ITS discord 認証botです!`,
+  );
+  await member.send("名前(フルネーム)を教えてください");
+  logger.info(`Sent welcome DM to ${member.displayName} (${member.id})`);
 }
 
 /**
  * 新規メンバーに未承認ロールを付与する。
  */
 async function giveUnauthorizedRole(member: GuildMember): Promise<void> {
-  try {
-    const guild: Guild = member.guild;
-    const role: Role = await createRoleIfNotFound({
-      guild,
-      role: roleRegistry.getRole(unAuthorizedRoleKey),
-    });
-    await member.roles.add(role);
-    logger.info(
-      `Assigned Unauthorized role (${role.name}) to ${member.displayName} (${member.id})`,
-    );
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      logger.error(
-        `Failed to assign Unauthorized role to ${member.displayName} (${member.id}): ${error.message}`,
-      );
-    } else {
-      logger.error(
-        `Failed to assign Unauthorized role to ${member.displayName} (${member.id}) due to an unknown error`,
-      );
-      throw new Error("Unknown error in giveUnauthorizedRole");
-    }
-  }
+  const guild: Guild = member.guild;
+  const role: Role = await createRoleIfNotFound({
+    guild,
+    role: roleRegistry.getRole(unAuthorizedRoleKey),
+  });
+  await member.roles.add(role);
+  logger.info(
+    `Assigned Unauthorized role (${role.name}) to ${member.displayName} (${member.id})`,
+  );
 }

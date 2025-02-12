@@ -10,65 +10,39 @@ export function setupInteractionCreateHandler(client: CustomClient): void {
     if (!command) {
       logger.error(
         `No command matching "${interaction.commandName}" was found.`,
-        {
-          module: "InteractionCreateHandler",
-          commandName: interaction.commandName,
-        },
       );
       return;
     }
 
+    const userId = interaction.user.id;
+    const guildId = interaction.guildId;
+    const options = interaction.options.data;
+
+    logger.info(
+      `Command executed: ${interaction.commandName} | User: ${userId} | Guild: ${guildId} | Options: ${JSON.stringify(options)}`,
+    );
+
     try {
       await command.execute(interaction);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        logger.error(
-          `Error executing command "${interaction.commandName}": ${error.message}`,
-          {
-            module: "InteractionCreateHandler",
-            stack: error.stack,
-          },
-        );
-      } else {
-        logger.error(
-          `Unknown error executing command "${interaction.commandName}"`,
-          {
-            module: "InteractionCreateHandler",
-          },
-        );
-        throw new Error("Unknown error executing command");
-      }
+      logger.info(
+        `Command completed: ${interaction.commandName} | User: ${userId} | Guild: ${guildId}`,
+      );
+    } catch (error) {
+      logger.error(
+        `Command failed: ${interaction.commandName} | User: ${userId} | Guild: ${guildId} | Error: ${error}`,
+      );
 
-      const replyContent = {
-        content: "There was an error while executing this command!",
+      const commandErrorMessage = {
+        content:
+          "コマンド実行時にエラーが発生しました．管理者にお問い合わせください．",
         ephemeral: true,
       };
 
-      try {
-        if (interaction.replied || interaction.deferred) {
-          await interaction.followUp(replyContent);
-        } else {
-          await interaction.reply(replyContent);
-        }
-      } catch (replyError: unknown) {
-        if (replyError instanceof Error) {
-          logger.error(
-            `Failed to send error reply for command "${interaction.commandName}": ${replyError.message}`,
-            {
-              module: "InteractionCreateHandler",
-            },
-          );
-        } else {
-          logger.error(
-            `Unknown error while sending error reply for command "${interaction.commandName}"`,
-            {
-              module: "InteractionCreateHandler",
-            },
-          );
-          throw new Error(
-            "Unknown error while sending error reply for command",
-          );
-        }
+      // NOTE: コマンドがすでに返信済みか、遅延している場合は、フォローアップで返信する
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp(commandErrorMessage);
+      } else {
+        await interaction.reply(commandErrorMessage);
       }
     }
   });

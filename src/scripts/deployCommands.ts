@@ -45,6 +45,7 @@ async function deployCommands(
     );
   } catch (error) {
     logger.error("Failed to deploy commands:", error);
+    throw error;
   }
 }
 

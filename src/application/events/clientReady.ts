@@ -47,15 +47,7 @@ async function initializeRoles(guild: Guild): Promise<void> {
 
   await Promise.all(
     roles.map(async (role) => {
-      try {
-        await createRoleIfNotFound({ guild, role });
-        logger.debug(`Role "${role.name}" initialized for guild ${guild.id}`);
-      } catch (error) {
-        logger.error(
-          `Error initializing role "${role.name}" for guild ${guild.id}`,
-          { error },
-        );
-      }
+      await createRoleIfNotFound({ guild, role });
     }),
   );
 }

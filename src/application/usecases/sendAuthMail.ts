@@ -17,22 +17,18 @@ async function sendAuthMail(
     handleCodeInApp: true,
   };
 
-  try {
-    const userCredential: UserCredential = await createUserWithEmailAndPassword(
-      auth,
-      mail,
-      student_number + department,
-    );
+  const userCredential: UserCredential = await createUserWithEmailAndPassword(
+    auth,
+    mail,
+    student_number + department,
+  );
 
-    if (userCredential.user) {
-      await sendEmailVerification(userCredential.user, actionCodeSettings);
-      logger.info(`Send mail to ${mail} successfully`);
-    } else {
-      logger.error("User object is null after creation");
-    }
-  } catch (e) {
-    logger.error("Failed to send auth mail:", e);
+  if (!userCredential.user) {
+    throw new Error("User object is null after creation");
   }
+
+  await sendEmailVerification(userCredential.user, actionCodeSettings);
+  logger.info(`Send mail to ${mail} successfully`);
 }
 
 export default sendAuthMail;

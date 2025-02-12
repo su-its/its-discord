@@ -4,9 +4,7 @@ import {
   type User,
 } from "discord.js";
 import type Command from "../../../domain/types/command";
-import logger from "../../../infrastructure/logger";
 import { getMemberByDiscordIdController } from "../../controllers/MemberController";
-
 const whoCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("who")
@@ -26,8 +24,6 @@ async function whoCommandHandler(interaction: CommandInteraction) {
     return;
   }
 
-  printLog(interaction);
-
   const userOption = interaction.options.get("user");
   if (!userOption || !userOption.user) {
     await interaction.reply("ユーザーを指定してください。");
@@ -45,10 +41,6 @@ async function whoCommandHandler(interaction: CommandInteraction) {
   await interaction.reply(
     `名前: ${member.name}\n学部: ${member.department}\n学籍番号: ${member.student_number}\nメールアドレス: ${member.mail}`,
   );
-}
-
-function printLog(interaction: CommandInteraction) {
-  logger.info(`[COMMAND] who command terminated by ${interaction.user}`);
 }
 
 export default whoCommand;

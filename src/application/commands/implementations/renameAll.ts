@@ -27,23 +27,30 @@ async function renameALLHandler(interaction: CommandInteraction) {
   await interaction.deferReply();
 
   const members = await interaction.guild.members.fetch();
+  let successCount = 0;
+  let failureCount = 0;
   const renamePromises = members.map(async (member) => {
-    const memberOnFirebase = await getMemberByDiscordIdController(member.id);
-    if (!memberOnFirebase) return;
-
     try {
-      await member.setNickname(memberOnFirebase.name);
-      logger.info(
-        `[NOTE] Changed nickname of ${member.nickname}, ${memberOnFirebase.name}`,
-      );
+      const registeredMember = await getMemberByDiscordIdController(member.id);
+      if (!registeredMember) {
+        // NOTE: DiscordIDとの紐づけが行われていないユーザーもいるため、無視する
+        return;
+      }
+
+      await member.setNickname(registeredMember.name);
+      successCount++;
     } catch (error) {
-      logger.error(`[ERROR] Failed to rename ${member.nickname}: ${error}`);
+      // NOTE: ニックネーム変更に一人が失敗しても全体の処理を止めない
+      failureCount++;
+      // NOTE: 例外に関しては全体の処理を止めずにログ出力する
+      logger.error(`Failed to rename ${member}: ${error}`);
     }
   });
 
   await Promise.all(renamePromises);
-  await interaction.followUp("ニックネームの変更が完了しました。");
-  logger.info("[NOTE] Completed changing nicknames");
+  await interaction.followUp(
+    `ニックネームの変更が完了しました。\n成功: ${successCount}件\n失敗: ${failureCount}件`,
+  );
 }
 
 export default renameALL;
