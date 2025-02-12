@@ -16,8 +16,7 @@ import {
   getMemberByDiscordIdController,
   getMemberByEmailController,
 } from "../../controllers/MemberController";
-import roleRegistry from "../../roles";
-import { departmentRoleKeys } from "../../roles/implementations/categories/departments";
+import roleRegistry, { roleRegistryKeys } from "../../roles";
 
 const authCommand: Command = {
   data: new SlashCommandBuilder()
@@ -42,16 +41,16 @@ async function authCommandHandler(interaction: CommandInteraction) {
 
   // メール認証が完了しているか確認
   const user: UserRecord = await adminAuth.getUserByEmail(member.mail);
-  if (user.emailVerified) {
-    try {
-      await changeNickName(interaction, member);
-      await giveRoles(interaction);
-    } catch (error) {
-      console.error("Failed to auth", error);
-      await interaction.reply("認証に失敗しました");
-    }
-  } else {
+  if (!user.emailVerified) {
     await interaction.reply("メール認証が完了していません");
+    return;
+  }
+  try {
+    await changeNickName(interaction, member);
+    await giveRoles(interaction);
+  } catch (error) {
+    await interaction.reply("認証に失敗しました");
+    throw error;
   }
 }
 
@@ -81,23 +80,19 @@ async function giveAuthorizedRole(
   guild: Guild,
   guildMember: GuildMember,
 ) {
-  try {
-    const authorizedRole: Role = await createRoleIfNotFound({
-      guild,
-      role: roleRegistry.getRole("Authorized"),
-    });
-    const unAuthorizedRole: Role = await createRoleIfNotFound({
-      guild,
-      role: roleRegistry.getRole("UnAuthorized"),
-    });
+  const authorizedRole: Role = await createRoleIfNotFound({
+    guild,
+    role: roleRegistry.getRole(roleRegistryKeys.authorizedRoleKey),
+  });
+  const unAuthorizedRole: Role = await createRoleIfNotFound({
+    guild,
+    role: roleRegistry.getRole(roleRegistryKeys.unAuthorizedRoleKey),
+  });
 
-    await guildMember.roles.add(authorizedRole);
-    await guildMember.roles.remove(unAuthorizedRole);
+  await guildMember.roles.add(authorizedRole);
+  await guildMember.roles.remove(unAuthorizedRole);
 
-    await interaction.reply("認証しました!");
-  } catch (error) {
-    console.error("Failed to give Authorized Role");
-  }
+  await interaction.reply("認証しました!");
 }
 
 async function giveDepartmentRole(
@@ -121,20 +116,17 @@ async function giveDepartmentRole(
   }
 
   const departmentRoleMap = {
-    [Department.CS]: roleRegistry.getRole(departmentRoleKeys.csRoleKey),
-    [Department.IA]: roleRegistry.getRole(departmentRoleKeys.iaRoleKey),
-    [Department.BI]: roleRegistry.getRole(departmentRoleKeys.biRoleKey),
+    [Department.CS]: roleRegistry.getRole(roleRegistryKeys.csRoleKey),
+    [Department.IA]: roleRegistry.getRole(roleRegistryKeys.iaRoleKey),
+    [Department.BI]: roleRegistry.getRole(roleRegistryKeys.biRoleKey),
     [Department.GRADUATE]: roleRegistry.getRole(
-      departmentRoleKeys.graduateRoleKey,
+      roleRegistryKeys.graduateRoleKey,
     ),
-    [Department.OTHERS]: roleRegistry.getRole(departmentRoleKeys.othersRoleKey),
-    [Department.OBOG]: roleRegistry.getRole(departmentRoleKeys.obOgRoleKey), // OBOGロールを追加
+    [Department.OTHERS]: roleRegistry.getRole(roleRegistryKeys.othersRoleKey),
+    [Department.OBOG]: roleRegistry.getRole(roleRegistryKeys.obOgRoleKey),
   };
 
   const role = departmentRoleMap[member.department];
-  if (!role) {
-    throw new Error("Department not found");
-  }
 
   await addRoleToMember(guild, guildMember, role);
 }

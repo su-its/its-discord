@@ -5,6 +5,7 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { auth } from "../../infrastructure/firebase";
+import logger from "../../infrastructure/logger";
 
 async function sendAuthMail(
   mail: string,
@@ -16,22 +17,18 @@ async function sendAuthMail(
     handleCodeInApp: true,
   };
 
-  try {
-    const userCredential: UserCredential = await createUserWithEmailAndPassword(
-      auth,
-      mail,
-      student_number + department,
-    );
+  const userCredential: UserCredential = await createUserWithEmailAndPassword(
+    auth,
+    mail,
+    student_number + department,
+  );
 
-    if (userCredential.user) {
-      await sendEmailVerification(userCredential.user, actionCodeSettings);
-      console.log(`Send mail to ${mail} successfully`);
-    } else {
-      console.error("User object is null after creation");
-    }
-  } catch (e) {
-    console.error(e);
+  if (!userCredential.user) {
+    throw new Error("User object is null after creation");
   }
+
+  await sendEmailVerification(userCredential.user, actionCodeSettings);
+  logger.info(`Send mail to ${mail} successfully`);
 }
 
 export default sendAuthMail;

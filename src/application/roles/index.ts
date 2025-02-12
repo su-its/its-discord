@@ -1,7 +1,10 @@
 import RoleRegistry from "./core/roleRegistry";
 import administratorRole from "./implementations/administrator";
 import authorizedRole from "./implementations/authorized";
-import { departmentRoles } from "./implementations/categories/departments";
+import {
+  departmentRoleKeys,
+  departmentRoles,
+} from "./implementations/categories/departments";
 import unAuthorizedRole from "./implementations/unAuthorized";
 
 const roleRegistry = new RoleRegistry();
@@ -14,5 +17,12 @@ roleRegistry.register(authorizedRole);
 roleRegistry.register(unAuthorizedRole);
 // 学部カテゴリのロール
 roleRegistry.registerRoles(departmentRoles);
+
+export const roleRegistryKeys = {
+  administratorRoleKey: administratorRole.name,
+  authorizedRoleKey: authorizedRole.name,
+  unAuthorizedRoleKey: unAuthorizedRole.name,
+  ...departmentRoleKeys,
+};
 
 export default roleRegistry;

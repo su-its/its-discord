@@ -11,6 +11,7 @@ import getMemberByDiscordId from "../usecases/member/getMemberByDiscordId";
 import getMemberByEmail from "../usecases/member/getMemberByEmail";
 import insertMember from "../usecases/member/insertMember";
 
+import logger from "../../infrastructure/logger";
 import prismaClient from "../../infrastructure/prisma";
 // リポジトリの実装と Prisma のインスタンス（インフラ層）
 import MemberRepository from "../repository/memberRepository";
@@ -22,12 +23,7 @@ const memberRepository = new MemberRepository(prismaClient);
  * 全メンバー取得エンドポイント
  */
 export async function getAllMembersController(): Promise<Member[]> {
-  try {
-    return await getAllMembers(memberRepository);
-  } catch (error) {
-    console.error("Error getting members:", error);
-    throw error;
-  }
+  return await getAllMembers(memberRepository);
 }
 
 /**
@@ -36,16 +32,11 @@ export async function getAllMembersController(): Promise<Member[]> {
 export async function getMemberByEmailController(
   email: string,
 ): Promise<Member | undefined> {
-  try {
-    const member = await getMemberByEmail(memberRepository, email);
-    if (!member) {
-      return undefined;
-    }
-    return member;
-  } catch (error) {
-    console.error("Error getting member by email:", error);
-    throw error;
+  const member = await getMemberByEmail(memberRepository, email);
+  if (!member) {
+    return undefined;
   }
+  return member;
 }
 
 /**
@@ -54,16 +45,11 @@ export async function getMemberByEmailController(
 export async function getMemberByDiscordIdController(
   discordId: string,
 ): Promise<Member | undefined> {
-  try {
-    const member = await getMemberByDiscordId(memberRepository, discordId);
-    if (!member) {
-      return undefined;
-    }
-    return member;
-  } catch (error) {
-    console.error("Error getting member by discord id:", error);
-    throw error;
+  const member = await getMemberByDiscordId(memberRepository, discordId);
+  if (!member) {
+    return undefined;
   }
+  return member;
 }
 
 /**
@@ -72,14 +58,8 @@ export async function getMemberByDiscordIdController(
 export async function addMemberController(
   input: MemberCreateInput,
 ): Promise<Member> {
-  try {
-    const member = await insertMember(memberRepository, input);
-    console.log("Member successfully added");
-    return member;
-  } catch (error) {
-    console.error("Error adding member:", error);
-    throw error;
-  }
+  const member = await insertMember(memberRepository, input);
+  return member;
 }
 
 /**
@@ -89,10 +69,5 @@ export async function addDiscordAccountController(
   memberId: string,
   discordId: string,
 ): Promise<Member> {
-  try {
-    return await connectDiscordAccount(memberRepository, memberId, discordId);
-  } catch (error) {
-    console.error("Error connecting discord account:", error);
-    throw error;
-  }
+  return await connectDiscordAccount(memberRepository, memberId, discordId);
 }

@@ -15,17 +15,11 @@ async function createRoleIfNotFound({
     (r) => r.name === role.name,
   );
   if (!originalRole) {
-    try {
-      originalRole = await guild.roles.create({
-        name: role.name,
-        color: role.color,
-        reason: role.reason,
-      });
-      console.log(`${role.name} role created.`);
-    } catch (error) {
-      console.error(`Error creating ${role.name} role:`, error);
-      throw error;
-    }
+    originalRole = await guild.roles.create({
+      name: role.name,
+      color: role.color,
+      reason: role.reason,
+    });
   }
   return originalRole;
 }

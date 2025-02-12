@@ -31,7 +31,6 @@ async function killCommandHandler(interaction: CommandInteraction) {
     return;
   }
   if (targetPid && targetPid === currentPid) {
-    console.log(`Killing process ${currentPid}`);
     await interaction.reply(`プロセス ${currentPid} を終了します...`);
     process.exit(0);
   } else {

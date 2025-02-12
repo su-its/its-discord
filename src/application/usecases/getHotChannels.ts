@@ -21,37 +21,25 @@ export async function generateChannelActivityRanking(guild: Guild) {
 
   const channelStats = await Promise.all(
     textChannels.map(async (channel) => {
-      try {
-        let totalMessages = 0;
-        let lastId: string | undefined;
-        while (true) {
-          const messages = await channel.messages.fetch({
-            limit: 100,
-            after: lastId || oneDayAgoSnowflake.toString(),
-          });
-          if (messages.size === 0) break;
-          totalMessages += messages.size;
-          lastId = messages.last()?.id;
-          const lastMessage = messages.last();
-          if (lastMessage && lastMessage.createdTimestamp < oneDayAgoSnowflake)
-            break;
-        }
-        return {
-          id: channel.id,
-          name: channel.name,
-          count: totalMessages,
-        };
-      } catch (error) {
-        console.error(
-          `Error fetching messages for channel ${channel.name}:`,
-          error,
-        );
-        return {
-          id: channel.id,
-          name: channel.name,
-          count: 0,
-        };
+      let totalMessages = 0;
+      let lastId: string | undefined;
+      while (true) {
+        const messages = await channel.messages.fetch({
+          limit: 100,
+          after: lastId || oneDayAgoSnowflake.toString(),
+        });
+        if (messages.size === 0) break;
+        totalMessages += messages.size;
+        lastId = messages.last()?.id;
+        const lastMessage = messages.last();
+        if (lastMessage && lastMessage.createdTimestamp < oneDayAgoSnowflake)
+          break;
       }
+      return {
+        id: channel.id,
+        name: channel.name,
+        count: totalMessages,
+      };
     }),
   );
 
