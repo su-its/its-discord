@@ -21,26 +21,47 @@ interface MemberRegistrationInfo extends Omit<Member, "id" | "name"> {
 }
 
 async function handleMemberRegistration(userInfo: AuthData) {
-  const memberRegistrationInfo = convertAuthDataToMemberRegistrationInfo(userInfo);
-  await sendAuthMail(memberRegistrationInfo.mail, memberRegistrationInfo.student_number, memberRegistrationInfo.department);
+  const memberRegistrationInfo =
+    convertAuthDataToMemberRegistrationInfo(userInfo);
+  await sendAuthMail(
+    memberRegistrationInfo.mail,
+    memberRegistrationInfo.student_number,
+    memberRegistrationInfo.department,
+  );
 
-  const member = await getMemberByEmail(memberRepository, memberRegistrationInfo.mail);
+  const member = await getMemberByEmail(
+    memberRepository,
+    memberRegistrationInfo.mail,
+  );
   if (!member) {
     throw new Error("Member not found");
   }
 
-  await connectDiscordAccount(memberRepository, member.id, memberRegistrationInfo.discordId);
+  await connectDiscordAccount(
+    memberRepository,
+    member.id,
+    memberRegistrationInfo.discordId,
+  );
 }
 
-function convertAuthDataToMemberRegistrationInfo(userInfo: AuthData): MemberRegistrationInfo {
-  if (!userInfo.mail || !userInfo.student_number || !userInfo.department || !userInfo.discordId) {
-    throw new Error(`Missing required fields in AuthData: ${JSON.stringify(userInfo)}`);
+function convertAuthDataToMemberRegistrationInfo(
+  userInfo: AuthData,
+): MemberRegistrationInfo {
+  if (
+    !userInfo.mail ||
+    !userInfo.student_number ||
+    !userInfo.department ||
+    !userInfo.discordId
+  ) {
+    throw new Error(
+      `Missing required fields in AuthData: ${JSON.stringify(userInfo)}`,
+    );
   }
   return {
     mail: userInfo.mail,
     student_number: userInfo.student_number,
     department: userInfo.department,
-    discordId: userInfo.discordId
+    discordId: userInfo.discordId,
   };
 }
 
