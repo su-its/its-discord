@@ -58,12 +58,17 @@ export interface IMemberRepository {
    * メンバーを作成する
    * @param {MemberCreateInput} arg メンバー作成のための入力
    * @returns {Member} 作成されたメンバー
+   * @throws {Error} メールアドレスが重複している場合に発生
+   * @throws {Error} メールアドレスのドメインがshizuoka.ac.jpでない場合に発生
    */
   insert(arg: MemberCreateInput): Promise<Member>;
   /**
    * メンバーを更新する
    * @param {MemberUpdateInput} arg メンバー更新のための入力
    * @returns {Member} 更新されたメンバー
+   * @throws {Error} メンバーが存在しない場合に発生
+   * @throws {Error} メールアドレスが重複している場合に発生
+   * @throws {Error} メールアドレスのドメインがshizuoka.ac.jpでない場合に発生
    */
   update(arg: MemberUpdateInput): Promise<Member>;
   /**
@@ -71,6 +76,7 @@ export interface IMemberRepository {
    * @param {ConnectDiscordAccountInput} arg 紐づけるDiscordアカウント
    * @returns {Member} 更新されたメンバー
    * @throws {Error} メンバーが既にDiscordアカウントを持っている場合に発生 // TODO: 複数アカウントに対応する https://github.com/su-its/its-discord/issues/70
+   * @throws {Error} メンバーが存在しない場合に発生
    */
   connectDiscordAccount(arg: ConnectDiscordAccountInput): Promise<Member>;
 }

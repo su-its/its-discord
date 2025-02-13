@@ -1,4 +1,8 @@
-import type { PrismaClient } from "@shizuoka-its/core";
+import {
+  type PrismaClient,
+  PrismaRecordDoesNotExistError,
+  PrismaUniqueConstraintError,
+} from "@shizuoka-its/core";
 import type {
   DiscordAccount as PrismaDiscordAccount,
   Member as PrismaMember,
@@ -12,6 +16,8 @@ import type {
   MemberUpdateInput,
 } from "./IMemberRepository";
 import { RepositoryError } from "./RepositoryError";
+
+const ALLOWED_EMAIL_DOMAIN = "@shizuoka.ac.jp";
 
 export default class MemberRepository implements IMemberRepository {
   private prisma: PrismaClient;
@@ -65,30 +71,58 @@ export default class MemberRepository implements IMemberRepository {
   }
 
   async insert(arg: MemberCreateInput): Promise<Member> {
-    const created = await this.prisma.member.create({
-      data: {
-        name: arg.name,
-        studentId: arg.student_number,
-        department: arg.department,
-        email: arg.mail,
-      },
-      include: { discordAccounts: true },
-    });
-    return this.convertToMember(created);
+    try {
+      if (!arg.mail.endsWith(ALLOWED_EMAIL_DOMAIN)) {
+        throw new RepositoryError("Invalid email domain");
+      }
+      const created = await this.prisma.member.create({
+        data: {
+          name: arg.name,
+          studentId: arg.student_number,
+          department: arg.department,
+          email: arg.mail,
+        },
+        include: { discordAccounts: true },
+      });
+      return this.convertToMember(created);
+    } catch (error) {
+      if (error instanceof PrismaUniqueConstraintError) {
+        // NOTE: UUIDであるID以外でUnique制約があるEmailフィールドが重複していると特定
+        throw new RepositoryError(
+          "The specified email address is already registered",
+        );
+      }
+      throw error;
+    }
   }
 
   async update(arg: MemberUpdateInput): Promise<Member> {
-    const updated = await this.prisma.member.update({
-      where: { id: arg.id },
-      data: {
-        name: arg.name,
-        studentId: arg.student_number,
-        department: arg.department,
-        email: arg.mail,
-      },
-      include: { discordAccounts: true },
-    });
-    return this.convertToMember(updated);
+    try {
+      if (arg.mail && !arg.mail.endsWith(ALLOWED_EMAIL_DOMAIN)) {
+        throw new RepositoryError("Invalid email domain");
+      }
+      const updated = await this.prisma.member.update({
+        where: { id: arg.id },
+        data: {
+          name: arg.name,
+          studentId: arg.student_number,
+          department: arg.department,
+          email: arg.mail,
+        },
+        include: { discordAccounts: true },
+      });
+      return this.convertToMember(updated);
+    } catch (error) {
+      if (error instanceof PrismaUniqueConstraintError) {
+        throw new RepositoryError(
+          "The specified email address is already registered",
+        );
+      }
+      if (error instanceof PrismaRecordDoesNotExistError) {
+        throw new RepositoryError("Member to update not found");
+      }
+      throw error;
+    }
   }
 
   async connectDiscordAccount(
@@ -101,21 +135,30 @@ export default class MemberRepository implements IMemberRepository {
     if (existingDiscordAccounts.length > 0) {
       throw new RepositoryError("Member already has a Discord account");
     }
-    const updated = await this.prisma.member.update({
-      where: { id: arg.memberId },
-      data: {
-        discordAccounts: {
-          connectOrCreate: {
-            where: { id: arg.discordAccount.id },
-            create: {
-              id: arg.discordAccount.id,
-              nickName: arg.discordAccount.nickName,
+    try {
+      const updated = await this.prisma.member.update({
+        where: { id: arg.memberId },
+        data: {
+          discordAccounts: {
+            connectOrCreate: {
+              where: { id: arg.discordAccount.id },
+              create: {
+                id: arg.discordAccount.id,
+                nickName: arg.discordAccount.nickName,
+              },
             },
           },
         },
-      },
-      include: { discordAccounts: true },
-    });
-    return this.convertToMember(updated);
+        include: { discordAccounts: true },
+      });
+      return this.convertToMember(updated);
+    } catch (error) {
+      if (error instanceof PrismaRecordDoesNotExistError) {
+        throw new RepositoryError(
+          "Member to connect Discord account not found",
+        );
+      }
+      throw error;
+    }
   }
 }
