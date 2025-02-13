@@ -1,4 +1,9 @@
-import type { PrismaClient } from "@shizuoka-its/core";
+import {
+  type PrismaClient,
+  PrismaRecordDoesNotExistError,
+  PrismaRuntime,
+  PrismaUniqueConstraintError,
+} from "@shizuoka-its/core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Department from "../../../domain/entities/department";
 import { RepositoryError } from "../RepositoryError";
@@ -27,7 +32,7 @@ describe("MemberRepository", () => {
     name: "Test User",
     studentId: "19XX0000",
     department: Department.CS,
-    email: "test@example.com",
+    email: "test@shizuoka.ac.jp",
     discordAccounts: [
       {
         id: "discord-id",
@@ -153,7 +158,7 @@ describe("MemberRepository", () => {
         name: "Test User",
         student_number: "19XX0000",
         department: Department.CS,
-        mail: "test@example.com",
+        mail: "test@shizuoka.ac.jp",
       };
 
       const result = await repository.insert(input);
@@ -169,84 +174,231 @@ describe("MemberRepository", () => {
       });
       expect(result.id).toBe(mockMember.id);
     });
-  });
 
-  describe("メンバー更新機能", () => {
-    it("メンバー情報を更新できる", async () => {
-      mockPrismaClient.member.update.mockResolvedValue(mockMember);
-
+    it("Emailが静大ドメイン以外の場合はエラーを投げる", async () => {
       const input = {
-        id: "test-id",
-        name: "Updated Name",
-        student_number: "20XX0000",
+        name: "Test User",
+        student_number: "19XX0000",
+        department: Department.CS,
+        mail: "test@example.com",
       };
 
-      const result = await repository.update(input);
-
-      expect(mockPrismaClient.member.update).toHaveBeenCalledWith({
-        where: { id: input.id },
-        data: {
-          name: input.name,
-          studentId: input.student_number,
-          department: undefined,
-          email: undefined,
-        },
-        include: { discordAccounts: true },
-      });
-      expect(result.id).toBe(mockMember.id);
+      await expect(repository.insert(input)).rejects.toThrow(
+        "Invalid email domain",
+      );
     });
-  });
 
-  describe("Discordアカウント連携機能", () => {
-    it("Discordアカウントを紐付けできる", async () => {
-      mockPrismaClient.discordAccount.findMany.mockResolvedValue([]);
-      mockPrismaClient.member.update.mockResolvedValue(mockMember);
+    it("重複したEmailでメンバーを作成しようとした場合はエラーを投げる", async () => {
+      mockPrismaClient.member.create.mockRejectedValue(
+        new PrismaUniqueConstraintError(
+          new PrismaRuntime.PrismaClientKnownRequestError("P2002", {
+            clientVersion: "2.24.1",
+            code: "P2002",
+            meta: {
+              target: ["email"],
+            },
+          }),
+        ),
+      );
 
       const input = {
-        memberId: "test-id",
-        discordAccount: {
-          id: "discord-id",
-          nickName: "Discord User",
-        },
+        name: "Test User",
+        student_number: "19XX0000",
+        department: Department.CS,
+        mail: "test@shizuoka.ac.jp",
       };
 
-      const result = await repository.connectDiscordAccount(input);
+      await expect(repository.insert(input)).rejects.toThrow(
+        "The specified email address is already registered",
+      );
+    });
 
-      expect(mockPrismaClient.member.update).toHaveBeenCalledWith({
-        where: { id: input.memberId },
-        data: {
-          discordAccounts: {
-            connectOrCreate: {
-              where: { id: input.discordAccount.id },
-              create: {
-                id: input.discordAccount.id,
-                nickName: input.discordAccount.nickName,
+    describe("メンバー更新機能", () => {
+      it("メンバー情報を更新できる", async () => {
+        mockPrismaClient.member.update.mockResolvedValue(mockMember);
+
+        const input = {
+          id: "test-id",
+          name: "Updated Name",
+          student_number: "20XX0000",
+        };
+
+        const result = await repository.update(input);
+
+        expect(mockPrismaClient.member.update).toHaveBeenCalledWith({
+          where: { id: input.id },
+          data: {
+            name: input.name,
+            studentId: input.student_number,
+            department: undefined,
+            email: undefined,
+          },
+          include: { discordAccounts: true },
+        });
+        expect(result.id).toBe(mockMember.id);
+      });
+
+      it("Emailが静大ドメイン以外に更新しようとした場合はエラーを投げる", async () => {
+        const input = {
+          id: "test-id",
+          name: "Test User",
+          student_number: "19XX0000",
+          department: Department.CS,
+          mail: "test@example.com",
+        };
+
+        await expect(repository.update(input)).rejects.toThrow(
+          "Invalid email domain",
+        );
+      });
+
+      it("存在しないメンバーを更新しようとした場合はエラーを投げる", async () => {
+        const input = {
+          id: "non-existent-id",
+          name: "Test User",
+        };
+
+        mockPrismaClient.member.update.mockRejectedValue(
+          new PrismaRecordDoesNotExistError(
+            new PrismaRuntime.PrismaClientKnownRequestError("P2001", {
+              clientVersion: "2.24.1",
+              code: "P2001",
+              meta: {
+                target: ["id"],
+              },
+            }),
+          ),
+        );
+
+        await expect(repository.update(input)).rejects.toThrow(
+          "Member to update not found",
+        );
+      });
+
+      it("重複したEmailでメンバーを更新しようとした場合はエラーを投げる", async () => {
+        mockPrismaClient.member.update.mockRejectedValue(
+          new PrismaUniqueConstraintError(
+            new PrismaRuntime.PrismaClientKnownRequestError("P2002", {
+              clientVersion: "2.24.1",
+              code: "P2002",
+              meta: {
+                target: ["email"],
+              },
+            }),
+          ),
+        );
+
+        const input = {
+          id: "test-id",
+          name: "Test User",
+          student_number: "19XX0000",
+          department: Department.CS,
+          mail: "test@shizuoka.ac.jp",
+        };
+
+        await expect(repository.update(input)).rejects.toThrow(
+          "The specified email address is already registered",
+        );
+      });
+
+      describe("Discordアカウント連携機能", () => {
+        it("Discordアカウントを紐付けできる", async () => {
+          mockPrismaClient.discordAccount.findMany.mockResolvedValue([]);
+          mockPrismaClient.member.update.mockResolvedValue(mockMember);
+
+          const input = {
+            memberId: "test-id",
+            discordAccount: {
+              id: "discord-id",
+              nickName: "Discord User",
+            },
+          };
+
+          const result = await repository.connectDiscordAccount(input);
+
+          expect(mockPrismaClient.member.update).toHaveBeenCalledWith({
+            where: { id: input.memberId },
+            data: {
+              discordAccounts: {
+                connectOrCreate: {
+                  where: { id: input.discordAccount.id },
+                  create: {
+                    id: input.discordAccount.id,
+                    nickName: input.discordAccount.nickName,
+                  },
+                },
               },
             },
-          },
-        },
-        include: { discordAccounts: true },
+            include: { discordAccounts: true },
+          });
+          expect(result.discordId).toBe(input.discordAccount.id);
+        });
+
+        // TODO: 複数アカウントに対応する https://github.com/su-its/its-discord/issues/70
+        it("既にDiscordアカウントが紐付けられている場合はエラーを投げる", async () => {
+          mockPrismaClient.discordAccount.findMany.mockResolvedValue([
+            { id: "existing-discord-id" },
+          ]);
+
+          const input = {
+            memberId: "test-id",
+            discordAccount: {
+              id: "new-discord-id",
+              nickName: "Discord User",
+            },
+          };
+
+          await expect(repository.connectDiscordAccount(input)).rejects.toThrow(
+            "Member already has a Discord account",
+          );
+        });
+
+        it("存在しないメンバーを紐付けようとした場合はエラーを投げる", async () => {
+          mockPrismaClient.discordAccount.findMany.mockResolvedValue([]);
+          mockPrismaClient.member.update.mockRejectedValue(
+            new PrismaRecordDoesNotExistError(
+              new PrismaRuntime.PrismaClientKnownRequestError("P2001", {
+                clientVersion: "2.24.1",
+                code: "P2001",
+                meta: {
+                  target: ["id"],
+                },
+              }),
+            ),
+          );
+
+          const input = {
+            memberId: "non-existent-id",
+            discordAccount: {
+              id: "discord-id",
+              nickName: "Discord User",
+            },
+          };
+
+          await expect(repository.connectDiscordAccount(input)).rejects.toThrow(
+            "Member to connect Discord account not found",
+          );
+        });
+
+        it("想定していないエラーが投げられた場合はそのまま投げる", async () => {
+          mockPrismaClient.discordAccount.findMany.mockResolvedValue([]);
+          mockPrismaClient.member.update.mockRejectedValue(
+            new Error("Unexpected error"),
+          );
+
+          const input = {
+            memberId: "test-id",
+            discordAccount: {
+              id: "discord-id",
+              nickName: "Discord User",
+            },
+          };
+
+          await expect(repository.connectDiscordAccount(input)).rejects.toThrow(
+            "Unexpected error",
+          );
+        });
       });
-      expect(result.discordId).toBe(input.discordAccount.id);
-    });
-
-    // TODO: 複数アカウントに対応する https://github.com/su-its/its-discord/issues/70
-    it("既にDiscordアカウントが紐付けられている場合はエラーを投げる", async () => {
-      mockPrismaClient.discordAccount.findMany.mockResolvedValue([
-        { id: "existing-discord-id" },
-      ]);
-
-      const input = {
-        memberId: "test-id",
-        discordAccount: {
-          id: "new-discord-id",
-          nickName: "Discord User",
-        },
-      };
-
-      await expect(repository.connectDiscordAccount(input)).rejects.toThrow(
-        "Member already has a Discord account",
-      );
     });
   });
 });
