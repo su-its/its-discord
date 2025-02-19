@@ -1,8 +1,5 @@
 import type Member from "../../../domain/entities/member";
-import type {
-  ConnectDiscordAccountInput,
-  IMemberRepository,
-} from "../../repository/IMemberRepository";
+import type { IMemberRepository } from "../../repository/IMemberRepository";
 
 /**
  * メンバーに Discord アカウントを紐付けるユースケース
