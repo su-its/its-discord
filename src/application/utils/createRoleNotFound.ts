@@ -6,6 +6,12 @@ interface CreateRoleNotFoundParams {
   role: Role;
 }
 
+/**
+ * ロールが存在しない場合は作成する
+ * @param guild ギルド
+ * @param role ロール
+ * @returns ロール
+ */
 async function createRoleIfNotFound({
   guild,
   role,
