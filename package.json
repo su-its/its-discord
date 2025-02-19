@@ -1,35 +1,40 @@
 {
   "name": "its-discord-auth",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "A Discord authentication service built with TypeScript.",
   "scripts": {
     "start": "nodemon --exec ts-node src/main.ts",
-    "test": "ts-node src/main.ts",
-    "deploy-commands": "ts-node src/deployCommands.ts",
-    "format": "biome format --write",
-    "lint": "biome lint --write",
-    "lint:fix": "eslint --ignore-pattern .gitignore './**/*.{js,ts}' --fix",
-    "check": "biome check --write"
+    "dev": "nodemon --exec ts-node src/main.ts",
+    "test": "vitest run --coverage",
+    "deploy-commands": "ts-node src/scripts/deployCommands.ts",
+    "format": "biome format",
+    "lint": "biome lint",
+    "check": "biome check",
+    "format:fix": "biome format --write",
+    "lint:fix": "biome lint --write",
+    "check:fix": "biome check --write",
+    "ci": "biome ci"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@biomejs/biome": "1.9.2",
+    "@biomejs/biome": "^1.9.2",
+    "@types/node": "^22.13.1",
     "@types/uuid": "^10.0.0",
-    "globals": "^15.9.0",
+    "@vitest/coverage-v8": "^3.0.5",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "vitest": "^3.0.5"
   },
   "dependencies": {
+    "@shizuoka-its/core": "^1.1.0",
     "cron": "^3.1.7",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
     "firebase": "^10.14.0",
     "firebase-admin": "^12.6.0",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "winston": "^3.17.0"
   },
   "packageManager": "yarn@4.2.2"
 }
