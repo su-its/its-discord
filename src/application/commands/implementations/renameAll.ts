@@ -1,4 +1,8 @@
-import { type CommandInteraction, SlashCommandBuilder, type GuildMember } from "discord.js";
+import {
+  type CommandInteraction,
+  type GuildMember,
+  SlashCommandBuilder,
+} from "discord.js";
 import type Command from "../../../domain/types/command";
 import logger from "../../../infrastructure/logger";
 import { getMemberByDiscordIdController } from "../../controllers/MemberController";
@@ -50,11 +54,12 @@ async function renameALLHandler(interaction: CommandInteraction) {
   });
 
   await Promise.all(renamePromises);
-  const failedMembersMessage = failedMembers.length > 0
-    ? failedMembers.length >= 10
-      ? '\n※10人以上のメンバーの変更に失敗しました。詳細はログを確認してください。'
-      : `\n失敗したメンバー:\n${failedMembers.join('\n')}`
-    : '';
+  const failedMembersMessage =
+    failedMembers.length > 0
+      ? failedMembers.length >= 10
+        ? "\n※10人以上のメンバーの変更に失敗しました。詳細はログを確認してください。"
+        : `\n失敗したメンバー:\n${failedMembers.join("\n")}`
+      : "";
   await interaction.followUp(
     `ニックネームの変更が完了しました。\n成功: ${successCount}件\n失敗: ${failureCount}件${failedMembersMessage}`,
   );
