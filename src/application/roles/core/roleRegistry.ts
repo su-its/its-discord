@@ -8,6 +8,9 @@ export default class RoleRegistry {
    * @param {Role} role Role インターフェースを実装したロール
    */
   public register(role: Role): void {
+    if (this.roles.has(role.name)) {
+      throw new Error(`Role ${role.name} already registered`);
+    }
     this.roles.set(role.name, role);
   }
 

@@ -32,6 +32,7 @@ export function setupInteractionCreateHandler(client: CustomClient): void {
         `Command failed: ${interaction.commandName} | User: ${userId} | Guild: ${guildId} | Error: ${error}`,
       );
 
+      // TODO: Adminにメンション付きで通知する # https://github.com/su-its/its-discord/issues/83
       const commandErrorMessage = {
         content:
           "コマンド実行時にエラーが発生しました．管理者にお問い合わせください．",

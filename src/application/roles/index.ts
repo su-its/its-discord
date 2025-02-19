@@ -11,9 +11,9 @@ const roleRegistry = new RoleRegistry();
 
 // 管理者ロール
 roleRegistry.register(administratorRole);
-// 承認ロール
+// 認証済みルール
 roleRegistry.register(authorizedRole);
-// 未承認ロール
+// 未認証ロール
 roleRegistry.register(unAuthorizedRole);
 // 学部カテゴリのロール
 roleRegistry.registerRoles(departmentRoles);
