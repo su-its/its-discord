@@ -8,6 +8,14 @@ import logger from "./infrastructure/logger";
 
 dotenv.config();
 
+process.on("uncaughtException", (error) => {
+  logger.error("Uncaught Exception:", error);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  logger.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
+
 const client = new CustomClient();
 const token = process.env.TOKEN;
 const userStates = new Map<string, AuthData>();
@@ -34,5 +42,5 @@ async function main() {
 }
 
 main().catch((error) => {
-  logger.error("Error in main: %o", error);
+  logger.error("Error in main function during startup:", error);
 });
