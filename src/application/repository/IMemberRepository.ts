@@ -26,6 +26,7 @@ export type CreateDiscordAccountInput = {
   nickName: string;
 };
 
+
 /**
  * MemberテーブルとDiscordAccountテーブルを集約して扱う
  * メンバーリポジトリのインターフェース

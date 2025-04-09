@@ -18,7 +18,6 @@ import type {
 import { RepositoryError } from "./RepositoryError";
 
 const ALLOWED_EMAIL_DOMAIN = "@shizuoka.ac.jp";
-
 export default class MemberRepository implements IMemberRepository {
   private prisma: PrismaClient;
 
