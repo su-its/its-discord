@@ -79,8 +79,5 @@ export async function addDiscordAccountController(
 export async function updateMemberController(
   input: MemberUpdateInput,
 ): Promise<Member> {
-  return await updateMemberDepartment(
-    memberRepository,
-    input
-  );
+  return await updateMemberDepartment(memberRepository, input);
 }
