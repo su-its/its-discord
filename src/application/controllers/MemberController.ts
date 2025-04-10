@@ -1,7 +1,7 @@
 import type Member from "../../domain/entities/member";
 import type {
-  CreateDiscordAccountInput,
   MemberCreateInput,
+  MemberUpdateInput,
 } from "../repository/IMemberRepository";
 
 import connectDiscordAccount from "../usecases/member/connectDiscordAccount";
@@ -11,10 +11,11 @@ import getMemberByDiscordId from "../usecases/member/getMemberByDiscordId";
 import getMemberByEmail from "../usecases/member/getMemberByEmail";
 import insertMember from "../usecases/member/insertMember";
 
-import logger from "../../infrastructure/logger";
 import prismaClient from "../../infrastructure/prisma";
 // リポジトリの実装と Prisma のインスタンス（インフラ層）
 import MemberRepository from "../repository/memberRepository";
+import updateMemberDepartment from "../usecases/member/updateMemberDepartment";
+import Department from "../../domain/entities/department";
 
 // リポジトリインスタンスの生成（DI）
 const memberRepository = new MemberRepository(prismaClient);
@@ -70,4 +71,13 @@ export async function addDiscordAccountController(
   discordId: string,
 ): Promise<Member> {
   return await connectDiscordAccount(memberRepository, memberId, discordId);
+}
+
+/**
+ * メンバーの情報を更新するエンドポイント
+ */
+export async function updateMemberController(
+  input: MemberUpdateInput,
+): Promise<Member> {
+  return await updateMemberDepartment(memberRepository, input);
 }
