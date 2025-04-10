@@ -47,7 +47,7 @@ async function authCommandHandler(interaction: CommandInteraction) {
   }
   try {
     await changeNickName(interaction, member);
-    await giveRoles(interaction);
+    await giveRoles(interaction, member);
   } catch (error) {
     await interaction.reply("認証に失敗しました");
     throw error;
@@ -64,8 +64,8 @@ async function changeNickName(interaction: CommandInteraction, member: Member) {
   await guildMember.setNickname(realName);
 }
 
-async function giveRoles(interaction: CommandInteraction) {
-  const user = await adminAuth.getUserByEmail(interaction.user.tag);
+async function giveRoles(interaction: CommandInteraction, member: Member) {
+  const user = await adminAuth.getUserByEmail(member.mail);
   const guild = interaction.guild;
   if (!guild) {
     throw new Error("This command can only be used in a guild.");
