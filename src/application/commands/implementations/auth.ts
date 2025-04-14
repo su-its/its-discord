@@ -48,6 +48,8 @@ async function authCommandHandler(interaction: CommandInteraction) {
 
     await changeNickName(interaction, member);
     await giveRoles(interaction, member);
+
+    await interaction.editReply("認証しました!");
   } catch (error) {
     await interaction.editReply("認証に失敗しました");
     throw error;
