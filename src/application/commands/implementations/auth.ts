@@ -26,30 +26,32 @@ const authCommand: Command = {
 };
 
 async function authCommandHandler(interaction: CommandInteraction) {
-  //DMでは実行できないようにする
   if (!interaction.guild) {
     await interaction.reply("このコマンドはサーバーでのみ実行可能です");
     return;
   }
 
-  // Firestoreからメンバー情報を取得
-  const member = await getMemberByDiscordIdController(interaction.user.id);
-  if (!member) {
-    await interaction.reply("メンバー情報が見つかりませんでした");
-    return;
-  }
+  await interaction.deferReply();
 
-  // メール認証が完了しているか確認
-  const user: UserRecord = await adminAuth.getUserByEmail(member.mail);
-  if (!user.emailVerified) {
-    await interaction.reply("メール認証が完了していません");
-    return;
-  }
   try {
+    const member = await getMemberByDiscordIdController(interaction.user.id);
+    if (!member) {
+      await interaction.editReply("メンバー情報が見つかりませんでした");
+      return;
+    }
+
+    const user: UserRecord = await adminAuth.getUserByEmail(member.mail);
+    if (!user.emailVerified) {
+      await interaction.editReply("メール認証が完了していません");
+      return;
+    }
+
     await changeNickName(interaction, member);
-    await giveRoles(interaction);
+    await giveRoles(interaction, member);
+
+    await interaction.editReply("認証しました!");
   } catch (error) {
-    await interaction.reply("認証に失敗しました");
+    await interaction.editReply("認証に失敗しました");
     throw error;
   }
 }
@@ -64,22 +66,18 @@ async function changeNickName(interaction: CommandInteraction, member: Member) {
   await guildMember.setNickname(realName);
 }
 
-async function giveRoles(interaction: CommandInteraction) {
-  const user = await adminAuth.getUserByEmail(interaction.user.tag);
+async function giveRoles(interaction: CommandInteraction, member: Member) {
+  const user = await adminAuth.getUserByEmail(member.mail);
   const guild = interaction.guild;
   if (!guild) {
     throw new Error("This command can only be used in a guild.");
   }
   const guildMember = await guild.members.fetch(interaction.user.id);
-  await giveAuthorizedRole(interaction, guild, guildMember);
+  await giveAuthorizedRole(guild, guildMember);
   await giveDepartmentRole(interaction, user, guildMember);
 }
 
-async function giveAuthorizedRole(
-  interaction: CommandInteraction,
-  guild: Guild,
-  guildMember: GuildMember,
-) {
+async function giveAuthorizedRole(guild: Guild, guildMember: GuildMember) {
   const authorizedRole: Role = await createRoleIfNotFound({
     guild,
     role: roleRegistry.getRole(roleRegistryKeys.authorizedRoleKey),
@@ -91,8 +89,6 @@ async function giveAuthorizedRole(
 
   await guildMember.roles.add(authorizedRole);
   await guildMember.roles.remove(unAuthorizedRole);
-
-  await interaction.reply("認証しました!");
 }
 
 async function giveDepartmentRole(
