@@ -1,19 +1,15 @@
-import {
-  type CommandInteraction,
-  SlashCommandBuilder,
-  type User,
-} from "discord.js";
+import { type CommandInteraction, SlashCommandBuilder, type User } from "discord.js";
 import type Command from "../../../domain/types/command";
-import { getMemberByDiscordIdController } from "../../controllers/MemberController";
+import { createMemberUseCases } from "@shizuoka-its/core";
+
+const memberUsecase = createMemberUseCases();
+
 const whoCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("who")
     .setDescription("ユーザー情報を表示します。")
     .addUserOption((option) =>
-      option
-        .setName("user")
-        .setDescription("情報を表示するユーザー")
-        .setRequired(true),
+      option.setName("user").setDescription("情報を表示するユーザー").setRequired(true)
     ) as SlashCommandBuilder,
   execute: whoCommandHandler,
 };
@@ -31,7 +27,7 @@ async function whoCommandHandler(interaction: CommandInteraction) {
   }
 
   const user: User = userOption.user;
-  const member = await getMemberByDiscordIdController(user.id);
+  const member = await memberUsecase.getMemberByDiscordId.execute({ discordId: user.id });
 
   if (!member) {
     await interaction.reply("メンバー情報が見つかりませんでした。");
@@ -39,7 +35,7 @@ async function whoCommandHandler(interaction: CommandInteraction) {
   }
 
   await interaction.reply(
-    `名前: ${member.name}\n学部: ${member.department}\n学籍番号: ${member.student_number}\nメールアドレス: ${member.mail}`,
+    `名前: ${member.name}\n学部: ${member.department}\n学籍番号: ${member.studentId}\nメールアドレス: ${member.email}`
   );
 }
 

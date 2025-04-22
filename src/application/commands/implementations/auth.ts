@@ -1,27 +1,18 @@
-import {
-  type CommandInteraction,
-  type Guild,
-  type GuildMember,
-  type Role,
-  SlashCommandBuilder,
-} from "discord.js";
+import { type CommandInteraction, type Guild, type GuildMember, type Role, SlashCommandBuilder } from "discord.js";
 import type { UserRecord } from "firebase-admin/lib/auth/user-record";
 import Department from "../../../domain/entities/department";
 import type Member from "../../../domain/entities/member";
 import type Command from "../../../domain/types/command";
 import { adminAuth } from "../../../infrastructure/firebase";
-import {
-  getMemberByDiscordIdController,
-  getMemberByEmailController,
-} from "../../controllers/MemberController";
 import roleRegistry, { roleRegistryKeys } from "../../roles";
 import addRoleToMember from "../../utils/addRoleToMember";
 import createRoleIfNotFound from "../../utils/createRoleNotFound";
+import { createMemberUseCases } from "@shizuoka-its/core";
+
+const memberUsecase = createMemberUseCases();
 
 const authCommand: Command = {
-  data: new SlashCommandBuilder()
-    .setName("auth")
-    .setDescription("認証コマンド"),
+  data: new SlashCommandBuilder().setName("auth").setDescription("認証コマンド"),
   execute: authCommandHandler,
 };
 
@@ -34,7 +25,7 @@ async function authCommandHandler(interaction: CommandInteraction) {
   await interaction.deferReply();
 
   try {
-    const member = await getMemberByDiscordIdController(interaction.user.id);
+    const member = await memberUsecase.getMemberByDiscordId.execute({ discordId: interaction.user.id });
     if (!member) {
       await interaction.editReply("メンバー情報が見つかりませんでした");
       return;
@@ -91,11 +82,7 @@ async function giveAuthorizedRole(guild: Guild, guildMember: GuildMember) {
   await guildMember.roles.remove(unAuthorizedRole);
 }
 
-async function giveDepartmentRole(
-  interaction: CommandInteraction,
-  userAccount: UserRecord,
-  guildMember: GuildMember,
-) {
+async function giveDepartmentRole(interaction: CommandInteraction, userAccount: UserRecord, guildMember: GuildMember) {
   const guild = interaction.guild;
   if (!guild) {
     throw new Error("Guild not found");
@@ -115,9 +102,7 @@ async function giveDepartmentRole(
     [Department.CS]: roleRegistry.getRole(roleRegistryKeys.csRoleKey),
     [Department.IA]: roleRegistry.getRole(roleRegistryKeys.iaRoleKey),
     [Department.BI]: roleRegistry.getRole(roleRegistryKeys.biRoleKey),
-    [Department.GRADUATE]: roleRegistry.getRole(
-      roleRegistryKeys.graduateRoleKey,
-    ),
+    [Department.GRADUATE]: roleRegistry.getRole(roleRegistryKeys.graduateRoleKey),
     [Department.OTHERS]: roleRegistry.getRole(roleRegistryKeys.othersRoleKey),
     [Department.OBOG]: roleRegistry.getRole(roleRegistryKeys.obOgRoleKey),
   };
