@@ -1,18 +1,25 @@
-import { type CommandInteraction, type Guild, type GuildMember, type Role, SlashCommandBuilder } from "discord.js";
+import {
+  type CommandInteraction,
+  type Guild,
+  type GuildMember,
+  SlashCommandBuilder,
+} from "discord.js";
 import type { UserRecord } from "firebase-admin/lib/auth/user-record";
 import Department from "../../../domain/entities/department";
 import type Member from "../../../domain/entities/member";
 import type Command from "../../../domain/types/command";
+import type CustomRole from "../../../domain/types/role";
 import { adminAuth } from "../../../infrastructure/firebase";
+import { toInternalMember } from "../../../infrastructure/itscore/mapper";
+import { memberUsecase } from "../../../infrastructure/itscore/usecases";
 import roleRegistry, { roleRegistryKeys } from "../../roles";
 import addRoleToMember from "../../utils/addRoleToMember";
 import createRoleIfNotFound from "../../utils/createRoleNotFound";
-import { createMemberUseCases } from "@shizuoka-its/core";
-
-const memberUsecase = createMemberUseCases();
 
 const authCommand: Command = {
-  data: new SlashCommandBuilder().setName("auth").setDescription("認証コマンド"),
+  data: new SlashCommandBuilder()
+    .setName("auth")
+    .setDescription("認証コマンド"),
   execute: authCommandHandler,
 };
 
@@ -25,11 +32,15 @@ async function authCommandHandler(interaction: CommandInteraction) {
   await interaction.deferReply();
 
   try {
-    const member = await memberUsecase.getMemberByDiscordId.execute({ discordId: interaction.user.id });
-    if (!member) {
+    const itsMember = await memberUsecase.getMemberByDiscordId.execute({
+      discordId: interaction.user.id,
+    });
+    if (!itsMember) {
       await interaction.editReply("メンバー情報が見つかりませんでした");
       return;
     }
+
+    const member = toInternalMember(itsMember);
 
     const user: UserRecord = await adminAuth.getUserByEmail(member.mail);
     if (!user.emailVerified) {
@@ -69,11 +80,11 @@ async function giveRoles(interaction: CommandInteraction, member: Member) {
 }
 
 async function giveAuthorizedRole(guild: Guild, guildMember: GuildMember) {
-  const authorizedRole: Role = await createRoleIfNotFound({
+  const authorizedRole = await createRoleIfNotFound({
     guild,
     role: roleRegistry.getRole(roleRegistryKeys.authorizedRoleKey),
   });
-  const unAuthorizedRole: Role = await createRoleIfNotFound({
+  const unAuthorizedRole = await createRoleIfNotFound({
     guild,
     role: roleRegistry.getRole(roleRegistryKeys.unAuthorizedRoleKey),
   });
@@ -82,7 +93,11 @@ async function giveAuthorizedRole(guild: Guild, guildMember: GuildMember) {
   await guildMember.roles.remove(unAuthorizedRole);
 }
 
-async function giveDepartmentRole(interaction: CommandInteraction, userAccount: UserRecord, guildMember: GuildMember) {
+async function giveDepartmentRole(
+  interaction: CommandInteraction,
+  userAccount: UserRecord,
+  guildMember: GuildMember,
+) {
   const guild = interaction.guild;
   if (!guild) {
     throw new Error("Guild not found");
@@ -93,16 +108,22 @@ async function giveDepartmentRole(interaction: CommandInteraction, userAccount: 
   }
 
   // 認証用のアカウントから、メンバー情報を取得
-  const member = await getMemberByEmailController(userAccount.email);
-  if (!member) {
+  const itsMember = await memberUsecase.getMemberByEmail.execute({
+    email: userAccount.email,
+  });
+  if (!itsMember) {
     throw new Error("Member not found");
   }
 
-  const departmentRoleMap = {
+  const member = toInternalMember(itsMember);
+
+  const departmentRoleMap: Record<string, CustomRole> = {
     [Department.CS]: roleRegistry.getRole(roleRegistryKeys.csRoleKey),
     [Department.IA]: roleRegistry.getRole(roleRegistryKeys.iaRoleKey),
     [Department.BI]: roleRegistry.getRole(roleRegistryKeys.biRoleKey),
-    [Department.GRADUATE]: roleRegistry.getRole(roleRegistryKeys.graduateRoleKey),
+    [Department.GRADUATE]: roleRegistry.getRole(
+      roleRegistryKeys.graduateRoleKey,
+    ),
     [Department.OTHERS]: roleRegistry.getRole(roleRegistryKeys.othersRoleKey),
     [Department.OBOG]: roleRegistry.getRole(roleRegistryKeys.obOgRoleKey),
   };
