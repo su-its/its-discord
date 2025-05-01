@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import registry from "./application/commands";
 import { setupEventHandlers } from "./application/events/eventHandler";
-import { scheduleHotChannels } from "./application/tasks/scheduleHotChannels";
+import { scheduleHotChannelsCron } from "./interfaces/cron/hotChannelsCron";
 import type AuthData from "./domain/types/authData";
 import { CustomClient } from "./domain/types/customClient";
 import logger from "./infrastructure/logger";
@@ -35,7 +35,7 @@ async function main() {
   }
 
   setupEventHandlers(client, userStates);
-  scheduleHotChannels(client, hotChannelId, postHotChannelTime);
+  scheduleHotChannelsCron(client, hotChannelId, postHotChannelTime);
 
   await client.login(token);
   logger.info("Bot is running...");
