@@ -1,11 +1,9 @@
 import type { CommandInteraction } from "discord.js";
-import administratorRoleProperty from "../../application/roles/implementations/administrator";
+import administratorRoleProperty from "../../domain/types/roles/implementations/administrator";
 import type { AuthorizationSpecification } from "../../domain/types/adminCommand";
 
 export class AdminRoleSpecification implements AuthorizationSpecification {
-  constructor(
-    private readonly roleName: string = administratorRoleProperty.name,
-  ) {}
+  constructor(private readonly roleName: string = administratorRoleProperty.name) {}
 
   async isSatisfiedBy(interaction: CommandInteraction): Promise<boolean> {
     const guild = interaction.guild;

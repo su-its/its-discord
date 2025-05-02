@@ -1,4 +1,4 @@
-import type RoleCategory from "../../../../../domain/types/roleCategory";
+import type RoleCategory from "../../../../roleCategory";
 
 export const DepartmentRoleCategory: RoleCategory = {
   prefix: "DP:",

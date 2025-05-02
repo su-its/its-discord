@@ -1,4 +1,4 @@
-import type Role from "../../../domain/types/role";
+import type Role from "../../role";
 
 export default class RoleRegistry {
   private roles: Map<string, Role> = new Map();

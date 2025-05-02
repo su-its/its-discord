@@ -1,5 +1,5 @@
-import type Role from "../../domain/types/role";
-import type RoleCategory from "../../domain/types/roleCategory";
+import type Role from "../../../../../role";
+import type RoleCategory from "../../../../../roleCategory";
 
 interface BuildRoleByCategoryProps {
   roleCategory: RoleCategory;

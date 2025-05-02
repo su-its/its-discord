@@ -1,5 +1,5 @@
-import type Role from "../../../../../../domain/types/role";
-import buildRoleByCategory from "../../../../../utils/createRoleByCategory";
+import type Role from "../../../../../role";
+import buildRoleByCategory from "../utils/buildRoleByCategory";
 import { DepartmentRoleCategory } from "../departmentRoleCategory";
 
 const obOgRole: Role = buildRoleByCategory({

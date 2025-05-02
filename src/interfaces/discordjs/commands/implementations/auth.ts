@@ -1,11 +1,6 @@
-import {
-  type CommandInteraction,
-  type Guild,
-  type GuildMember,
-  SlashCommandBuilder,
-} from "discord.js";
+import { type CommandInteraction, type Guild, type GuildMember, SlashCommandBuilder } from "discord.js";
 import type { UserRecord } from "firebase-admin/lib/auth/user-record";
-import roleRegistry, { roleRegistryKeys } from "../../../../application/roles";
+import roleRegistry, { roleRegistryKeys } from "../../../../domain/types/roles";
 import addRoleToMember from "../../../../application/utils/addRoleToMember";
 import createRoleIfNotFound from "../../../../application/utils/createRoleNotFound";
 import Department from "../../../../domain/entities/department";
@@ -17,9 +12,7 @@ import { toInternalMember } from "../../../../infrastructure/itscore/mapper";
 import { memberUsecase } from "../../../../infrastructure/itscore/usecases";
 
 const authCommand: Command = {
-  data: new SlashCommandBuilder()
-    .setName("auth")
-    .setDescription("認証コマンド"),
+  data: new SlashCommandBuilder().setName("auth").setDescription("認証コマンド"),
   execute: authCommandHandler,
   isDMAllowed: false,
 };
@@ -89,11 +82,7 @@ async function giveAuthorizedRole(guild: Guild, guildMember: GuildMember) {
   await guildMember.roles.remove(unAuthorizedRole);
 }
 
-async function giveDepartmentRole(
-  interaction: CommandInteraction,
-  userAccount: UserRecord,
-  guildMember: GuildMember,
-) {
+async function giveDepartmentRole(interaction: CommandInteraction, userAccount: UserRecord, guildMember: GuildMember) {
   const guild = interaction.guild;
   if (!guild) {
     throw new Error("Guild not found");
@@ -117,9 +106,7 @@ async function giveDepartmentRole(
     [Department.CS]: roleRegistry.getRole(roleRegistryKeys.csRoleKey),
     [Department.IA]: roleRegistry.getRole(roleRegistryKeys.iaRoleKey),
     [Department.BI]: roleRegistry.getRole(roleRegistryKeys.biRoleKey),
-    [Department.GRADUATE]: roleRegistry.getRole(
-      roleRegistryKeys.graduateRoleKey,
-    ),
+    [Department.GRADUATE]: roleRegistry.getRole(roleRegistryKeys.graduateRoleKey),
     [Department.OTHERS]: roleRegistry.getRole(roleRegistryKeys.othersRoleKey),
     [Department.OBOG]: roleRegistry.getRole(roleRegistryKeys.obOgRoleKey),
   };

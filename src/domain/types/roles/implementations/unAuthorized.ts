@@ -1,4 +1,4 @@
-import type Role from "../../../domain/types/role";
+import type Role from "../../role";
 
 const unAuthorizedRoleProperty: Role = {
   name: "Unauthorized",
