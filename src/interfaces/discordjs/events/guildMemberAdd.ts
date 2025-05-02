@@ -1,9 +1,9 @@
 import { Events, type Guild, type GuildMember, type Role } from "discord.js";
-import type { CustomClient } from "../../domain/types/customClient";
-import logger from "../../infrastructure/logger";
-import roleRegistry from "../roles";
-import { unAuthorizedRoleKey } from "../roles/implementations/unAuthorized";
-import createRoleIfNotFound from "../utils/createRoleNotFound";
+import type { CustomClient } from "../../../domain/types/customClient";
+import logger from "../../../infrastructure/logger";
+import roleRegistry from "../../../application/roles";
+import { unAuthorizedRoleKey } from "../../../application/roles/implementations/unAuthorized";
+import createRoleIfNotFound from "../../../application/utils/createRoleNotFound";
 
 /**
  * GuildMemberAdd イベントハンドラを設定する。
@@ -21,9 +21,7 @@ export function setupGuildMemberAddHandler(client: CustomClient): void {
  * 新規メンバーへウェルカムDMを送信する。
  */
 async function sendDM(member: GuildMember): Promise<void> {
-  await member.send(
-    `ようこそ ${member.displayName} さん！ ITS discord 認証botです!`,
-  );
+  await member.send(`ようこそ ${member.displayName} さん！ ITS discord 認証botです!`);
   await member.send("名前(フルネーム)を教えてください");
   logger.info(`Sent welcome DM to ${member.displayName} (${member.id})`);
 }
@@ -38,7 +36,5 @@ async function giveUnauthorizedRole(member: GuildMember): Promise<void> {
     role: roleRegistry.getRole(unAuthorizedRoleKey),
   });
   await member.roles.add(role);
-  logger.info(
-    `Assigned Unauthorized role (${role.name}) to ${member.displayName} (${member.id})`,
-  );
+  logger.info(`Assigned Unauthorized role (${role.name}) to ${member.displayName} (${member.id})`);
 }

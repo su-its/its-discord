@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { setupEventHandlers } from "./application/events/eventHandler";
+import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
 import type AuthData from "./domain/types/authData";
 import { CustomClient } from "./domain/types/customClient";
 import logger from "./infrastructure/logger";

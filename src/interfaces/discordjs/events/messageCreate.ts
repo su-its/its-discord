@@ -1,14 +1,11 @@
 import { ChannelType, Events, type Message } from "discord.js";
-import Department from "../../domain/entities/department";
-import type AuthData from "../../domain/types/authData";
-import type { CustomClient } from "../../domain/types/customClient";
-import handleMemberRegistration from "../usecases/authController";
-import authMember from "../utils/authMember";
+import Department from "../../../domain/entities/department";
+import type AuthData from "../../../domain/types/authData";
+import type { CustomClient } from "../../../domain/types/customClient";
+import handleMemberRegistration from "../../../application/usecases/authController";
+import authMember from "../../../application/utils/authMember";
 
-export function setupMessageCreate(
-  client: CustomClient,
-  userStates: Map<string, AuthData>,
-) {
+export function setupMessageCreate(client: CustomClient, userStates: Map<string, AuthData>) {
   client.on(Events.MessageCreate, async (message: Message) => {
     if (message.author.bot || message.channel.type !== ChannelType.DM) return;
     handleDM(message, userStates);
@@ -21,29 +18,11 @@ async function handleDM(message: Message, userStates: Map<string, AuthData>) {
   const reply = async (text: string) => message.reply(text);
 
   if (!userInfo.name) {
-    await setUserInfoAndReply(
-      userStates,
-      userId,
-      { name: message.content },
-      "学籍番号を教えてください",
-      reply,
-    );
+    await setUserInfoAndReply(userStates, userId, { name: message.content }, "学籍番号を教えてください", reply);
   } else if (!userInfo.student_number) {
-    await validateAndSetStudentNumber(
-      message,
-      userInfo,
-      userStates,
-      userId,
-      reply,
-    );
+    await validateAndSetStudentNumber(message, userInfo, userStates, userId, reply);
   } else if (!userInfo.department) {
-    await validateAndSetDepartment(
-      message,
-      userInfo,
-      userStates,
-      userId,
-      reply,
-    );
+    await validateAndSetDepartment(message, userInfo, userStates, userId, reply);
   } else if (!userInfo.mail) {
     await validateAndRegisterUser(message, userInfo, userStates, userId, reply);
   }
@@ -54,7 +33,7 @@ async function setUserInfoAndReply(
   userId: string,
   update: Partial<AuthData>,
   replyMessage: string,
-  reply: (message: string) => Promise<Message>,
+  reply: (message: string) => Promise<Message>
 ) {
   const userInfo = userStates.get(userId) || {};
   Object.assign(userInfo, update);
@@ -67,7 +46,7 @@ async function validateAndSetStudentNumber(
   userInfo: AuthData,
   userStates: Map<string, AuthData>,
   userId: string,
-  reply: (message: string) => Promise<Message>,
+  reply: (message: string) => Promise<Message>
 ) {
   const studentNumber = message.content;
   // 学籍番号の形式が正しいかどうか曖昧にチェック
@@ -80,7 +59,7 @@ async function validateAndSetStudentNumber(
     userId,
     { student_number: studentNumber },
     "学科を以下から教えてください: CS, BI, IA, OTHERS",
-    reply,
+    reply
   );
 }
 
@@ -89,7 +68,7 @@ async function validateAndSetDepartment(
   userInfo: AuthData,
   userStates: Map<string, AuthData>,
   userId: string,
-  reply: (message: string) => Promise<Message>,
+  reply: (message: string) => Promise<Message>
 ) {
   const departmentInput = message.content.toUpperCase();
   if (departmentInput in Department) {
@@ -98,12 +77,10 @@ async function validateAndSetDepartment(
       userId,
       { department: Department[departmentInput as keyof typeof Department] },
       "メールアドレスを教えてください",
-      reply,
+      reply
     );
   } else {
-    await reply(
-      "形式が正しくありません。学科を以下から教えてください: CS, BI, IA, GRADUATE, OTHERS",
-    );
+    await reply("形式が正しくありません。学科を以下から教えてください: CS, BI, IA, GRADUATE, OTHERS");
   }
 }
 
@@ -112,7 +89,7 @@ async function validateAndRegisterUser(
   userInfo: AuthData,
   userStates: Map<string, AuthData>,
   userId: string,
-  reply: (message: string) => Promise<Message>,
+  reply: (message: string) => Promise<Message>
 ) {
   const mail = message.content;
   if (mail.endsWith("@shizuoka.ac.jp")) {
@@ -128,7 +105,7 @@ async function validateAndRegisterUser(
         return;
       }
       await reply(
-        "認証メールを送信しました。静大メールから認証を行い、Discordサーバーで`/auth`コマンドを実行してください",
+        "認証メールを送信しました。静大メールから認証を行い、Discordサーバーで`/auth`コマンドを実行してください"
       );
     } else {
       await reply("認証に失敗しました。もう一度やり直してください");
