@@ -1,8 +1,8 @@
 import { REST, Routes, type SlashCommandBuilder } from "discord.js";
 import dotenv from "dotenv";
-import registry from "../application/commands";
 import type Command from "../domain/types/command";
 import logger from "../infrastructure/logger";
+import registry from "../interfaces/discordjs/commands";
 
 function checkEnvVariables() {
   dotenv.config();
