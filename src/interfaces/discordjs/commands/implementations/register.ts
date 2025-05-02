@@ -1,6 +1,5 @@
 import { createMemberUseCases } from "@shizuoka-its/core";
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import checkIsAdmin from "../../../../application/utils/checkMemberRole";
 import Department from "../../../../domain/entities/department";
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
