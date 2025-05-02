@@ -1,6 +1,6 @@
 import type { Guild, GuildMember, Role as OriginalRole } from "discord.js";
-import type Role from "../../domain/types/role";
 import createRoleIfNotFound from "../../application/utils/createRoleNotFound";
+import type Role from "../../domain/types/role";
 
 /**
  * メンバーにロールを追加する

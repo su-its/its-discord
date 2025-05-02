@@ -1,10 +1,10 @@
 import dotenv from "dotenv";
-import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
 import type AuthData from "./domain/types/authData";
 import { CustomClient } from "./domain/types/customClient";
 import logger from "./infrastructure/logger";
 import { scheduleHotChannelsCron } from "./interfaces/cron/hotChannelsCron";
 import registry from "./interfaces/discordjs/commands";
+import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
 
 dotenv.config();
 

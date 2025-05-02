@@ -1,6 +1,6 @@
 import type Role from "../../../../../role";
-import buildRoleByCategory from "../utils/buildRoleByCategory";
 import { DepartmentRoleCategory } from "../departmentRoleCategory";
+import buildRoleByCategory from "../utils/buildRoleByCategory";
 
 const othersRole: Role = buildRoleByCategory({
   roleCategory: DepartmentRoleCategory,

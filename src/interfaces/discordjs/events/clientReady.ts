@@ -1,9 +1,9 @@
 import { Events } from "discord.js";
 import type { Guild } from "discord.js";
-import type { CustomClient } from "../../../domain/types/customClient";
-import logger from "../../../infrastructure/logger";
-import roleRegistry from "../../../domain/types/roles";
 import createRoleIfNotFound from "../../../application/utils/createRoleNotFound";
+import type { CustomClient } from "../../../domain/types/customClient";
+import roleRegistry from "../../../domain/types/roles";
+import logger from "../../../infrastructure/logger";
 
 /**
  * ClientReady イベント発生時のハンドラを設定する。
@@ -41,11 +41,13 @@ export function setupClientReadyHandler(client: CustomClient): void {
  */
 async function initializeRoles(guild: Guild): Promise<void> {
   const roles = roleRegistry.getAllRoles();
-  logger.info(`Found ${roles.length} roles for guild ${guild.name} (${guild.id})`);
+  logger.info(
+    `Found ${roles.length} roles for guild ${guild.name} (${guild.id})`,
+  );
 
   await Promise.all(
     roles.map(async (role) => {
       await createRoleIfNotFound({ guild, role });
-    })
+    }),
   );
 }

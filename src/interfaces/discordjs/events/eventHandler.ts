@@ -5,7 +5,10 @@ import { setupGuildMemberAddHandler } from "./guildMemberAdd";
 import { setupInteractionCreateHandler } from "./interactionCreate";
 import { setupMessageCreate } from "./messageCreate";
 
-export function setupEventHandlers(client: CustomClient, userStates: Map<string, AuthData>) {
+export function setupEventHandlers(
+  client: CustomClient,
+  userStates: Map<string, AuthData>,
+) {
   setupClientReadyHandler(client);
   setupInteractionCreateHandler(client);
   setupGuildMemberAddHandler(client);
