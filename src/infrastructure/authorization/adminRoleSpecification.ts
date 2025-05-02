@@ -3,7 +3,9 @@ import administratorRoleProperty from "../../application/roles/implementations/a
 import type { AuthorizationSpecification } from "../../domain/types/adminCommand";
 
 export class AdminRoleSpecification implements AuthorizationSpecification {
-  constructor(private readonly roleName: string = administratorRoleProperty.name) {}
+  constructor(
+    private readonly roleName: string = administratorRoleProperty.name,
+  ) {}
 
   async isSatisfiedBy(interaction: CommandInteraction): Promise<boolean> {
     const guild = interaction.guild;

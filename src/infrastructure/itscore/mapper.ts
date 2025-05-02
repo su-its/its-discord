@@ -1,4 +1,7 @@
-import type { Department as ItsCoreDepartment, Member as ItsCoreMember } from "@shizuoka-its/core";
+import type {
+  Department as ItsCoreDepartment,
+  Member as ItsCoreMember,
+} from "@shizuoka-its/core";
 import InternalDepartment from "../../domain/entities/department";
 import type InternalMember from "../../domain/entities/member";
 
@@ -25,6 +28,8 @@ function mapDepartment(department: ItsCoreDepartment): InternalDepartment {
   throw new Error(`Invalid department: ${department}`);
 }
 
-export function toInternalDepartment(department: ItsCoreDepartment): InternalDepartment {
+export function toInternalDepartment(
+  department: ItsCoreDepartment,
+): InternalDepartment {
   return mapDepartment(department);
 }

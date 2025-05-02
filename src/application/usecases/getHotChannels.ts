@@ -7,6 +7,7 @@ import {
   type TextChannel,
 } from "discord.js";
 
+// TODO: Usecaseからdiscord.jsの依存を排除する
 export async function generateChannelActivityRanking(guild: Guild) {
   const now = new Date();
   const oneDayAgoSnowflake = SnowflakeUtil.generate({

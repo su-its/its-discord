@@ -1,9 +1,9 @@
 import { createMemberUseCases } from "@shizuoka-its/core";
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import Department from "../../../domain/entities/department";
-import type AdminCommand from "../../../domain/types/adminCommand";
-import checkIsAdmin from "../../utils/checkMemberRole";
-import { AdminRoleSpecification } from "../../../infrastructure/authorization/adminRoleSpecification";
+import checkIsAdmin from "../../../../application/utils/checkMemberRole";
+import Department from "../../../../domain/entities/department";
+import type AdminCommand from "../../../../domain/types/adminCommand";
+import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
 
 const memberUsecase = createMemberUseCases();
 
@@ -11,35 +11,32 @@ const registerCommand: AdminCommand = {
   data: new SlashCommandBuilder()
     .setName("register")
     .setDescription("認証コマンド")
-    .addStringOption((option) => option.setName("mail").setDescription("メールアドレス").setRequired(true))
-    .addStringOption((option) => option.setName("name").setDescription("名前").setRequired(true))
-    .addStringOption((option) => option.setName("department").setDescription("学部").setRequired(true))
     .addStringOption((option) =>
-      option.setName("student_number").setDescription("学籍番号").setRequired(true)
+      option.setName("mail").setDescription("メールアドレス").setRequired(true),
+    )
+    .addStringOption((option) =>
+      option.setName("name").setDescription("名前").setRequired(true),
+    )
+    .addStringOption((option) =>
+      option.setName("department").setDescription("学部").setRequired(true),
+    )
+    .addStringOption((option) =>
+      option
+        .setName("student_number")
+        .setDescription("学籍番号")
+        .setRequired(true),
     ) as SlashCommandBuilder,
   execute: addMemberCommandHandler,
   authorization: new AdminRoleSpecification(),
+  isDMAllowed: false,
 };
 
 async function addMemberCommandHandler(interaction: CommandInteraction) {
-  //DMでは使用不可
-  if (!interaction.guild) {
-    await interaction.reply("このコマンドはサーバー内でのみ使用可能です。");
-    return;
-  }
-
-  //adminロールを持っているか確認
-  const isAdmin: boolean = await checkIsAdmin(interaction);
-  if (!isAdmin) {
-    await interaction.reply("このコマンドは管理者のみ使用可能です。");
-    return;
-  }
-
   //引数が正しいか確認
   const isArgsValid: boolean = validateArgs(
     interaction.options.get("mail")?.value as string,
     interaction.options.get("department")?.value as string,
-    interaction.options.get("student_number")?.value as string
+    interaction.options.get("student_number")?.value as string,
   );
   if (!isArgsValid) {
     await interaction.reply("引数が不正です。");
@@ -53,11 +50,21 @@ async function addMemberCommandHandler(interaction: CommandInteraction) {
     studentId: interaction.options.get("student_number")?.value as string,
   });
 
-  await interaction.reply(`${interaction.options.get("name")?.value}さんを登録しました`);
+  await interaction.reply(
+    `${interaction.options.get("name")?.value}さんを登録しました`,
+  );
 }
 
-function validateArgs(mail: string, department: string, studentNumber: string): boolean {
-  return validateEmail(mail) && validateStudentNumber(studentNumber) && validateDepartment(department);
+function validateArgs(
+  mail: string,
+  department: string,
+  studentNumber: string,
+): boolean {
+  return (
+    validateEmail(mail) &&
+    validateStudentNumber(studentNumber) &&
+    validateDepartment(department)
+  );
 }
 
 function validateEmail(email: string): boolean {

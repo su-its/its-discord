@@ -5,30 +5,26 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import type { UserRecord } from "firebase-admin/lib/auth/user-record";
-import Department from "../../../domain/entities/department";
-import type Member from "../../../domain/entities/member";
-import type Command from "../../../domain/types/command";
-import type CustomRole from "../../../domain/types/role";
-import { adminAuth } from "../../../infrastructure/firebase";
-import { toInternalMember } from "../../../infrastructure/itscore/mapper";
-import { memberUsecase } from "../../../infrastructure/itscore/usecases";
-import roleRegistry, { roleRegistryKeys } from "../../roles";
-import addRoleToMember from "../../utils/addRoleToMember";
-import createRoleIfNotFound from "../../utils/createRoleNotFound";
+import roleRegistry, { roleRegistryKeys } from "../../../../application/roles";
+import addRoleToMember from "../../../../application/utils/addRoleToMember";
+import createRoleIfNotFound from "../../../../application/utils/createRoleNotFound";
+import Department from "../../../../domain/entities/department";
+import type Member from "../../../../domain/entities/member";
+import type Command from "../../../../domain/types/command";
+import type CustomRole from "../../../../domain/types/role";
+import { adminAuth } from "../../../../infrastructure/firebase";
+import { toInternalMember } from "../../../../infrastructure/itscore/mapper";
+import { memberUsecase } from "../../../../infrastructure/itscore/usecases";
 
 const authCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("auth")
     .setDescription("認証コマンド"),
   execute: authCommandHandler,
+  isDMAllowed: false,
 };
 
 async function authCommandHandler(interaction: CommandInteraction) {
-  if (!interaction.guild) {
-    await interaction.reply("このコマンドはサーバーでのみ実行可能です");
-    return;
-  }
-
   await interaction.deferReply();
 
   try {

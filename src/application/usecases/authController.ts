@@ -1,7 +1,7 @@
 import { createMemberUseCases } from "@shizuoka-its/core";
 import type Member from "../../domain/entities/member";
 import type AuthData from "../../domain/types/authData";
-import sendAuthMail from "../usecases/sendAuthMail";
+import sendAuthMail from "./sendAuthMail";
 
 const memberUsecase = createMemberUseCases();
 
