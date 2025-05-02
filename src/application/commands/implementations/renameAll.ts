@@ -1,31 +1,21 @@
 import { createMemberUseCases } from "@shizuoka-its/core";
-import {
-  type CommandInteraction,
-  type GuildMember,
-  SlashCommandBuilder,
-} from "discord.js";
-import type Command from "../../../domain/types/command";
+import { type CommandInteraction, type GuildMember, SlashCommandBuilder } from "discord.js";
+import type AdminCommand from "../../../domain/types/adminCommand";
+import { AdminRoleSpecification } from "../../../infrastructure/authorization/adminRoleSpecification";
 import logger from "../../../infrastructure/logger";
 import checkIsAdmin from "../../utils/checkMemberRole";
 
 const memberUsecase = createMemberUseCases();
 
-const renameALL: Command = {
-  data: new SlashCommandBuilder()
-    .setName("rename_all")
-    .setDescription("全員のニックネームを変更する"),
+const renameALL: AdminCommand = {
+  data: new SlashCommandBuilder().setName("rename_all").setDescription("全員のニックネームを変更する"),
   execute: renameALLHandler,
+  authorization: new AdminRoleSpecification(),
 };
 
 async function renameALLHandler(interaction: CommandInteraction) {
   if (!interaction.guild) {
     await interaction.reply("このコマンドはサーバー内でのみ使用可能です。");
-    return;
-  }
-
-  const isAdmin = await checkIsAdmin(interaction);
-  if (!isAdmin) {
-    await interaction.reply("このコマンドは管理者のみ使用可能です。");
     return;
   }
 
@@ -38,11 +28,9 @@ async function renameALLHandler(interaction: CommandInteraction) {
   const failedMembers: GuildMember[] = [];
   const renamePromises = members.map(async (member) => {
     try {
-      const registeredMember = await memberUsecase.getMemberByDiscordId.execute(
-        {
-          discordId: member.id,
-        },
-      );
+      const registeredMember = await memberUsecase.getMemberByDiscordId.execute({
+        discordId: member.id,
+      });
       if (!registeredMember) {
         // NOTE: DiscordIDとの紐づけが行われていないユーザーもいるため、無視する
         return;
@@ -67,7 +55,7 @@ async function renameALLHandler(interaction: CommandInteraction) {
         : `\n失敗したメンバー:\n${failedMembers.join("\n")}`
       : "";
   await interaction.followUp(
-    `ニックネームの変更が完了しました。\n成功: ${successCount}件\n失敗: ${failureCount}件${failedMembersMessage}`,
+    `ニックネームの変更が完了しました。\n成功: ${successCount}件\n失敗: ${failureCount}件${failedMembersMessage}`
   );
 }
 

@@ -1,27 +1,18 @@
 import * as os from "node:os";
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import type Command from "../../../domain/types/command";
 import checkIsAdmin from "../../utils/checkMemberRole";
+import type AdminCommand from "../../../domain/types/adminCommand";
+import { AdminRoleSpecification } from "../../../infrastructure/authorization/adminRoleSpecification";
 
-const psCommand: Command = {
-  data: new SlashCommandBuilder()
-    .setName("ps")
-    .setDescription("現在のボットプロセス情報を表示します"),
+const psCommand: AdminCommand = {
+  data: new SlashCommandBuilder().setName("ps").setDescription("現在のボットプロセス情報を表示します"),
   execute: psCommandHandler,
+  authorization: new AdminRoleSpecification(),
 };
 
 async function psCommandHandler(interaction: CommandInteraction) {
-  //adminロールを持っているか確認
-  const isAdmin: boolean = await checkIsAdmin(interaction);
-  if (!isAdmin) {
-    await interaction.reply("このコマンドは管理者のみ使用可能です。");
-    return;
-  }
-
   const processInfo = await getProcessInfo();
-  await interaction.reply(
-    `ボットプロセス情報:\nPID: ${processInfo.pid}\nホスト名: ${processInfo.hostname}`,
-  );
+  await interaction.reply(`ボットプロセス情報:\nPID: ${processInfo.pid}\nホスト名: ${processInfo.hostname}`);
 }
 
 async function getProcessInfo(): Promise<{ pid: number; hostname: string }> {

@@ -1,24 +1,17 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import type Command from "../../../domain/types/command";
+import type AdminCommand from "../../../domain/types/adminCommand";
 import { generateChannelActivityRanking } from "../../usecases/getHotChannels";
-import checkIsAdmin from "../../utils/checkMemberRole";
+import { AdminRoleSpecification } from "../../../infrastructure/authorization/adminRoleSpecification";
 
-const hotChannelsCommand: Command = {
-  data: new SlashCommandBuilder()
-    .setName("hot_channels")
-    .setDescription("Show hot channels ranking"),
+const hotChannelsCommand: AdminCommand = {
+  data: new SlashCommandBuilder().setName("hot_channels").setDescription("Show hot channels ranking"),
   execute: hotChannelsHandler,
+  authorization: new AdminRoleSpecification(),
 };
 
 async function hotChannelsHandler(interaction: CommandInteraction) {
   if (!interaction.guild) {
     await interaction.reply("このコマンドはサーバーでのみ実行可能です");
-    return;
-  }
-
-  const isAdmin: boolean = await checkIsAdmin(interaction);
-  if (!isAdmin) {
-    await interaction.reply("このコマンドは管理者のみ使用可能です");
     return;
   }
 
