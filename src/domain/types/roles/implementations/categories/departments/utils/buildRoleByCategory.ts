@@ -1,0 +1,28 @@
+import type Role from "../../../../../role";
+import type RoleCategory from "../../../../../roleCategory";
+
+interface BuildRoleByCategoryProps {
+  roleCategory: RoleCategory;
+  role: Role;
+}
+
+/**
+ * 指定された RoleCategory を利用して Role オブジェクトを構築する関数
+ *
+ * @param {RoleCategory} roleCategory - ロールカテゴリー
+ * @param {Role} role - ロールオブジェクト
+ * @returns 構築された Role オブジェクト
+ */
+function buildRoleByCategory({
+  roleCategory,
+  role,
+}: BuildRoleByCategoryProps): Role {
+  const fullName = `${roleCategory.prefix}${role.name}`;
+  return {
+    name: fullName,
+    color: role.color,
+    reason: role.reason,
+  };
+}
+
+export default buildRoleByCategory;
