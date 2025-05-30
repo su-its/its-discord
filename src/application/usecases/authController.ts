@@ -18,39 +18,29 @@ interface MemberRegistrationInfo extends Omit<Member, "id" | "name"> {
 }
 
 async function handleMemberRegistration(userInfo: AuthData) {
-  const memberRegistrationInfo =
-    convertAuthDataToMemberRegistrationInfo(userInfo);
+  const memberRegistrationInfo = convertAuthDataToMemberRegistrationInfo(userInfo);
   await sendAuthMail(
     memberRegistrationInfo.mail,
     memberRegistrationInfo.student_number,
-    memberRegistrationInfo.department,
+    memberRegistrationInfo.department
   );
 
-  const member = await memberUsecase.getMemberByEmail.execute({
+  const result = await memberUsecase.getMemberByEmail.execute({
     email: memberRegistrationInfo.mail,
   });
-  if (!member) {
+  if (!result.member) {
     throw new Error("Member not found");
   }
 
   await memberUsecase.connectDiscordAccount.execute({
-    memberId: member.id,
+    memberId: result.member.id,
     discordAccountId: memberRegistrationInfo.discordId,
   });
 }
 
-function convertAuthDataToMemberRegistrationInfo(
-  userInfo: AuthData,
-): MemberRegistrationInfo {
-  if (
-    !userInfo.mail ||
-    !userInfo.student_number ||
-    !userInfo.department ||
-    !userInfo.discordId
-  ) {
-    throw new Error(
-      `Missing required fields in AuthData: ${JSON.stringify(userInfo)}`,
-    );
+function convertAuthDataToMemberRegistrationInfo(userInfo: AuthData): MemberRegistrationInfo {
+  if (!userInfo.mail || !userInfo.student_number || !userInfo.department || !userInfo.discordId) {
+    throw new Error(`Missing required fields in AuthData: ${JSON.stringify(userInfo)}`);
   }
   return {
     mail: userInfo.mail,

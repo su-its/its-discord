@@ -16,16 +16,14 @@ export async function renameAllMembersInGuild(guild: Guild): Promise<{
 
   const renamePromises = members.map(async (member) => {
     try {
-      const registeredMember = await memberUsecase.getMemberByDiscordId.execute(
-        {
-          discordId: member.id,
-        },
-      );
-      if (!registeredMember) {
+      const result = await memberUsecase.getMemberByDiscordId.execute({
+        discordId: member.id,
+      });
+      if (!result.member) {
         // NOTE: DiscordIDとの紐づけが行われていないユーザーもいるため、無視する
         return;
       }
-      await member.setNickname(registeredMember.name);
+      await member.setNickname(result.member.getName());
       successCount++;
     } catch (error) {
       failureCount++;

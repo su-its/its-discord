@@ -1,17 +1,14 @@
-import type {
-  Department as ItsCoreDepartment,
-  Member as ItsCoreMember,
-} from "@shizuoka-its/core";
+import type { Department as ItsCoreDepartment, Member as ItsCoreMember } from "@shizuoka-its/core";
 import InternalDepartment from "../../domain/entities/department";
 import type InternalMember from "../../domain/entities/member";
 
 export function toInternalMember(member: ItsCoreMember): InternalMember {
   return {
     id: member.id,
-    name: member.name,
-    student_number: member.studentId,
-    department: mapDepartment(member.department),
-    mail: member.email.getValue(),
+    name: member.getName(),
+    student_number: member.getStudentId(),
+    department: mapDepartment(member.getDepartment()),
+    mail: member.getEmail().getValue(),
     discordId: member.getDiscordAccounts()[0]?.id,
   };
 }
@@ -28,8 +25,6 @@ function mapDepartment(department: ItsCoreDepartment): InternalDepartment {
   throw new Error(`Invalid department: ${department}`);
 }
 
-export function toInternalDepartment(
-  department: ItsCoreDepartment,
-): InternalDepartment {
+export function toInternalDepartment(department: ItsCoreDepartment): InternalDepartment {
   return mapDepartment(department);
 }
