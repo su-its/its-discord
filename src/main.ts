@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 import type AuthData from "./domain/types/authData";
 import { CustomClient } from "./domain/types/customClient";
 import logger from "./infrastructure/logger";
+// DIコンテナの初期化（アプリケーション起動時に実行される）
+import "./infrastructure/di/container";
 import { scheduleHotChannelsCron } from "./interfaces/cron/hotChannelsCron";
 import registry from "./interfaces/discordjs/commands";
 import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";

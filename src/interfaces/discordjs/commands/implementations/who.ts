@@ -1,6 +1,6 @@
 import { type CommandInteraction, SlashCommandBuilder, type User } from "discord.js";
 import type Command from "../../../../domain/types/command";
-import { itsCoreMemberRepository } from "../../../../infrastructure/itscore/memberService";
+import { itsCoreService } from "../../../../application/services/itsCoreService";
 
 const whoCommand: Command = {
   data: new SlashCommandBuilder()
@@ -21,14 +21,15 @@ async function whoCommandHandler(interaction: CommandInteraction) {
   }
 
   const user: User = userOption.user;
-  itsCoreMemberRepository.getMemberByDiscordId(user.id).then((member) => {
-    if (!member) {
-      return interaction.reply("メンバー情報が見つかりませんでした。");
-    }
-    return interaction.reply(
-      `名前: ${member.name}\n学部: ${member.department}\n学籍番号: ${member.student_number}\nメールアドレス: ${member.mail}`
-    );
-  });
+  const member = await itsCoreService.getMemberByDiscordId(user.id);
+  if (!member) {
+    await interaction.reply("メンバー情報が見つかりませんでした。");
+    return;
+  }
+
+  await interaction.reply(
+    `名前: ${member.name}\n学部: ${member.department}\n学籍番号: ${member.student_number}\nメールアドレス: ${member.mail}`
+  );
 }
 
 export default whoCommand;

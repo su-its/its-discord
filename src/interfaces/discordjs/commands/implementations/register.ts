@@ -2,7 +2,7 @@ import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
 import Department from "../../../../domain/entities/department";
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
-import { itsCoreMemberRepository } from "../../../../infrastructure/itscore/memberService";
+import { itsCoreService } from "../../../../application/services/itsCoreService";
 
 const registerCommand: AdminCommand = {
   data: new SlashCommandBuilder()
@@ -31,7 +31,7 @@ async function addMemberCommandHandler(interaction: CommandInteraction) {
     return;
   }
 
-  await itsCoreMemberRepository.registerMember({
+  await itsCoreService.registerMember({
     email: interaction.options.get("mail")?.value as string,
     name: interaction.options.get("name")?.value as string,
     department: interaction.options.get("department")?.value as string,

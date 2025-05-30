@@ -6,7 +6,7 @@ import removeRole from "../../../../infrastructure/discordjs/addRole";
 import addRole from "../../../../infrastructure/discordjs/addRole";
 import giveDepartmentRole from "../../../../infrastructure/discordjs/giveDepartmentRole";
 import { firebaseAuthService } from "../../../../infrastructure/firebase";
-import { itsCoreMemberRepository } from "../../../../infrastructure/itscore/memberService";
+import { itsCoreService } from "../../../../application/services/itsCoreService";
 
 const authCommand: Command = {
   data: new SlashCommandBuilder().setName("auth").setDescription("認証コマンド"),
@@ -27,7 +27,7 @@ async function authCommandHandler(interaction: CommandInteraction) {
   await interaction.deferReply();
 
   try {
-    const member = await itsCoreMemberRepository.getMemberByDiscordId(interaction.user.id);
+    const member = await itsCoreService.getMemberByDiscordId(interaction.user.id);
     if (!member) {
       await interaction.editReply("メンバー情報がITSCoreに存在しません。管理者に連絡してください。");
       return;

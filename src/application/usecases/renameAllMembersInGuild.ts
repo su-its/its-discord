@@ -1,5 +1,5 @@
 import type { Guild, GuildMember } from "discord.js";
-import { itsCoreMemberRepository } from "../../infrastructure/itscore/memberService";
+import { itsCoreService } from "../services/itsCoreService";
 import logger from "../../infrastructure/logger";
 
 export async function renameAllMembersInGuild(guild: Guild): Promise<{
@@ -14,7 +14,7 @@ export async function renameAllMembersInGuild(guild: Guild): Promise<{
 
   const renamePromises = members.map(async (member) => {
     try {
-      const itsMember = await itsCoreMemberRepository.getMemberByDiscordId(member.id);
+      const itsMember = await itsCoreService.getMemberByDiscordId(member.id);
       if (!itsMember) {
         // NOTE: DiscordIDとの紐づけが行われていないユーザーもいるため、無視する
         return;

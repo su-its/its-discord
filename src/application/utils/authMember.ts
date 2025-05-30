@@ -1,9 +1,9 @@
 import type Member from "../../domain/entities/member";
 import type AuthData from "../../domain/types/authData";
-import { itsCoreMemberRepository } from "../../infrastructure/itscore/memberService";
+import { itsCoreService } from "../services/itsCoreService";
 
 async function authMember(authData: AuthData): Promise<boolean> {
-  const members: Member[] = await itsCoreMemberRepository.getMemberList();
+  const members: Member[] = await itsCoreService.getMemberList();
   //membersの中からauthDataと一致するものがあるかどうかを確認する
   const authMember: Member | undefined = members.find((member) => {
     return (

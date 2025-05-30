@@ -1,26 +1,14 @@
 import { createMemberUseCases } from "@shizuoka-its/core";
+import type { ITSCorePort, MemberRegistrationData, MemberConnectionData } from "../../application/ports/itsCorePort";
 import type InternalMember from "../../domain/entities/member";
 import { toInternalMember } from "./mapper";
 
-// ITSCoreとの通信で必要な型定義（必要最小限の情報のみ）
-interface MemberRegistrationData {
-  email: string;
-  name: string;
-  department: string;
-  studentId: string;
-}
-
-interface MemberConnectionData {
-  memberId: string;
-  discordAccountId: string;
-}
-
 /**
- * ITSCoreのメンバー機能へのアクセスを提供するリポジトリクラス
+ * ITSCoreのメンバー機能へのアクセスを提供するAdapter（ヘキサゴナルアーキテクチャ）
  * YAGNIの原則に従い、実際に使用される機能のみを公開
  * ITSCoreのモデルを内部モデルに変換して返す責務も持つ
  */
-export class ITSCoreMemberRepository {
+export class ITSCoreMemberRepository implements ITSCorePort {
   private useCases = createMemberUseCases();
 
   /**

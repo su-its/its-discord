@@ -1,6 +1,6 @@
 import type Member from "../../domain/entities/member";
 import type AuthData from "../../domain/types/authData";
-import { itsCoreMemberRepository } from "../../infrastructure/itscore/memberService";
+import { itsCoreService } from "../services/itsCoreService";
 import sendAuthMail from "./sendAuthMail";
 
 /**
@@ -23,12 +23,12 @@ async function handleMemberRegistration(userInfo: AuthData) {
     memberRegistrationInfo.department
   );
 
-  const member = await itsCoreMemberRepository.getMemberByEmail(memberRegistrationInfo.mail);
+  const member = await itsCoreService.getMemberByEmail(memberRegistrationInfo.mail);
   if (!member) {
     throw new Error("Member not found");
   }
 
-  await itsCoreMemberRepository.connectDiscordAccount({
+  await itsCoreService.connectDiscordAccount({
     memberId: member.id,
     discordAccountId: memberRegistrationInfo.discordId,
   });
