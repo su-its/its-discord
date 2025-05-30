@@ -1,10 +1,12 @@
 import dotenv from "dotenv";
-import registry from "./application/commands";
-import { setupEventHandlers } from "./application/events/eventHandler";
-import { scheduleHotChannels } from "./application/tasks/scheduleHotChannels";
 import type AuthData from "./domain/types/authData";
 import { CustomClient } from "./domain/types/customClient";
 import logger from "./infrastructure/logger";
+// DIコンテナの初期化（アプリケーション起動時に実行される）
+import "./infrastructure/di/container";
+import { scheduleHotChannelsCron } from "./interfaces/cron/hotChannelsCron";
+import registry from "./interfaces/discordjs/commands";
+import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
 
 dotenv.config();
 
@@ -35,7 +37,7 @@ async function main() {
   }
 
   setupEventHandlers(client, userStates);
-  scheduleHotChannels(client, hotChannelId, postHotChannelTime);
+  scheduleHotChannelsCron(client, hotChannelId, postHotChannelTime);
 
   await client.login(token);
   logger.info("Bot is running...");
