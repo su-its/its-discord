@@ -1,9 +1,6 @@
-import { createMemberUseCases } from "@shizuoka-its/core";
 import { type CommandInteraction, SlashCommandBuilder, type User } from "discord.js";
 import type Command from "../../../../domain/types/command";
-import { toInternalMember } from "../../../../infrastructure/itscore/mapper";
-
-const memberUsecase = createMemberUseCases();
+import { itsCoreMemberRepository } from "../../../../infrastructure/itscore/memberService";
 
 const whoCommand: Command = {
   data: new SlashCommandBuilder()
@@ -24,19 +21,14 @@ async function whoCommandHandler(interaction: CommandInteraction) {
   }
 
   const user: User = userOption.user;
-  memberUsecase.getMemberByDiscordId
-    .execute({
-      discordId: user.id,
-    })
-    .then((result) => {
-      if (!result.member) {
-        return interaction.reply("メンバー情報が見つかりませんでした。");
-      }
-      const internalMember = toInternalMember(result.member);
-      return interaction.reply(
-        `名前: ${internalMember.name}\n学部: ${internalMember.department}\n学籍番号: ${internalMember.student_number}\nメールアドレス: ${internalMember.mail}`
-      );
-    });
+  itsCoreMemberRepository.getMemberByDiscordId(user.id).then((member) => {
+    if (!member) {
+      return interaction.reply("メンバー情報が見つかりませんでした。");
+    }
+    return interaction.reply(
+      `名前: ${member.name}\n学部: ${member.department}\n学籍番号: ${member.student_number}\nメールアドレス: ${member.mail}`
+    );
+  });
 }
 
 export default whoCommand;

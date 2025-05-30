@@ -1,9 +1,7 @@
-import { createMemberUseCases } from "@shizuoka-its/core";
 import type Member from "../../domain/entities/member";
 import type AuthData from "../../domain/types/authData";
+import { itsCoreMemberRepository } from "../../infrastructure/itscore/memberService";
 import sendAuthMail from "./sendAuthMail";
-
-const memberUsecase = createMemberUseCases();
 
 /**
  * メンバーの登録を行う
@@ -25,15 +23,13 @@ async function handleMemberRegistration(userInfo: AuthData) {
     memberRegistrationInfo.department
   );
 
-  const result = await memberUsecase.getMemberByEmail.execute({
-    email: memberRegistrationInfo.mail,
-  });
-  if (!result.member) {
+  const member = await itsCoreMemberRepository.getMemberByEmail(memberRegistrationInfo.mail);
+  if (!member) {
     throw new Error("Member not found");
   }
 
-  await memberUsecase.connectDiscordAccount.execute({
-    memberId: result.member.id,
+  await itsCoreMemberRepository.connectDiscordAccount({
+    memberId: member.id,
     discordAccountId: memberRegistrationInfo.discordId,
   });
 }

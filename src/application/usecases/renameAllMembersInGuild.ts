@@ -1,8 +1,6 @@
-import { createMemberUseCases } from "@shizuoka-its/core";
 import type { Guild, GuildMember } from "discord.js";
+import { itsCoreMemberRepository } from "../../infrastructure/itscore/memberService";
 import logger from "../../infrastructure/logger";
-
-const memberUsecase = createMemberUseCases();
 
 export async function renameAllMembersInGuild(guild: Guild): Promise<{
   successCount: number;
@@ -16,14 +14,12 @@ export async function renameAllMembersInGuild(guild: Guild): Promise<{
 
   const renamePromises = members.map(async (member) => {
     try {
-      const result = await memberUsecase.getMemberByDiscordId.execute({
-        discordId: member.id,
-      });
-      if (!result.member) {
+      const itsMember = await itsCoreMemberRepository.getMemberByDiscordId(member.id);
+      if (!itsMember) {
         // NOTE: DiscordIDとの紐づけが行われていないユーザーもいるため、無視する
         return;
       }
-      await member.setNickname(result.member.getName());
+      await member.setNickname(itsMember.name);
       successCount++;
     } catch (error) {
       failureCount++;
