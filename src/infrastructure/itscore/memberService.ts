@@ -1,5 +1,9 @@
 import { createMemberUseCases } from "@shizuoka-its/core";
-import type { ITSCorePort, MemberRegistrationData, MemberConnectionData } from "../../application/ports/itsCorePort";
+import type {
+  ITSCorePort,
+  MemberConnectionData,
+  MemberRegistrationData,
+} from "../../application/ports/itsCorePort";
 import type InternalMember from "../../domain/entities/member";
 import { toInternalMember } from "./mapper";
 
@@ -21,8 +25,12 @@ export class ITSCoreMemberRepository implements ITSCorePort {
   /**
    * DiscordIDでメンバーを取得する
    */
-  async getMemberByDiscordId(discordId: string): Promise<InternalMember | undefined> {
-    const result = await this.useCases.getMemberByDiscordId.execute({ discordId });
+  async getMemberByDiscordId(
+    discordId: string,
+  ): Promise<InternalMember | undefined> {
+    const result = await this.useCases.getMemberByDiscordId.execute({
+      discordId,
+    });
     return result.member ? toInternalMember(result.member) : undefined;
   }
 

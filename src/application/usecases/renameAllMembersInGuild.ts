@@ -1,34 +1,24 @@
-import type { Guild, GuildMember } from "discord.js";
-import { itsCoreService } from "../services/itsCoreService";
 import logger from "../../infrastructure/logger";
+import type { MemberRenameResult } from "../ports/discordServerPort";
+import { discordServerService } from "../services/discordServerService";
+import { itsCoreService } from "../services/itsCoreService";
 
-export async function renameAllMembersInGuild(guild: Guild): Promise<{
-  successCount: number;
-  failureCount: number;
-  failedMembers: GuildMember[];
-}> {
-  const members = await guild.members.fetch();
-  let successCount = 0;
-  let failureCount = 0;
-  const failedMembers: GuildMember[] = [];
+export async function renameAllMembersInGuild(
+  guildId: string,
+): Promise<MemberRenameResult> {
+  // ITSCoreから全メンバーのDiscordIDと名前のマッピングを取得
+  const members = await itsCoreService.getMemberList();
+  const memberNameMap = new Map<string, string>();
 
-  const renamePromises = members.map(async (member) => {
-    try {
-      const itsMember = await itsCoreService.getMemberByDiscordId(member.id);
-      if (!itsMember) {
-        // NOTE: DiscordIDとの紐づけが行われていないユーザーもいるため、無視する
-        return;
-      }
-      await member.setNickname(itsMember.name);
-      successCount++;
-    } catch (error) {
-      failureCount++;
-      failedMembers.push(member);
-      logger.error(`Failed to rename ${member}: ${error}`);
+  for (const member of members) {
+    if (member.discordId) {
+      memberNameMap.set(member.discordId, member.name);
     }
-  });
+  }
 
-  await Promise.all(renamePromises);
-
-  return { successCount, failureCount, failedMembers };
+  // DiscordServerServiceを使って一括リネーム
+  return await discordServerService.renameAllMembersInGuild(
+    guildId,
+    memberNameMap,
+  );
 }

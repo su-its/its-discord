@@ -8,7 +8,7 @@ export function scheduleHotChannelsCron(
   time: string,
 ): void {
   const job = new CronJob(time, async () => {
-    await postHotChannels(client, channelId);
+    await postHotChannels(channelId);
   });
   job.start();
 }

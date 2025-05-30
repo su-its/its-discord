@@ -3,7 +3,7 @@ import Department from "../../domain/entities/department";
 import type Member from "../../domain/entities/member";
 import type CustomRole from "../../domain/types/role";
 import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
-import removeRole from "./addRole";
+import addRole from "./addRole";
 
 async function giveDepartmentRole(
   guild: Guild,
@@ -23,7 +23,7 @@ async function giveDepartmentRole(
 
   const role = departmentRoleMap[internalMember.department];
 
-  await removeRole(guild, guildMember, role);
+  await addRole(guild, guildMember, role);
 }
 
 export default giveDepartmentRole;

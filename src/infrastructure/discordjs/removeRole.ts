@@ -1,21 +1,15 @@
-import type { Guild, GuildMember, Role as OriginalRole } from "discord.js";
-import createRoleIfNotFound from "../../application/utils/createRoleNotFound";
+import type { Guild, GuildMember } from "discord.js";
+import { discordServerService } from "../../application/services/discordServerService";
 import type Role from "../../domain/types/role";
 
 /**
- * メンバーにロールを追加する
- * ロールが存在しない場合は作成する
+ * メンバーからロールを削除する
  * @param guild ギルド
  * @param member メンバー
  * @param role ロール
  */
-async function addRole(guild: Guild, member: GuildMember, role: Role) {
-  // TODO: ロールが存在しない場合かってに作ってしまっている https://github.com/su-its/its-discord/issues/84
-  const originalRole: OriginalRole = await createRoleIfNotFound({
-    guild,
-    role,
-  });
-  await member.roles.add(originalRole);
+async function removeRole(guild: Guild, member: GuildMember, role: Role) {
+  await discordServerService.removeRoleFromMember(guild.id, member.id, role);
 }
 
-export default addRole;
+export default removeRole;

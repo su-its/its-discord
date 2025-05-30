@@ -2,11 +2,12 @@ import { type CommandInteraction, type Guild, type GuildMember, SlashCommandBuil
 import type { UserRecord } from "firebase-admin/lib/auth/user-record";
 import type Command from "../../../../domain/types/command";
 import roleRegistry, { roleRegistryKeys } from "../../../../domain/types/roles";
-import removeRole from "../../../../infrastructure/discordjs/addRole";
+import removeRole from "../../../../infrastructure/discordjs/removeRole";
 import addRole from "../../../../infrastructure/discordjs/addRole";
 import giveDepartmentRole from "../../../../infrastructure/discordjs/giveDepartmentRole";
 import { firebaseAuthService } from "../../../../infrastructure/firebase";
 import { itsCoreService } from "../../../../application/services/itsCoreService";
+import { discordServerService } from "../../../../application/services/discordServerService";
 
 const authCommand: Command = {
   data: new SlashCommandBuilder().setName("auth").setDescription("認証コマンド"),
@@ -44,7 +45,7 @@ async function authCommandHandler(interaction: CommandInteraction) {
     await giveDepartmentRole(guild, guildMember, member);
     await addRole(guild, guildMember, roleRegistry.getRole(roleRegistryKeys.authorizedRoleKey));
     await removeRole(guild, guildMember, roleRegistry.getRole(roleRegistryKeys.unAuthorizedRoleKey));
-    await guildMember.setNickname(member.name);
+    await discordServerService.setMemberNickname(guild.id, guildMember.id, member.name);
 
     await interaction.editReply("認証に成功しました! ITSへようこそ!");
   } catch (error) {

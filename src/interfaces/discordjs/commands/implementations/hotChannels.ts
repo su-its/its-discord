@@ -14,7 +14,7 @@ const hotChannelsCommand: AdminCommand = {
 
 async function hotChannelsHandler(interaction: CommandInteraction) {
   if (!interaction.guild) throw new Error("Guild not found");
-  const ranking = await generateChannelActivityRanking(interaction.guild);
+  const ranking = await generateChannelActivityRanking(interaction.guild.id);
   await interaction.reply({ embeds: [ranking] });
 }
 
