@@ -20,7 +20,7 @@ export class MemoryScheduledMessageRepository implements ScheduledMessagePort {
     const scheduledMessage: ScheduledMessage = {
       id,
       channelId: messageData.channelId,
-      message: messageData.message,
+      messageContent: messageData.messageContent,
       cronSchedule: messageData.cronSchedule,
       isActive: true,
       createdAt: now,
@@ -49,7 +49,7 @@ export class MemoryScheduledMessageRepository implements ScheduledMessagePort {
     const scheduledMessage: ScheduledMessage = {
       id,
       channelId: messageData.channelId,
-      message: messageData.message,
+      messageContent: messageData.messageContent,
       cronSchedule: messageData.cronSchedule,
       isActive: true,
       createdAt: now,

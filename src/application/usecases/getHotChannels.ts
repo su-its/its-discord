@@ -1,6 +1,6 @@
 import { discordServerService } from "../services/discordServerService";
 
-interface ChannelActivity {
+export interface ChannelActivity {
   id: string;
   name: string;
   count: number;

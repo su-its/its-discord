@@ -1,3 +1,4 @@
+import type { Embed } from "../../domain/entities/scheduledMessage";
 import logger from "../../infrastructure/logger";
 import { discordServerService } from "../services/discordServerService";
 import { scheduledMessageService } from "../services/scheduledMessageService";
@@ -24,11 +25,21 @@ export async function sendScheduledMessage(
       return;
     }
 
-    // メッセージを送信
-    await discordServerService.sendMessageToChannel(
-      targetMessage.channelId,
-      targetMessage.message,
-    );
+    // メッセージコンテンツを実行
+    if (typeof targetMessage.messageContent === "string") {
+      // 静的テキストメッセージの場合
+      await discordServerService.sendMessageToChannel(
+        targetMessage.channelId,
+        targetMessage.messageContent,
+      );
+      logger.debug(`Sent static message to channel ${targetMessage.channelId}`);
+    } else {
+      // 関数の場合は実行（既存のUsecaseはvoidを返すので、戻り値の処理は不要）
+      const constnt = await targetMessage.messageContent();
+      logger.debug(
+        `Executed message function for channel ${targetMessage.channelId}`,
+      );
+    }
 
     // 最後の実行時刻を更新
     await scheduledMessageService.updateLastExecuted(
@@ -65,10 +76,27 @@ export async function executeAllScheduledMessages(): Promise<void> {
     // 並列実行でパフォーマンスを向上
     const promises = activeMessages.map(async (message) => {
       try {
-        await discordServerService.sendMessageToChannel(
-          message.channelId,
-          message.message,
-        );
+        if (typeof message.messageContent === "string") {
+          // 静的テキストメッセージの場合
+          await discordServerService.sendMessageToChannel(
+            message.channelId,
+            message.messageContent,
+          );
+        } else {
+          // 関数の場合は実行
+          const content = await message.messageContent();
+          if (typeof content === "object" && content.title) {
+            await discordServerService.sendEmbedToChannel(
+              message.channelId,
+              content as Embed,
+            );
+          } else {
+            await discordServerService.sendMessageToChannel(
+              message.channelId,
+              content as string,
+            );
+          }
+        }
         await scheduledMessageService.updateLastExecuted(
           message.id,
           new Date(),

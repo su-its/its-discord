@@ -50,7 +50,7 @@ export async function initializeScheduledMessagesFromConfig(): Promise<void> {
             config.id,
             {
               channelId: config.channelId,
-              message: config.message,
+              messageContent: config.messageContent,
               cronSchedule: config.cronSchedule,
             },
           );
