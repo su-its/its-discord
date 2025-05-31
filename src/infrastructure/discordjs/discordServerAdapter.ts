@@ -14,7 +14,6 @@ import type {
   DiscordMember,
   DiscordServerPort,
   EmbedData,
-  MemberRenameResult,
 } from "../../application/ports/discordServerPort";
 import type { CustomClient } from "../../domain/types/customClient";
 import type Role from "../../domain/types/role";
@@ -170,82 +169,6 @@ export class DiscordServerAdapter implements DiscordServerPort {
     return {
       id: guild.id,
       name: guild.name,
-    };
-  }
-
-  async renameAllMembersInGuild(
-    guildId: string,
-    memberNameMap: Map<string, string>,
-  ): Promise<MemberRenameResult> {
-    const guild = this.client.guilds.cache.get(guildId);
-    if (!guild) throw new Error(`Guild not found: ${guildId}`);
-
-    const members = await guild.members.fetch();
-    let successCount = 0;
-    let failureCount = 0;
-    const failedMembers: DiscordMember[] = [];
-
-    const renamePromises = members.map(async (member) => {
-      try {
-        const newName = memberNameMap.get(member.id);
-        if (!newName) return; // スキップ
-
-        await member.setNickname(newName);
-        successCount++;
-      } catch (error) {
-        failureCount++;
-        failedMembers.push({
-          id: member.id,
-          displayName: member.displayName,
-          nickname: member.nickname || undefined,
-        });
-        logger.error(`Failed to rename ${member}: ${error}`);
-      }
-    });
-
-    await Promise.all(renamePromises);
-    return { successCount, failureCount, failedMembers };
-  }
-
-  async generateChannelActivityEmbedData(guildId: string): Promise<EmbedData> {
-    const guild = this.client.guilds.cache.get(guildId);
-    if (!guild) throw new Error(`Guild not found: ${guildId}`);
-
-    const now = new Date();
-    const channels = await this.getTextChannels(guildId);
-
-    const channelStats = await Promise.all(
-      channels.map(async (channel) => ({
-        id: channel.id,
-        name: channel.name,
-        count: await this.getChannelMessageCount(guildId, channel.id),
-      })),
-    );
-
-    const targetChannels = channelStats.filter((channel) => channel.count > 0);
-    const sortedStats = targetChannels
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 20);
-    const totalMessages = sortedStats.reduce(
-      (sum, channel) => sum + channel.count,
-      0,
-    );
-
-    const fields: APIEmbedField[] = sortedStats.map((channel, index) => {
-      const percentage = ((channel.count / totalMessages) * 100).toFixed(1);
-      return {
-        name: `${index + 1}. https://discord.com/channels/${guildId}/${channel.id}`,
-        value: `発言数: ${channel.count} (${percentage}%)`,
-        inline: false,
-      };
-    });
-
-    return {
-      color: 0x0099ff,
-      title: "Hot Channels Bot",
-      description: `${now.toISOString().split("T")[0]} の発言数ランキング`,
-      footer: { text: `合計発言数: ${totalMessages}` },
-      fields,
     };
   }
 

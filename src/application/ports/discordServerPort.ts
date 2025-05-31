@@ -46,12 +46,6 @@ export interface EmbedData {
   };
 }
 
-export interface MemberRenameResult {
-  successCount: number;
-  failureCount: number;
-  failedMembers: DiscordMember[];
-}
-
 /**
  * Discordサーバーの操作を抽象化するPort（ヘキサゴナルアーキテクチャ）
  * Application層はこのインターフェースのみに依存し、Discord.jsの詳細を知らない
@@ -113,19 +107,6 @@ export interface DiscordServerPort {
    * 最初のギルドを取得する
    */
   getFirstGuild(): Promise<DiscordGuild>;
-
-  /**
-   * メンバーの全ニックネームを一括変更する
-   */
-  renameAllMembersInGuild(
-    guildId: string,
-    memberNameMap: Map<string, string>,
-  ): Promise<MemberRenameResult>;
-
-  /**
-   * チャンネル活動ランキングのEmbedデータを生成する
-   */
-  generateChannelActivityEmbedData(guildId: string): Promise<EmbedData>;
 
   /**
    * メンバーにDMを送信する

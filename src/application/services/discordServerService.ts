@@ -4,7 +4,6 @@ import type {
   DiscordMember,
   DiscordServerPort,
   EmbedData,
-  MemberRenameResult,
 } from "../ports/discordServerPort";
 
 /**
@@ -58,6 +57,19 @@ export class DiscordServerService {
     return this.port.setMemberNickname(guildId, memberId, nickname);
   }
 
+  async getTextChannels(
+    guildId: string,
+  ): Promise<ReturnType<DiscordServerPort["getTextChannels"]>> {
+    return this.port.getTextChannels(guildId);
+  }
+
+  async getChannelMessageCount(
+    guildId: string,
+    channelId: string,
+  ): Promise<number> {
+    return this.port.getChannelMessageCount(guildId, channelId);
+  }
+
   async addRoleToMember(
     guildId: string,
     memberId: string,
@@ -82,17 +94,6 @@ export class DiscordServerService {
     ReturnType<DiscordServerPort["getFirstGuild"]>
   > {
     return this.port.getFirstGuild();
-  }
-
-  async renameAllMembersInGuild(
-    guildId: string,
-    memberNameMap: Map<string, string>,
-  ): Promise<MemberRenameResult> {
-    return this.port.renameAllMembersInGuild(guildId, memberNameMap);
-  }
-
-  async generateChannelActivityEmbedData(guildId: string): Promise<EmbedData> {
-    return this.port.generateChannelActivityEmbedData(guildId);
   }
 
   async sendEmbedToChannel(
