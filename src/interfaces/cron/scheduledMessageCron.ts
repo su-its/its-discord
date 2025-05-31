@@ -24,28 +24,20 @@ class ScheduledMessageCronManager {
           try {
             await sendScheduledMessage(messageId);
           } catch (error) {
-            logger.error(
-              `Error executing scheduled message ${messageId}:`,
-              error,
-            );
+            logger.error(`Error executing scheduled message ${messageId}:`, error);
           }
         },
         null, // onComplete
         false, // start immediately
-        "Asia/Tokyo", // timezone
+        "Asia/Tokyo" // timezone
       );
 
       this.jobs.set(messageId, job);
       job.start();
 
-      logger.info(
-        `Created cron job for scheduled message: ${messageId} with schedule: ${cronSchedule}`,
-      );
+      logger.info(`Created cron job for scheduled message: ${messageId} with schedule: ${cronSchedule}`);
     } catch (error) {
-      logger.error(
-        `Failed to create cron job for message ${messageId}:`,
-        error,
-      );
+      logger.error(`Failed to create cron job for message ${messageId}:`, error);
       throw error;
     }
   }
@@ -95,27 +87,11 @@ class ScheduledMessageCronManager {
 export const scheduledMessageCronManager = new ScheduledMessageCronManager();
 
 /**
- * スケジュールメッセージのCronシステムを初期化する
- * アプリケーション起動時に呼び出される
- */
-export async function initializeScheduledMessageCron(): Promise<void> {
-  try {
-    logger.info("Scheduled message cron system initialized successfully");
-  } catch (error) {
-    logger.error("Failed to initialize scheduled message cron system:", error);
-    throw error;
-  }
-}
-
-/**
  * 新しいスケジュールメッセージのCronジョブを追加する
  * @param messageId メッセージID
  * @param cronSchedule Cron式
  */
-export function addScheduledMessageJob(
-  messageId: string,
-  cronSchedule: string,
-): void {
+export function addScheduledMessageJob(messageId: string, cronSchedule: string): void {
   scheduledMessageCronManager.createJobForMessage(messageId, cronSchedule);
 }
 
