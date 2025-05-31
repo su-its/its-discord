@@ -1,13 +1,20 @@
-import { type CommandInteraction, SlashCommandBuilder, type User } from "discord.js";
-import type Command from "../../../../domain/types/command";
+import {
+  type CommandInteraction,
+  SlashCommandBuilder,
+  type User,
+} from "discord.js";
 import { itsCoreService } from "../../../../application/services/itsCoreService";
+import type Command from "../../../../domain/types/command";
 
 const whoCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("who")
     .setDescription("ユーザー情報を表示します。")
     .addUserOption((option) =>
-      option.setName("user").setDescription("情報を表示するユーザー").setRequired(true)
+      option
+        .setName("user")
+        .setDescription("情報を表示するユーザー")
+        .setRequired(true),
     ) as SlashCommandBuilder,
   execute: whoCommandHandler,
   isDMAllowed: false,
@@ -28,7 +35,7 @@ async function whoCommandHandler(interaction: CommandInteraction) {
   }
 
   await interaction.reply(
-    `名前: ${member.name}\n学部: ${member.department}\n学籍番号: ${member.student_number}\nメールアドレス: ${member.mail}`
+    `名前: ${member.name}\n学部: ${member.department}\n学籍番号: ${member.student_number}\nメールアドレス: ${member.mail}`,
   );
 }
 

@@ -1,5 +1,9 @@
 import { createMemberUseCases } from "@shizuoka-its/core";
-import type { ITSCorePort, MemberRegistrationData, MemberConnectionData } from "../../application/ports/itsCorePort";
+import type {
+  ITSCorePort,
+  MemberConnectionData,
+  MemberRegistrationData,
+} from "../../application/ports/itsCorePort";
 import type InternalMember from "../../domain/entities/member";
 import { toInternalMember } from "./mapper";
 
@@ -8,7 +12,7 @@ import { toInternalMember } from "./mapper";
  * YAGNIの原則に従い、実際に使用される機能のみを公開
  * ITSCoreのモデルを内部モデルに変換して返す責務も持つ
  */
-export class ITSCoreMemberRepository implements ITSCorePort {
+export class ITSCoreAdaptor implements ITSCorePort {
   private useCases = createMemberUseCases();
 
   /**
@@ -21,8 +25,12 @@ export class ITSCoreMemberRepository implements ITSCorePort {
   /**
    * DiscordIDでメンバーを取得する
    */
-  async getMemberByDiscordId(discordId: string): Promise<InternalMember | undefined> {
-    const result = await this.useCases.getMemberByDiscordId.execute({ discordId });
+  async getMemberByDiscordId(
+    discordId: string,
+  ): Promise<InternalMember | undefined> {
+    const result = await this.useCases.getMemberByDiscordId.execute({
+      discordId,
+    });
     return result.member ? toInternalMember(result.member) : undefined;
   }
 
@@ -51,4 +59,4 @@ export class ITSCoreMemberRepository implements ITSCorePort {
 }
 
 // シングルトンとしてエクスポート
-export const itsCoreMemberRepository = new ITSCoreMemberRepository();
+export const itsCoreMemberRepository = new ITSCoreAdaptor();

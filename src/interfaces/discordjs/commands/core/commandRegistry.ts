@@ -1,4 +1,4 @@
-import type Command from "../../../domain/types/command";
+import type Command from "../../../../domain/types/command";
 
 class CommandRegistry {
   private commands: Map<string, Command> = new Map();

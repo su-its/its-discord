@@ -1,8 +1,6 @@
 import { Events } from "discord.js";
-import type { Guild } from "discord.js";
-import createRoleIfNotFound from "../../../application/utils/createRoleNotFound";
+import { initializeAllGuildsRoles } from "../../../application/usecases/initializeGuildRoles";
 import type { CustomClient } from "../../../domain/types/customClient";
-import roleRegistry from "../../../domain/types/roles";
 import logger from "../../../infrastructure/logger";
 
 /**
@@ -25,29 +23,13 @@ export function setupClientReadyHandler(client: CustomClient): void {
       throw new Error("No guild found");
     }
 
-    // 各ギルドでロール初期化を実施
-    for (const guild of guilds.values()) {
-      logger.info(`Initializing roles for guild ${guild.name} (${guild.id})`);
-      await initializeRoles(guild);
+    // ロール初期化を実施
+    try {
+      await initializeAllGuildsRoles();
+      logger.info("Guild roles initialization completed");
+    } catch (error) {
+      logger.error("Failed to initialize guild roles:", error);
+      throw error;
     }
   });
-}
-
-/**
- * 指定されたギルドに対して、RoleRegistry に登録された全ロールを初期化する。
- * 各ロールが存在しない場合は作成を試み、成功・失敗をそれぞれログ出力する。
- *
- * @param guild 初期化対象の Discord ギルド
- */
-async function initializeRoles(guild: Guild): Promise<void> {
-  const roles = roleRegistry.getAllRoles();
-  logger.info(
-    `Found ${roles.length} roles for guild ${guild.name} (${guild.id})`,
-  );
-
-  await Promise.all(
-    roles.map(async (role) => {
-      await createRoleIfNotFound({ guild, role });
-    }),
-  );
 }

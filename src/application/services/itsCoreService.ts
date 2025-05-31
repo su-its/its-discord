@@ -18,7 +18,9 @@ class ITSCoreServiceContainer {
    */
   getITSCorePort(): ITSCorePort {
     if (!this._itsCorePort) {
-      throw new Error("ITSCorePort is not initialized. Call setITSCorePort() first.");
+      throw new Error(
+        "ITSCorePort is not initialized. Call setITSCorePort() first.",
+      );
     }
     return this._itsCorePort;
   }
@@ -36,19 +38,27 @@ export class ITSCoreService {
     return itsCoreServiceContainer.getITSCorePort();
   }
 
-  async registerMember(data: Parameters<ITSCorePort["registerMember"]>[0]): Promise<void> {
+  async registerMember(
+    data: Parameters<ITSCorePort["registerMember"]>[0],
+  ): Promise<void> {
     return this.port.registerMember(data);
   }
 
-  async getMemberByDiscordId(discordId: string): Promise<ReturnType<ITSCorePort["getMemberByDiscordId"]>> {
+  async getMemberByDiscordId(
+    discordId: string,
+  ): Promise<ReturnType<ITSCorePort["getMemberByDiscordId"]>> {
     return this.port.getMemberByDiscordId(discordId);
   }
 
-  async getMemberByEmail(email: string): Promise<ReturnType<ITSCorePort["getMemberByEmail"]>> {
+  async getMemberByEmail(
+    email: string,
+  ): Promise<ReturnType<ITSCorePort["getMemberByEmail"]>> {
     return this.port.getMemberByEmail(email);
   }
 
-  async connectDiscordAccount(data: Parameters<ITSCorePort["connectDiscordAccount"]>[0]): Promise<void> {
+  async connectDiscordAccount(
+    data: Parameters<ITSCorePort["connectDiscordAccount"]>[0],
+  ): Promise<void> {
     return this.port.connectDiscordAccount(data);
   }
 
