@@ -1,4 +1,7 @@
-import type { ScheduledMessage, ScheduledMessageCreate } from "../../domain/entities/scheduledMessage";
+import type {
+  ScheduledMessage,
+  ScheduledMessageCreate,
+} from "../../domain/entities/scheduledMessage";
 
 /**
  * スケジュールメッセージ管理を抽象化するPort（簡素版）
@@ -13,7 +16,10 @@ export interface ScheduledMessagePort {
    * IDを指定してスケジュールメッセージを作成する
    * 設定ファイルからの初期化で使用
    */
-  createWithId(id: string, message: ScheduledMessageCreate): Promise<ScheduledMessage>;
+  createWithId(
+    id: string,
+    message: ScheduledMessageCreate,
+  ): Promise<ScheduledMessage>;
 
   /**
    * すべてのアクティブなスケジュールメッセージを取得する

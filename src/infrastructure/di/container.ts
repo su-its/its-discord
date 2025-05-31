@@ -15,7 +15,9 @@ export function setupDependencyInjection(client?: CustomClient): void {
   itsCoreServiceContainer.setITSCorePort(itsCoreMemberRepository);
 
   // ScheduledMessagePortの実装を注入
-  scheduledMessageServiceContainer.setScheduledMessagePort(memoryScheduledMessageRepository);
+  scheduledMessageServiceContainer.setScheduledMessagePort(
+    memoryScheduledMessageRepository,
+  );
 
   // DiscordServerPortの実装を注入（クライアントが利用可能な場合のみ）
   if (client) {

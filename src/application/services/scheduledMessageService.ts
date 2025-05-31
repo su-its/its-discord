@@ -1,4 +1,7 @@
-import type { ScheduledMessage, ScheduledMessageCreate } from "../../domain/entities/scheduledMessage";
+import type {
+  ScheduledMessage,
+  ScheduledMessageCreate,
+} from "../../domain/entities/scheduledMessage";
 import type { ScheduledMessagePort } from "../ports/scheduledMessagePort";
 
 /**
@@ -13,27 +16,35 @@ class ScheduledMessageServiceContainer {
 
   getScheduledMessagePort(): ScheduledMessagePort {
     if (!this._scheduledMessagePort) {
-      throw new Error("ScheduledMessagePort is not initialized. Call setScheduledMessagePort() first.");
+      throw new Error(
+        "ScheduledMessagePort is not initialized. Call setScheduledMessagePort() first.",
+      );
     }
     return this._scheduledMessagePort;
   }
 }
 
 // シングルトンインスタンス
-export const scheduledMessageServiceContainer = new ScheduledMessageServiceContainer();
+export const scheduledMessageServiceContainer =
+  new ScheduledMessageServiceContainer();
 
 /**
  * Application層でScheduledMessagePortを使用するためのサービスクラス（簡素版）
  * ヘキサゴナルアーキテクチャに従い、Portのみに依存
  */
 export class ScheduledMessageService {
-  async createScheduledMessage(message: ScheduledMessageCreate): Promise<ScheduledMessage> {
+  async createScheduledMessage(
+    message: ScheduledMessageCreate,
+  ): Promise<ScheduledMessage> {
     return scheduledMessageServiceContainer
       .getScheduledMessagePort()
       .create(message);
   }
 
-  async createScheduledMessageWithId(id: string, message: ScheduledMessageCreate): Promise<ScheduledMessage> {
+  async createScheduledMessageWithId(
+    id: string,
+    message: ScheduledMessageCreate,
+  ): Promise<ScheduledMessage> {
     return scheduledMessageServiceContainer
       .getScheduledMessagePort()
       .createWithId(id, message);
