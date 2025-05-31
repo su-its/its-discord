@@ -4,6 +4,7 @@ import { firebaseAuthService } from "../../infrastructure/firebase";
 import logger from "../../infrastructure/logger";
 import { discordServerService } from "../services/discordServerService";
 import { itsCoreService } from "../services/itsCoreService";
+import { assignDepartmentRole } from "./assignDepartmentRole";
 
 /**
  * ユーザー認証処理の結果
@@ -54,11 +55,7 @@ export async function authenticateUser(
     // 3. 認証成功 - ロールとニックネームを設定
     await Promise.all([
       // 部署ロールの付与
-      discordServerService.addDepartmentRoleToMember(
-        guildId,
-        discordUserId,
-        member,
-      ),
+      assignDepartmentRole(guildId, discordUserId, member),
       // 承認済みロールの付与
       discordServerService.addRoleToMember(
         guildId,

@@ -16,11 +16,8 @@ import type {
   EmbedData,
   MemberRenameResult,
 } from "../../application/ports/discordServerPort";
-import Department from "../../domain/entities/department";
-import type InternalMember from "../../domain/entities/member";
 import type { CustomClient } from "../../domain/types/customClient";
 import type Role from "../../domain/types/role";
-import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
 import logger from "../logger";
 
 /**
@@ -157,29 +154,6 @@ export class DiscordServerAdapter implements DiscordServerPort {
 
     const discordRole = await this.createRoleIfNotFound(guild, role);
     await member.roles.remove(discordRole);
-  }
-
-  async addDepartmentRoleToMember(
-    guildId: string,
-    memberId: string,
-    member: InternalMember,
-  ): Promise<void> {
-    // 部署に対応するロールマッピング
-    const departmentRoleMap: Record<string, Role> = {
-      [Department.CS]: roleRegistry.getRole(roleRegistryKeys.csRoleKey),
-      [Department.IA]: roleRegistry.getRole(roleRegistryKeys.iaRoleKey),
-      [Department.BI]: roleRegistry.getRole(roleRegistryKeys.biRoleKey),
-      [Department.GRADUATE]: roleRegistry.getRole(
-        roleRegistryKeys.graduateRoleKey,
-      ),
-      [Department.OTHERS]: roleRegistry.getRole(roleRegistryKeys.othersRoleKey),
-      [Department.OBOG]: roleRegistry.getRole(roleRegistryKeys.obOgRoleKey),
-    };
-
-    const role = departmentRoleMap[member.department];
-    if (role) {
-      await this.addRoleToMember(guildId, memberId, role);
-    }
   }
 
   async ensureRoleExists(guildId: string, role: Role): Promise<void> {

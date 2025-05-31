@@ -74,14 +74,6 @@ export class DiscordServerService {
     return this.port.removeRoleFromMember(guildId, memberId, role);
   }
 
-  async addDepartmentRoleToMember(
-    guildId: string,
-    memberId: string,
-    member: InternalMember,
-  ): Promise<void> {
-    return this.port.addDepartmentRoleToMember(guildId, memberId, member);
-  }
-
   async ensureRoleExists(guildId: string, role: Role): Promise<void> {
     return this.port.ensureRoleExists(guildId, role);
   }

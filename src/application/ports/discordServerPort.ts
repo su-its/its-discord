@@ -105,15 +105,6 @@ export interface DiscordServerPort {
   ): Promise<void>;
 
   /**
-   * メンバーの部署に応じたロールを付与する
-   */
-  addDepartmentRoleToMember(
-    guildId: string,
-    memberId: string,
-    member: InternalMember,
-  ): Promise<void>;
-
-  /**
    * ギルドにロールを作成する（存在しない場合のみ）
    */
   ensureRoleExists(guildId: string, role: Role): Promise<void>;
