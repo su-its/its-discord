@@ -110,6 +110,10 @@ export class DiscordServerService {
   ): Promise<void> {
     return this.port.sendEmbedToChannel(guildId, channelId, embed);
   }
+
+  async sendDirectMessage(memberId: string, message: string): Promise<void> {
+    return this.port.sendDirectMessage(memberId, message);
+  }
 }
 
 // Application層で使用するサービスインスタンス

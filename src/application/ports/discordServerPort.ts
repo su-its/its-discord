@@ -135,4 +135,9 @@ export interface DiscordServerPort {
    * チャンネル活動ランキングのEmbedデータを生成する
    */
   generateChannelActivityEmbedData(guildId: string): Promise<EmbedData>;
+
+  /**
+   * メンバーにDMを送信する
+   */
+  sendDirectMessage(memberId: string, message: string): Promise<void>;
 }

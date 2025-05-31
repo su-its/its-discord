@@ -275,6 +275,13 @@ export class DiscordServerAdapter implements DiscordServerPort {
     };
   }
 
+  async sendDirectMessage(memberId: string, message: string): Promise<void> {
+    const user = await this.client.users.fetch(memberId);
+    if (!user) throw new Error(`User not found: ${memberId}`);
+
+    await user.send(message);
+  }
+
   private async createRoleIfNotFound(
     guild: Guild,
     role: Role,
