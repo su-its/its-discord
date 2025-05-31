@@ -82,6 +82,10 @@ export class DiscordServerService {
     return this.port.addDepartmentRoleToMember(guildId, memberId, member);
   }
 
+  async ensureRoleExists(guildId: string, role: Role): Promise<void> {
+    return this.port.ensureRoleExists(guildId, role);
+  }
+
   async getFirstGuild(): Promise<
     ReturnType<DiscordServerPort["getFirstGuild"]>
   > {

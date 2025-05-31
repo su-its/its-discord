@@ -1,5 +1,5 @@
-import { Events, type Guild, type GuildMember, type Role } from "discord.js";
-import createRoleIfNotFound from "../../../application/utils/createRoleNotFound";
+import { Events, type GuildMember } from "discord.js";
+import { discordServerService } from "../../../application/services/discordServerService";
 import type { CustomClient } from "../../../domain/types/customClient";
 import roleRegistry from "../../../domain/types/roles";
 import { unAuthorizedRoleKey } from "../../../domain/types/roles/implementations/unAuthorized";
@@ -32,12 +32,8 @@ async function sendDM(member: GuildMember): Promise<void> {
  * 新規メンバーに未承認ロールを付与する。
  */
 async function giveUnauthorizedRole(member: GuildMember): Promise<void> {
-  const guild: Guild = member.guild;
-  const role: Role = await createRoleIfNotFound({
-    guild,
-    role: roleRegistry.getRole(unAuthorizedRoleKey),
-  });
-  await member.roles.add(role);
+  const role = roleRegistry.getRole(unAuthorizedRoleKey);
+  await discordServerService.addRoleToMember(member.guild.id, member.id, role);
   logger.info(
     `Assigned Unauthorized role (${role.name}) to ${member.displayName} (${member.id})`,
   );

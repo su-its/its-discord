@@ -182,6 +182,13 @@ export class DiscordServerAdapter implements DiscordServerPort {
     }
   }
 
+  async ensureRoleExists(guildId: string, role: Role): Promise<void> {
+    const guild = this.client.guilds.cache.get(guildId);
+    if (!guild) throw new Error(`Guild not found: ${guildId}`);
+
+    await this.createRoleIfNotFound(guild, role);
+  }
+
   async getFirstGuild(): Promise<DiscordGuild> {
     const guild = this.client.guilds.cache.first();
     if (!guild) throw new Error("No guild found");

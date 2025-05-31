@@ -114,6 +114,11 @@ export interface DiscordServerPort {
   ): Promise<void>;
 
   /**
+   * ギルドにロールを作成する（存在しない場合のみ）
+   */
+  ensureRoleExists(guildId: string, role: Role): Promise<void>;
+
+  /**
    * 最初のギルドを取得する
    */
   getFirstGuild(): Promise<DiscordGuild>;

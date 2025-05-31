@@ -1,37 +1,40 @@
-import type { CustomClient } from "../../domain/types/customClient";
 import roleRegistry from "../../domain/types/roles";
 import logger from "../../infrastructure/logger";
+import { discordServerService } from "../services/discordServerService";
 
 /**
- * 全ギルドのロールを初期化する
- * @param client Discordクライアント
+ * 指定されたギルドのロールを初期化するUsecase
+ * RoleRegistryに登録されたすべてのロールを作成・確認する
  */
-export async function initializeGuildRoles(
-  client: CustomClient,
-): Promise<void> {
-  const guilds = client.guilds.cache;
+export async function initializeGuildRoles(guildId: string): Promise<void> {
   const roles = roleRegistry.getAllRoles();
+  logger.info(`Found ${roles.length} roles for guild ${guildId}`);
 
-  for (const guild of guilds.values()) {
-    logger.info(`Initializing roles for guild: ${guild.name} (${guild.id})`);
-
-    for (const role of roles) {
+  // すべてのロールを並列で初期化
+  await Promise.all(
+    roles.map(async (role) => {
       try {
-        // ダミーメンバーIDでロール追加を試行することで、ロールの存在確認・作成を行う
-        // 実際にはDiscordServerAdapterのaddRoleToMemberでロールが作成される
-        logger.debug(
-          `Ensuring role ${role.name} exists for guild ${guild.name}`,
-        );
-        // ここでは実際にロールを追加せず、ロールの存在確認のみを行う
-        // 実装上、ロールはaddRoleToMember時に自動作成される
+        await discordServerService.ensureRoleExists(guildId, role);
+        logger.debug(`Role ${role.name} ensured for guild ${guildId}`);
       } catch (error) {
-        logger.error(
-          `Failed to initialize role ${role.name} for guild ${guild.name}:`,
-          error,
-        );
+        logger.error(`Failed to ensure role ${role.name}:`, error);
+        throw error;
       }
-    }
+    }),
+  );
 
-    logger.info(`Completed role initialization for guild: ${guild.name}`);
+  logger.info(`Role initialization completed for guild ${guildId}`);
+}
+
+/**
+ * すべてのギルドでロール初期化を実行するUsecase
+ */
+export async function initializeAllGuildsRoles(): Promise<void> {
+  try {
+    const guild = await discordServerService.getFirstGuild();
+    await initializeGuildRoles(guild.id);
+  } catch (error) {
+    logger.error("Failed to initialize guild roles:", error);
+    throw error;
   }
 }

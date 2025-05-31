@@ -2,8 +2,8 @@ import type { Message } from "discord.js";
 import Department from "../../domain/entities/department";
 import type AuthData from "../../domain/types/authData";
 import logger from "../../infrastructure/logger";
-import authMember from "../utils/authMember";
 import handleMemberRegistration from "./authController";
+import { verifyMemberCredentials } from "./verifyMemberCredentials";
 
 /**
  * DM認証フローを処理する
@@ -72,7 +72,7 @@ export async function handleDMAuthFlow(
       userState.mail = content;
 
       // 全情報が揃ったので認証処理を実行
-      const isAuthenticated = await authMember(userState);
+      const isAuthenticated = await verifyMemberCredentials(userState);
 
       if (isAuthenticated) {
         await handleMemberRegistration(userState);
@@ -164,7 +164,7 @@ async function validateAndRegisterUser(
   const mail = message.content;
   if (mail.endsWith("@shizuoka.ac.jp")) {
     const updatedUserInfo = { ...userInfo, mail };
-    if (await authMember(updatedUserInfo)) {
+    if (await verifyMemberCredentials(updatedUserInfo)) {
       try {
         updatedUserInfo.discordId = message.author.id;
         await handleMemberRegistration(updatedUserInfo);

@@ -1,6 +1,6 @@
 import { ChannelType, Events, type Message } from "discord.js";
 import handleMemberRegistration from "../../../application/usecases/authController";
-import authMember from "../../../application/utils/authMember";
+import { verifyMemberCredentials } from "../../../application/usecases/verifyMemberCredentials";
 import Department from "../../../domain/entities/department";
 import type AuthData from "../../../domain/types/authData";
 import type { CustomClient } from "../../../domain/types/customClient";
@@ -117,7 +117,7 @@ async function validateAndRegisterUser(
   const mail = message.content;
   if (mail.endsWith("@shizuoka.ac.jp")) {
     const updatedUserInfo = { ...userInfo, mail };
-    if (await authMember(updatedUserInfo)) {
+    if (await verifyMemberCredentials(updatedUserInfo)) {
       try {
         updatedUserInfo.discordId = message.author.id;
         await handleMemberRegistration(updatedUserInfo);
