@@ -65,11 +65,7 @@ export interface DiscordServerPort {
   /**
    * メンバーのニックネームを設定する
    */
-  setMemberNickname(
-    guildId: string,
-    memberId: string,
-    nickname: string,
-  ): Promise<void>;
+  setMemberNickname(guildId: string, memberId: string, nickname: string): Promise<void>;
 
   /**
    * 指定されたギルドのテキストチャンネルを取得する
@@ -84,11 +80,7 @@ export interface DiscordServerPort {
   /**
    * チャンネルにEmbedメッセージを送信する
    */
-  sendEmbedToChannel(
-    guildId: string,
-    channelId: string,
-    embed: EmbedData,
-  ): Promise<void>;
+  sendEmbedToChannel(guildId: string, channelId: string, embed: EmbedData): Promise<void>;
 
   /**
    * ロールが存在しない場合は作成し、メンバーにロールを追加する
@@ -98,11 +90,12 @@ export interface DiscordServerPort {
   /**
    * メンバーからロールを削除する
    */
-  removeRoleFromMember(
-    guildId: string,
-    memberId: string,
-    role: Role,
-  ): Promise<void>;
+  removeRoleFromMember(guildId: string, memberId: string, role: Role): Promise<void>;
+
+  /**
+   * メンバーの部署に応じたロールを付与する
+   */
+  addDepartmentRoleToMember(guildId: string, memberId: string, member: InternalMember): Promise<void>;
 
   /**
    * 最初のギルドを取得する
@@ -112,13 +105,10 @@ export interface DiscordServerPort {
   /**
    * メンバーの全ニックネームを一括変更する
    */
-  renameAllMembersInGuild(
-    guildId: string,
-    memberNameMap: Map<string, string>,
-  ): Promise<MemberRenameResult>;
+  renameAllMembersInGuild(guildId: string, memberNameMap: Map<string, string>): Promise<MemberRenameResult>;
 
   /**
-   * チャンネル活動ランキングを生成する
+   * チャンネル活動ランキングのEmbedデータを生成する
    */
-  generateChannelActivityRanking(guildId: string): Promise<EmbedData>;
+  generateChannelActivityEmbedData(guildId: string): Promise<EmbedData>;
 }

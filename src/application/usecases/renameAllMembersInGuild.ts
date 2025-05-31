@@ -1,11 +1,8 @@
-import logger from "../../infrastructure/logger";
-import type { MemberRenameResult } from "../ports/discordServerPort";
-import { discordServerService } from "../services/discordServerService";
 import { itsCoreService } from "../services/itsCoreService";
+import { discordServerService } from "../services/discordServerService";
+import type { MemberRenameResult } from "../ports/discordServerPort";
 
-export async function renameAllMembersInGuild(
-  guildId: string,
-): Promise<MemberRenameResult> {
+export async function renameAllMembersInGuild(guildId: string): Promise<MemberRenameResult> {
   // ITSCoreから全メンバーのDiscordIDと名前のマッピングを取得
   const members = await itsCoreService.getMemberList();
   const memberNameMap = new Map<string, string>();
@@ -17,8 +14,5 @@ export async function renameAllMembersInGuild(
   }
 
   // DiscordServerServiceを使って一括リネーム
-  return await discordServerService.renameAllMembersInGuild(
-    guildId,
-    memberNameMap,
-  );
+  return await discordServerService.renameAllMembersInGuild(guildId, memberNameMap);
 }
