@@ -1,4 +1,4 @@
-import CommandRegistry from "../../../application/commands/core/commandRegistry";
+import CommandRegistry from "./core/commandRegistry";
 import auth from "./implementations/auth";
 import healthCheck from "./implementations/healthCheck";
 import hotChannels from "./implementations/hotChannels";

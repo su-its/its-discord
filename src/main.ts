@@ -37,11 +37,14 @@ async function main() {
     // イベントハンドラを設定
     setupEventHandlers(client, userStates);
 
-    // ホットチャンネルのクロンを設定
-    scheduleHotChannelsCron(client, config.hotChannelId, config.postHotChannelTime);
-
     // クライアントをログイン
     await client.login(config.discordToken);
+
+    // クライアント初期化後にDiscordServerAdapterを設定
+    setupDependencyInjection(client);
+
+    // ホットチャンネルのクロンを設定（DIコンテナ初期化後）
+    scheduleHotChannelsCron(config.hotChannelId, config.postHotChannelTime);
 
     logger.info("Bot is running...");
   } catch (error) {

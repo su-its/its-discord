@@ -1,5 +1,6 @@
 import type Role from "../../domain/types/role";
 import type { DiscordMember, DiscordServerPort, EmbedData, MemberRenameResult } from "../ports/discordServerPort";
+import type InternalMember from "../../domain/entities/member";
 
 /**
  * DIコンテナ - DiscordServerPortの実装を注入するためのシングルトン
@@ -53,6 +54,10 @@ export class DiscordServerService {
     return this.port.removeRoleFromMember(guildId, memberId, role);
   }
 
+  async addDepartmentRoleToMember(guildId: string, memberId: string, member: InternalMember): Promise<void> {
+    return this.port.addDepartmentRoleToMember(guildId, memberId, member);
+  }
+
   async getFirstGuild(): Promise<ReturnType<DiscordServerPort["getFirstGuild"]>> {
     return this.port.getFirstGuild();
   }
@@ -61,8 +66,8 @@ export class DiscordServerService {
     return this.port.renameAllMembersInGuild(guildId, memberNameMap);
   }
 
-  async generateChannelActivityRanking(guildId: string): Promise<EmbedData> {
-    return this.port.generateChannelActivityRanking(guildId);
+  async generateChannelActivityEmbedData(guildId: string): Promise<EmbedData> {
+    return this.port.generateChannelActivityEmbedData(guildId);
   }
 
   async sendEmbedToChannel(guildId: string, channelId: string, embed: EmbedData): Promise<void> {
