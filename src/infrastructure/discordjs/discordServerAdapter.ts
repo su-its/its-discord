@@ -194,6 +194,21 @@ export class DiscordServerAdapter
     await user.send(message);
   }
 
+  async sendMessageToChannel(
+    channelId: string,
+    message: string,
+  ): Promise<void> {
+    const channel = (await this.client.channels.fetch(
+      channelId,
+    )) as TextChannel;
+    if (!channel) throw new Error(`Channel not found: ${channelId}`);
+
+    await channel.send(message);
+    logger.debug(
+      `Message sent to channel ${channelId}: ${message.substring(0, 50)}...`,
+    );
+  }
+
   private async createRoleIfNotFound(
     guild: Guild,
     role: Role,

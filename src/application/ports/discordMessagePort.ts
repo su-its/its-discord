@@ -7,4 +7,9 @@ export interface DiscordMessagePort {
    * ユーザーにダイレクトメッセージを送信する
    */
   sendDirectMessage(userId: string, message: string): Promise<void>;
+
+  /**
+   * 指定されたチャンネルにテキストメッセージを送信する
+   */
+  sendMessageToChannel(channelId: string, message: string): Promise<void>;
 }

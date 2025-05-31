@@ -3,9 +3,9 @@ import { CustomClient } from "./domain/types/customClient";
 import logger from "./infrastructure/logger";
 // DIコンテナの初期化（アプリケーション起動時に実行される）
 import "./infrastructure/di/container";
-import { loadConfig, validateConfig } from "./config";
+import { initializeScheduledMessagesFromConfig } from "./application/usecases/initializeScheduledMessagesFromConfig";
+import { loadConfig } from "./config";
 import { setupDependencyInjection } from "./infrastructure/di/container";
-import { scheduleHotChannelsCron } from "./interfaces/cron/hotChannelsCron";
 import registry from "./interfaces/discordjs/commands";
 import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
 
@@ -24,7 +24,6 @@ async function main() {
   try {
     // アプリケーション設定を読み込み・検証
     const config = loadConfig();
-    validateConfig(config);
     logger.info("Configuration loaded and validated successfully");
 
     // Registry からすべてのコマンドを取得し、クライアントに登録
@@ -43,8 +42,8 @@ async function main() {
     // クライアント初期化後にDiscordServerAdapterを設定
     setupDependencyInjection(client);
 
-    // ホットチャンネルのクロンを設定（DIコンテナ初期化後）
-    scheduleHotChannelsCron(config.hotChannelId, config.postHotChannelTime);
+    // 設定ファイルからスケジュールメッセージを初期化
+    await initializeScheduledMessagesFromConfig();
 
     logger.info("Bot is running...");
   } catch (error) {

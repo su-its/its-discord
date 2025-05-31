@@ -1,3 +1,4 @@
+import type { Embed } from "../../domain/entities/scheduledMessage";
 import type Role from "../../domain/types/role";
 import type {
   DiscordChannel,
@@ -142,19 +143,7 @@ export class DiscordServerService {
       .getChannelMessageCount(channelId);
   }
 
-  async sendEmbedToChannel(
-    channelId: string,
-    embed: {
-      title: string;
-      description: string;
-      color: number;
-      thumbnail?: { url: string };
-      image?: { url: string };
-      fields?: { name: string; value: string; inline?: boolean }[];
-      footer?: { text: string; iconURL?: string };
-      timestamp?: string;
-    },
-  ): Promise<void> {
+  async sendEmbedToChannel(channelId: string, embed: Embed): Promise<void> {
     return discordServerServiceContainer
       .getDiscordChannelPort()
       .sendEmbedToChannel(channelId, embed);
@@ -176,6 +165,15 @@ export class DiscordServerService {
     return discordServerServiceContainer
       .getDiscordMessagePort()
       .sendDirectMessage(userId, message);
+  }
+
+  async sendMessageToChannel(
+    channelId: string,
+    message: string,
+  ): Promise<void> {
+    return discordServerServiceContainer
+      .getDiscordMessagePort()
+      .sendMessageToChannel(channelId, message);
   }
 }
 

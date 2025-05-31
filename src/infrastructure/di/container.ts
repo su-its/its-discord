@@ -1,8 +1,10 @@
 import { discordServerServiceContainer } from "../../application/services/discordServerService";
 import { itsCoreServiceContainer } from "../../application/services/itsCoreService";
+import { scheduledMessageServiceContainer } from "../../application/services/scheduledMessageService";
 import type { CustomClient } from "../../domain/types/customClient";
 import { DiscordServerAdapter } from "../discordjs/discordServerAdapter";
 import { itsCoreMemberRepository } from "../itscore/itsCoreAdaptor";
+import { memoryScheduledMessageRepository } from "../memory/scheduledMessageRepository";
 
 /**
  * 依存性注入の設定
@@ -11,6 +13,11 @@ import { itsCoreMemberRepository } from "../itscore/itsCoreAdaptor";
 export function setupDependencyInjection(client?: CustomClient): void {
   // ITSCorePortの実装を注入
   itsCoreServiceContainer.setITSCorePort(itsCoreMemberRepository);
+
+  // ScheduledMessagePortの実装を注入
+  scheduledMessageServiceContainer.setScheduledMessagePort(
+    memoryScheduledMessageRepository,
+  );
 
   // DiscordServerPortの実装を注入（クライアントが利用可能な場合のみ）
   if (client) {
