@@ -31,8 +31,8 @@ export async function initializeGuildRoles(guildId: string): Promise<void> {
  */
 export async function initializeAllGuildsRoles(): Promise<void> {
   try {
-    const guild = await discordServerService.getFirstGuild();
-    await initializeGuildRoles(guild.id);
+    const guildId = await discordServerService.getFirstGuild();
+    await initializeGuildRoles(guildId);
   } catch (error) {
     logger.error("Failed to initialize guild roles:", error);
     throw error;

@@ -12,7 +12,7 @@ export async function handleDMAuthFlow(
   userId: string,
   messageContent: string,
   userStates: Map<string, AuthData>,
-  replyFunction: (message: string) => Promise<void>
+  replyFunction: (message: string) => Promise<void>,
 ): Promise<void> {
   const content = messageContent.trim();
 
@@ -41,11 +41,15 @@ export async function handleDMAuthFlow(
     } else if (!userState.student_number) {
       // 学籍番号の形式検証
       if (!/^[a-zA-Z0-9]{8}$/.test(content)) {
-        await replyFunction("学籍番号の形式が正しくありません。8文字の英数字で入力してください。");
+        await replyFunction(
+          "学籍番号の形式が正しくありません。8文字の英数字で入力してください。",
+        );
         return;
       }
       userState.student_number = content;
-      await replyFunction("学科を教えてください（CS, IA, BI, GRADUATE, OTHERS, OBOG）");
+      await replyFunction(
+        "学科を教えてください（CS, IA, BI, GRADUATE, OTHERS, OBOG）",
+      );
     } else if (!userState.department) {
       // Department型の検証
       const validDepartments = [
@@ -60,12 +64,16 @@ export async function handleDMAuthFlow(
         userState.department = content as Department;
         await replyFunction("メールアドレス（静大のもの）を教えてください");
       } else {
-        await replyFunction("無効な学科です。CS, IA, BI, GRADUATE, OTHERS, OBOG のいずれかを入力してください");
+        await replyFunction(
+          "無効な学科です。CS, IA, BI, GRADUATE, OTHERS, OBOG のいずれかを入力してください",
+        );
       }
     } else if (!userState.mail) {
       // メールアドレスの形式検証
       if (!content.endsWith("@shizuoka.ac.jp")) {
-        await replyFunction("静岡大学のメールアドレス（@shizuoka.ac.jpで終わる）を入力してください。");
+        await replyFunction(
+          "静岡大学のメールアドレス（@shizuoka.ac.jpで終わる）を入力してください。",
+        );
         return;
       }
 
@@ -77,16 +85,22 @@ export async function handleDMAuthFlow(
       if (isAuthenticated) {
         try {
           await handleMemberRegistration(userState);
-          await replyFunction("認証メールを送信しました。メールを確認して認証を完了してください。");
+          await replyFunction(
+            "認証メールを送信しました。メールを確認して認証を完了してください。",
+          );
           logger.info(`Authentication process started for user: ${userId}`);
         } catch (error) {
-          await replyFunction("認証に失敗しました。もう一度やり直してください。");
+          await replyFunction(
+            "認証に失敗しました。もう一度やり直してください。",
+          );
           await replyFunction("名前(フルネーム)を教えてください");
           userStates.set(userId, createEmptyAuthData(userId));
           return;
         }
       } else {
-        await replyFunction("認証に失敗しました。入力した情報を確認してください。");
+        await replyFunction(
+          "認証に失敗しました。入力した情報を確認してください。",
+        );
         await replyFunction("名前(フルネーム)を教えてください");
         userStates.set(userId, createEmptyAuthData(userId));
         logger.warn(`Authentication failed for user: ${userId}`);

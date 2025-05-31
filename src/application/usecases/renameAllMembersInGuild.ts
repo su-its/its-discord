@@ -1,5 +1,5 @@
 import logger from "../../infrastructure/logger";
-import type { DiscordMember } from "../ports/discordServerPort";
+import type { DiscordMember } from "../ports/discordMemberPort";
 import { discordServerService } from "../services/discordServerService";
 import { itsCoreService } from "../services/itsCoreService";
 
