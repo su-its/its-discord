@@ -3,11 +3,11 @@ import { CustomClient } from "./domain/types/customClient";
 import logger from "./infrastructure/logger";
 // DIコンテナの初期化（アプリケーション起動時に実行される）
 import "./infrastructure/di/container";
-import { loadConfig, validateConfig } from "./config";
+import { initializeScheduledMessagesFromConfig } from "./application/usecases/initializeScheduledMessagesFromConfig";
+import { loadConfig } from "./config";
 import { setupDependencyInjection } from "./infrastructure/di/container";
 import { scheduleHotChannelsCron } from "./interfaces/cron/hotChannelsCron";
 import { initializeScheduledMessageCron } from "./interfaces/cron/scheduledMessageCron";
-import { initializeScheduledMessagesFromConfig } from "./application/usecases/initializeScheduledMessagesFromConfig";
 import registry from "./interfaces/discordjs/commands";
 import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
 
@@ -26,7 +26,6 @@ async function main() {
   try {
     // アプリケーション設定を読み込み・検証
     const config = loadConfig();
-    validateConfig(config);
     logger.info("Configuration loaded and validated successfully");
 
     // Registry からすべてのコマンドを取得し、クライアントに登録

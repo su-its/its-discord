@@ -7,8 +7,7 @@ export interface AppConfig {
   discordToken: string;
   hotChannelId: string;
   postHotChannelTime: string;
-  generalChannelId?: string;
-  systemChannelId?: string;
+  generalChannelId: string;
 }
 
 /**
@@ -35,35 +34,16 @@ export function loadConfig(): AppConfig {
     );
   }
 
+  if (!generalChannelId) {
+    throw new Error(
+      "Missing required environment variable: GENERAL_CHANNEL_ID",
+    );
+  }
+
   return {
     discordToken,
     hotChannelId,
     postHotChannelTime,
     generalChannelId,
-    systemChannelId,
   };
-}
-
-/**
- * 設定の妥当性をチェックする
- */
-export function validateConfig(config: AppConfig): void {
-  // cron形式の検証（簡易版）
-  if (
-    !/^[0-9\*\-\/,]+\s+[0-9\*\-\/,]+\s+[0-9\*\-\/,]+\s+[0-9\*\-\/,]+\s+[0-9\*\-\/,]+$/.test(
-      config.postHotChannelTime,
-    )
-  ) {
-    throw new Error("Invalid cron format for POST_HOT_CHANNEL_TIME");
-  }
-
-  // Discord Token の基本検証
-  if (config.discordToken.length < 50) {
-    throw new Error("Discord token appears to be invalid (too short)");
-  }
-
-  // Channel ID の基本検証
-  if (!/^[0-9]{17,20}$/.test(config.hotChannelId)) {
-    throw new Error("Hot channel ID appears to be invalid format");
-  }
 }
