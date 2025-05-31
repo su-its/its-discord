@@ -10,7 +10,6 @@ WORKDIR /usr/src/app
 
 # 依存関係関連のファイルだけを先にコピー
 COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn .yarn
 
 # 依存関係をインストール
 RUN yarn install
