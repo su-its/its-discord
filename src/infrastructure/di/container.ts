@@ -2,7 +2,7 @@ import { discordServerServiceContainer } from "../../application/services/discor
 import { itsCoreServiceContainer } from "../../application/services/itsCoreService";
 import type { CustomClient } from "../../domain/types/customClient";
 import { DiscordServerAdapter } from "../discordjs/discordServerAdapter";
-import { itsCoreMemberRepository } from "../itscore/memberService";
+import { itsCoreMemberRepository } from "../itscore/itsCoreAdaptor";
 
 /**
  * 依存性注入の設定
