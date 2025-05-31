@@ -6,6 +6,8 @@ import "./infrastructure/di/container";
 import { loadConfig, validateConfig } from "./config";
 import { setupDependencyInjection } from "./infrastructure/di/container";
 import { scheduleHotChannelsCron } from "./interfaces/cron/hotChannelsCron";
+import { initializeScheduledMessageCron } from "./interfaces/cron/scheduledMessageCron";
+import { initializeScheduledMessagesFromConfig } from "./application/usecases/initializeScheduledMessagesFromConfig";
 import registry from "./interfaces/discordjs/commands";
 import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
 
@@ -45,6 +47,12 @@ async function main() {
 
     // ホットチャンネルのクロンを設定（DIコンテナ初期化後）
     scheduleHotChannelsCron(config.hotChannelId, config.postHotChannelTime);
+
+    // スケジュールメッセージシステムを初期化（DIコンテナ初期化後）
+    await initializeScheduledMessageCron();
+
+    // 設定ファイルからスケジュールメッセージを初期化
+    await initializeScheduledMessagesFromConfig();
 
     logger.info("Bot is running...");
   } catch (error) {

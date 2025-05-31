@@ -8,15 +8,9 @@ import {
   SnowflakeUtil,
   type TextChannel,
 } from "discord.js";
-import type {
-  DiscordChannel,
-  DiscordChannelPort,
-} from "../../application/ports/discordChannelPort";
+import type { DiscordChannel, DiscordChannelPort } from "../../application/ports/discordChannelPort";
 import type { DiscordGuildPort } from "../../application/ports/discordGuildPort";
-import type {
-  DiscordMember,
-  DiscordMemberPort,
-} from "../../application/ports/discordMemberPort";
+import type { DiscordMember, DiscordMemberPort } from "../../application/ports/discordMemberPort";
 import type { DiscordMessagePort } from "../../application/ports/discordMessagePort";
 import type { CustomClient } from "../../domain/types/customClient";
 import type Role from "../../domain/types/role";
@@ -27,11 +21,7 @@ import logger from "../logger";
  * Discord.jsの詳細をInfrastructure層に隠蔽
  */
 export class DiscordServerAdapter
-  implements
-    DiscordMemberPort,
-    DiscordChannelPort,
-    DiscordGuildPort,
-    DiscordMessagePort
+  implements DiscordMemberPort, DiscordChannelPort, DiscordGuildPort, DiscordMessagePort
 {
   constructor(private client: CustomClient) {}
 
@@ -48,11 +38,7 @@ export class DiscordServerAdapter
     }));
   }
 
-  async setMemberNickname(
-    guildId: string,
-    memberId: string,
-    nickname: string,
-  ): Promise<void> {
+  async setMemberNickname(guildId: string, memberId: string, nickname: string): Promise<void> {
     const guild = this.client.guilds.cache.get(guildId);
     if (!guild) throw new Error(`Guild not found: ${guildId}`);
 
@@ -62,11 +48,7 @@ export class DiscordServerAdapter
     await member.setNickname(nickname);
   }
 
-  async addRoleToMember(
-    guildId: string,
-    memberId: string,
-    role: Role,
-  ): Promise<void> {
+  async addRoleToMember(guildId: string, memberId: string, role: Role): Promise<void> {
     const guild = this.client.guilds.cache.get(guildId);
     if (!guild) throw new Error(`Guild not found: ${guildId}`);
 
@@ -77,11 +59,7 @@ export class DiscordServerAdapter
     await member.roles.add(discordRole);
   }
 
-  async removeRoleFromMember(
-    guildId: string,
-    memberId: string,
-    role: Role,
-  ): Promise<void> {
+  async removeRoleFromMember(guildId: string, memberId: string, role: Role): Promise<void> {
     const guild = this.client.guilds.cache.get(guildId);
     if (!guild) throw new Error(`Guild not found: ${guildId}`);
 
@@ -99,10 +77,7 @@ export class DiscordServerAdapter
 
     const channels = await guild.channels.fetch();
     return channels
-      .filter(
-        (channel): channel is TextChannel =>
-          channel !== null && channel.type === ChannelType.GuildText,
-      )
+      .filter((channel): channel is TextChannel => channel !== null && channel.type === ChannelType.GuildText)
       .map((channel) => ({
         id: channel.id,
         name: channel.name,
@@ -110,9 +85,7 @@ export class DiscordServerAdapter
   }
 
   async getChannelMessageCount(channelId: string): Promise<number> {
-    const channel = (await this.client.channels.fetch(
-      channelId,
-    )) as TextChannel;
+    const channel = (await this.client.channels.fetch(channelId)) as TextChannel;
     if (!channel) throw new Error(`Channel not found: ${channelId}`);
 
     const now = new Date();
@@ -133,8 +106,7 @@ export class DiscordServerAdapter
       totalMessages += messages.size;
       lastId = messages.last()?.id;
       const lastMessage = messages.last();
-      if (lastMessage && lastMessage.createdTimestamp < oneDayAgoSnowflake)
-        break;
+      if (lastMessage && lastMessage.createdTimestamp < oneDayAgoSnowflake) break;
     }
 
     return totalMessages;
@@ -151,11 +123,9 @@ export class DiscordServerAdapter
       fields?: { name: string; value: string; inline?: boolean }[];
       footer?: { text: string; iconURL?: string };
       timestamp?: string;
-    },
+    }
   ): Promise<void> {
-    const channel = (await this.client.channels.fetch(
-      channelId,
-    )) as TextChannel;
+    const channel = (await this.client.channels.fetch(channelId)) as TextChannel;
     if (!channel) throw new Error(`Channel not found: ${channelId}`);
 
     const embedBuilder = new EmbedBuilder();
@@ -194,10 +164,15 @@ export class DiscordServerAdapter
     await user.send(message);
   }
 
-  private async createRoleIfNotFound(
-    guild: Guild,
-    role: Role,
-  ): Promise<DiscordRole> {
+  async sendMessageToChannel(channelId: string, message: string): Promise<void> {
+    const channel = (await this.client.channels.fetch(channelId)) as TextChannel;
+    if (!channel) throw new Error(`Channel not found: ${channelId}`);
+
+    await channel.send(message);
+    logger.debug(`Message sent to channel ${channelId}: ${message.substring(0, 50)}...`);
+  }
+
+  private async createRoleIfNotFound(guild: Guild, role: Role): Promise<DiscordRole> {
     const roles = await guild.roles.fetch();
     let discordRole = roles.find((r) => r.name === role.name);
 

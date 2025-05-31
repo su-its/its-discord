@@ -7,6 +7,8 @@ export interface AppConfig {
   discordToken: string;
   hotChannelId: string;
   postHotChannelTime: string;
+  generalChannelId?: string;
+  systemChannelId?: string;
 }
 
 /**
@@ -16,6 +18,8 @@ export function loadConfig(): AppConfig {
   const discordToken = process.env.TOKEN;
   const hotChannelId = process.env.HOT_CHANNEL_ID;
   const postHotChannelTime = process.env.POST_HOT_CHANNEL_TIME;
+  const generalChannelId = process.env.GENERAL_CHANNEL_ID;
+  const systemChannelId = process.env.SYSTEM_CHANNEL_ID;
 
   if (!discordToken) {
     throw new Error("Missing required environment variable: TOKEN");
@@ -35,6 +39,8 @@ export function loadConfig(): AppConfig {
     discordToken,
     hotChannelId,
     postHotChannelTime,
+    generalChannelId,
+    systemChannelId,
   };
 }
 
