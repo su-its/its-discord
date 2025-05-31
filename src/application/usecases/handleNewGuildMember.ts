@@ -1,7 +1,7 @@
-import { discordServerService } from "../services/discordServerService";
 import type { GuildMember } from "discord.js";
 import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
 import logger from "../../infrastructure/logger";
+import { discordServerService } from "../services/discordServerService";
 
 /**
  * 新規ギルドメンバーの処理を行う
@@ -11,8 +11,14 @@ import logger from "../../infrastructure/logger";
 export async function handleNewGuildMember(member: GuildMember): Promise<void> {
   try {
     // 未承認ロールを付与
-    const unAuthorizedRole = roleRegistry.getRole(roleRegistryKeys.unAuthorizedRoleKey);
-    await discordServerService.addRoleToMember(member.guild.id, member.id, unAuthorizedRole);
+    const unAuthorizedRole = roleRegistry.getRole(
+      roleRegistryKeys.unAuthorizedRoleKey,
+    );
+    await discordServerService.addRoleToMember(
+      member.guild.id,
+      member.id,
+      unAuthorizedRole,
+    );
 
     // ウェルカムDMを送信
     const welcomeMessage = `
@@ -30,7 +36,10 @@ export async function handleNewGuildMember(member: GuildMember): Promise<void> {
     await member.send(welcomeMessage);
     logger.info(`Welcome DM sent to ${member.displayName} (${member.id})`);
   } catch (error) {
-    logger.error(`Failed to handle new guild member ${member.displayName} (${member.id}):`, error);
+    logger.error(
+      `Failed to handle new guild member ${member.displayName} (${member.id}):`,
+      error,
+    );
     throw error;
   }
 }

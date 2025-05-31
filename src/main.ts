@@ -3,11 +3,11 @@ import { CustomClient } from "./domain/types/customClient";
 import logger from "./infrastructure/logger";
 // DIコンテナの初期化（アプリケーション起動時に実行される）
 import "./infrastructure/di/container";
+import { loadConfig, validateConfig } from "./config";
 import { setupDependencyInjection } from "./infrastructure/di/container";
 import { scheduleHotChannelsCron } from "./interfaces/cron/hotChannelsCron";
 import registry from "./interfaces/discordjs/commands";
 import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
-import { loadConfig, validateConfig } from "./config";
 
 process.on("uncaughtException", (error) => {
   logger.error("Uncaught Exception:", error);

@@ -1,6 +1,11 @@
-import type Role from "../../domain/types/role";
-import type { DiscordMember, DiscordServerPort, EmbedData, MemberRenameResult } from "../ports/discordServerPort";
 import type InternalMember from "../../domain/entities/member";
+import type Role from "../../domain/types/role";
+import type {
+  DiscordMember,
+  DiscordServerPort,
+  EmbedData,
+  MemberRenameResult,
+} from "../ports/discordServerPort";
 
 /**
  * DIコンテナ - DiscordServerPortの実装を注入するためのシングルトン
@@ -20,14 +25,17 @@ class DiscordServerServiceContainer {
    */
   getDiscordServerPort(): DiscordServerPort {
     if (!this._discordServerPort) {
-      throw new Error("DiscordServerPort is not initialized. Call setDiscordServerPort() first.");
+      throw new Error(
+        "DiscordServerPort is not initialized. Call setDiscordServerPort() first.",
+      );
     }
     return this._discordServerPort;
   }
 }
 
 // シングルトンインスタンス
-export const discordServerServiceContainer = new DiscordServerServiceContainer();
+export const discordServerServiceContainer =
+  new DiscordServerServiceContainer();
 
 /**
  * Application層でDiscordServerPortを使用するためのサービスクラス
@@ -42,27 +50,48 @@ export class DiscordServerService {
     return this.port.getGuildMembers(guildId);
   }
 
-  async setMemberNickname(guildId: string, memberId: string, nickname: string): Promise<void> {
+  async setMemberNickname(
+    guildId: string,
+    memberId: string,
+    nickname: string,
+  ): Promise<void> {
     return this.port.setMemberNickname(guildId, memberId, nickname);
   }
 
-  async addRoleToMember(guildId: string, memberId: string, role: Role): Promise<void> {
+  async addRoleToMember(
+    guildId: string,
+    memberId: string,
+    role: Role,
+  ): Promise<void> {
     return this.port.addRoleToMember(guildId, memberId, role);
   }
 
-  async removeRoleFromMember(guildId: string, memberId: string, role: Role): Promise<void> {
+  async removeRoleFromMember(
+    guildId: string,
+    memberId: string,
+    role: Role,
+  ): Promise<void> {
     return this.port.removeRoleFromMember(guildId, memberId, role);
   }
 
-  async addDepartmentRoleToMember(guildId: string, memberId: string, member: InternalMember): Promise<void> {
+  async addDepartmentRoleToMember(
+    guildId: string,
+    memberId: string,
+    member: InternalMember,
+  ): Promise<void> {
     return this.port.addDepartmentRoleToMember(guildId, memberId, member);
   }
 
-  async getFirstGuild(): Promise<ReturnType<DiscordServerPort["getFirstGuild"]>> {
+  async getFirstGuild(): Promise<
+    ReturnType<DiscordServerPort["getFirstGuild"]>
+  > {
     return this.port.getFirstGuild();
   }
 
-  async renameAllMembersInGuild(guildId: string, memberNameMap: Map<string, string>): Promise<MemberRenameResult> {
+  async renameAllMembersInGuild(
+    guildId: string,
+    memberNameMap: Map<string, string>,
+  ): Promise<MemberRenameResult> {
     return this.port.renameAllMembersInGuild(guildId, memberNameMap);
   }
 
@@ -70,7 +99,11 @@ export class DiscordServerService {
     return this.port.generateChannelActivityEmbedData(guildId);
   }
 
-  async sendEmbedToChannel(guildId: string, channelId: string, embed: EmbedData): Promise<void> {
+  async sendEmbedToChannel(
+    guildId: string,
+    channelId: string,
+    embed: EmbedData,
+  ): Promise<void> {
     return this.port.sendEmbedToChannel(guildId, channelId, embed);
   }
 }

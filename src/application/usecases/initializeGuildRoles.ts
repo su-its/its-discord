@@ -6,7 +6,9 @@ import logger from "../../infrastructure/logger";
  * 全ギルドのロールを初期化する
  * @param client Discordクライアント
  */
-export async function initializeGuildRoles(client: CustomClient): Promise<void> {
+export async function initializeGuildRoles(
+  client: CustomClient,
+): Promise<void> {
   const guilds = client.guilds.cache;
   const roles = roleRegistry.getAllRoles();
 
@@ -17,11 +19,16 @@ export async function initializeGuildRoles(client: CustomClient): Promise<void> 
       try {
         // ダミーメンバーIDでロール追加を試行することで、ロールの存在確認・作成を行う
         // 実際にはDiscordServerAdapterのaddRoleToMemberでロールが作成される
-        logger.debug(`Ensuring role ${role.name} exists for guild ${guild.name}`);
+        logger.debug(
+          `Ensuring role ${role.name} exists for guild ${guild.name}`,
+        );
         // ここでは実際にロールを追加せず、ロールの存在確認のみを行う
         // 実装上、ロールはaddRoleToMember時に自動作成される
       } catch (error) {
-        logger.error(`Failed to initialize role ${role.name} for guild ${guild.name}:`, error);
+        logger.error(
+          `Failed to initialize role ${role.name} for guild ${guild.name}:`,
+          error,
+        );
       }
     }
 

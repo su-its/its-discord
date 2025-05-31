@@ -26,7 +26,9 @@ export function loadConfig(): AppConfig {
   }
 
   if (!postHotChannelTime) {
-    throw new Error("Missing required environment variable: POST_HOT_CHANNEL_TIME");
+    throw new Error(
+      "Missing required environment variable: POST_HOT_CHANNEL_TIME",
+    );
   }
 
   return {
@@ -42,7 +44,9 @@ export function loadConfig(): AppConfig {
 export function validateConfig(config: AppConfig): void {
   // cron形式の検証（簡易版）
   if (
-    !/^[0-9\*\-\/,]+\s+[0-9\*\-\/,]+\s+[0-9\*\-\/,]+\s+[0-9\*\-\/,]+\s+[0-9\*\-\/,]+$/.test(config.postHotChannelTime)
+    !/^[0-9\*\-\/,]+\s+[0-9\*\-\/,]+\s+[0-9\*\-\/,]+\s+[0-9\*\-\/,]+\s+[0-9\*\-\/,]+$/.test(
+      config.postHotChannelTime,
+    )
   ) {
     throw new Error("Invalid cron format for POST_HOT_CHANNEL_TIME");
   }

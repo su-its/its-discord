@@ -10,7 +10,10 @@ import handleMemberRegistration from "./authController";
  * @param message DMメッセージ
  * @param userStates ユーザーの状態管理Map
  */
-export async function handleDMAuthFlow(message: Message, userStates: Map<string, AuthData>): Promise<void> {
+export async function handleDMAuthFlow(
+  message: Message,
+  userStates: Map<string, AuthData>,
+): Promise<void> {
   // BOTからのメッセージは無視
   if (message.author.bot) return;
 
@@ -44,7 +47,9 @@ export async function handleDMAuthFlow(message: Message, userStates: Map<string,
       await message.reply("学籍番号を教えてください");
     } else if (!userState.student_number) {
       userState.student_number = content;
-      await message.reply("学科を教えてください（CS, IA, BI, GRADUATE, OTHERS, OBOG）");
+      await message.reply(
+        "学科を教えてください（CS, IA, BI, GRADUATE, OTHERS, OBOG）",
+      );
     } else if (!userState.department) {
       // Department型の検証
       const validDepartments = [
@@ -59,7 +64,9 @@ export async function handleDMAuthFlow(message: Message, userStates: Map<string,
         userState.department = content as Department;
         await message.reply("メールアドレス（静大のもの）を教えてください");
       } else {
-        await message.reply("無効な学科です。CS, IA, BI, GRADUATE, OTHERS, OBOG のいずれかを入力してください");
+        await message.reply(
+          "無効な学科です。CS, IA, BI, GRADUATE, OTHERS, OBOG のいずれかを入力してください",
+        );
       }
     } else if (!userState.mail) {
       userState.mail = content;
@@ -69,10 +76,14 @@ export async function handleDMAuthFlow(message: Message, userStates: Map<string,
 
       if (isAuthenticated) {
         await handleMemberRegistration(userState);
-        await message.reply("認証メールを送信しました。メールを確認して認証を完了してください。");
+        await message.reply(
+          "認証メールを送信しました。メールを確認して認証を完了してください。",
+        );
         logger.info(`Authentication process started for user: ${userId}`);
       } else {
-        await message.reply("認証に失敗しました。入力した情報を確認してください。");
+        await message.reply(
+          "認証に失敗しました。入力した情報を確認してください。",
+        );
         logger.warn(`Authentication failed for user: ${userId}`);
       }
 
@@ -91,7 +102,7 @@ async function setUserInfoAndReply(
   userId: string,
   update: Partial<AuthData>,
   replyMessage: string,
-  reply: (message: string) => Promise<Message>
+  reply: (message: string) => Promise<Message>,
 ) {
   const userInfo = userStates.get(userId) || {};
   Object.assign(userInfo, update);
@@ -104,7 +115,7 @@ async function validateAndSetStudentNumber(
   userInfo: AuthData,
   userStates: Map<string, AuthData>,
   userId: string,
-  reply: (message: string) => Promise<Message>
+  reply: (message: string) => Promise<Message>,
 ) {
   const studentNumber = message.content;
   if (!/^[a-zA-Z0-9]{8}$/.test(studentNumber)) {
@@ -116,7 +127,7 @@ async function validateAndSetStudentNumber(
     userId,
     { student_number: studentNumber },
     "学科を以下から教えてください: CS, BI, IA, OTHERS",
-    reply
+    reply,
   );
 }
 
@@ -125,7 +136,7 @@ async function validateAndSetDepartment(
   userInfo: AuthData,
   userStates: Map<string, AuthData>,
   userId: string,
-  reply: (message: string) => Promise<Message>
+  reply: (message: string) => Promise<Message>,
 ) {
   const departmentInput = message.content.toUpperCase();
   if (departmentInput in Department) {
@@ -134,10 +145,12 @@ async function validateAndSetDepartment(
       userId,
       { department: Department[departmentInput as keyof typeof Department] },
       "メールアドレスを教えてください",
-      reply
+      reply,
     );
   } else {
-    await reply("形式が正しくありません。学科を以下から教えてください: CS, BI, IA, GRADUATE, OTHERS");
+    await reply(
+      "形式が正しくありません。学科を以下から教えてください: CS, BI, IA, GRADUATE, OTHERS",
+    );
   }
 }
 
@@ -146,7 +159,7 @@ async function validateAndRegisterUser(
   userInfo: AuthData,
   userStates: Map<string, AuthData>,
   userId: string,
-  reply: (message: string) => Promise<Message>
+  reply: (message: string) => Promise<Message>,
 ) {
   const mail = message.content;
   if (mail.endsWith("@shizuoka.ac.jp")) {
@@ -162,7 +175,7 @@ async function validateAndRegisterUser(
         return;
       }
       await reply(
-        "認証メールを送信しました。静大メールから認証を行い、Discordサーバーで`/auth`コマンドを実行してください"
+        "認証メールを送信しました。静大メールから認証を行い、Discordサーバーで`/auth`コマンドを実行してください",
       );
     } else {
       await reply("認証に失敗しました。もう一度やり直してください");

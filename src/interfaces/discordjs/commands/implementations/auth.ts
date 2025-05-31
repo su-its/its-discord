@@ -1,9 +1,11 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import type Command from "../../../../domain/types/command";
 import { authenticateUser } from "../../../../application/usecases/authenticateUser";
+import type Command from "../../../../domain/types/command";
 
 const authCommand: Command = {
-  data: new SlashCommandBuilder().setName("auth").setDescription("認証コマンド"),
+  data: new SlashCommandBuilder()
+    .setName("auth")
+    .setDescription("認証コマンド"),
   execute: authCommandHandler,
   isDMAllowed: false,
 };
@@ -18,7 +20,10 @@ async function authCommandHandler(interaction: CommandInteraction) {
   await interaction.deferReply();
 
   // 認証処理をUsecaseに委譲
-  const result = await authenticateUser(interaction.user.id, interaction.guild.id);
+  const result = await authenticateUser(
+    interaction.user.id,
+    interaction.guild.id,
+  );
 
   // 結果をユーザーに返却
   await interaction.editReply(result.message);
