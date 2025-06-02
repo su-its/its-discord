@@ -1,6 +1,6 @@
 {
   "name": "its-discord-auth",
-  "version": "2.0.0",
+  "version": "2.2.0",
   "description": "A Discord authentication service built with TypeScript.",
   "scripts": {
     "start": "nodemon --exec ts-node src/main.ts",
