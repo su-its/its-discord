@@ -4,7 +4,7 @@ import logger from "./infrastructure/logger";
 // DIコンテナの初期化（アプリケーション起動時に実行される）
 import "./infrastructure/di/container";
 import { initializeScheduledMessagesFromConfig } from "./application/usecases/initializeScheduledMessagesFromConfig";
-import { loadConfig } from "./config";
+import { loadConfig } from "./config/environment";
 import { setupDependencyInjection } from "./infrastructure/di/container";
 import registry from "./interfaces/discordjs/commands";
 import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
