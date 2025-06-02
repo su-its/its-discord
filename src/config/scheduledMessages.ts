@@ -1,7 +1,7 @@
 import { discordServerService } from "../application/services/discordServerService";
 import { createHotChannelsEmbed } from "../application/usecases/createHotChannelsEmbed";
 import { getHotChannels } from "../application/usecases/getHotChannels";
-import { loadConfig } from "../config";
+import { loadConfig } from "./environment";
 import type { ScheduledMessageCreate } from "../domain/entities/scheduledMessage";
 
 /**
@@ -24,12 +24,23 @@ export const SCHEDULED_MESSAGE_CONFIGS: Array<
       const channelActivities = await getHotChannels(guildId);
       return createHotChannelsEmbed(guildId, channelActivities);
     },
-    cronSchedule: "0 0 * * *",
+    // 午後四時
+    cronSchedule: "21 16 * * *",
+  },
+  {
+    id: "test",
+    description: "テスト",
+    channelId: config.generalChannelId,
+    messageContent: async () => {
+      const test: string = "String関数テスト";
+      return test;
+    },
+    cronSchedule: "25 16 * * *",
   },
   {
     id: "garbage-collection-reminder",
     description: "毎週月曜と木曜日のゴミ捨てリマインダー",
-    channelId: config.generalChannelId || "",
+    channelId: config.generalChannelId,
     messageContent: "🗑️ ゴミ捨ての時間です！忘れずにゴミを出しましょう",
     cronSchedule: "0 12 * * 1,4", // 毎週月曜日と木曜日の12時
   },
