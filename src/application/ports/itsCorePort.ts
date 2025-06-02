@@ -15,6 +15,11 @@ export interface MemberConnectionData {
   discordAccountId: string;
 }
 
+export interface MemberNicknameUpdateData {
+  discordAccountId: string;
+  discordNickName: string;
+}
+
 /**
  * ITSCoreへのアクセスを抽象化するPort（ヘキサゴナルアーキテクチャ）
  * Application層はこのインターフェースのみに依存し、Infrastructure層の詳細を知らない
@@ -44,4 +49,9 @@ export interface ITSCorePort {
    * 全メンバーのリストを取得する
    */
   getMemberList(): Promise<InternalMember[]>;
+
+  /**
+   * メンバーのDiscordニックネームを変更する
+   */
+  updateMemberNickname(data: MemberNicknameUpdateData): Promise<InternalMember>;
 }
