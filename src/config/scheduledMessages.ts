@@ -1,8 +1,8 @@
 import { discordServerService } from "../application/services/discordServerService";
 import { createHotChannelsEmbed } from "../application/usecases/createHotChannelsEmbed";
 import { getHotChannels } from "../application/usecases/getHotChannels";
-import { loadConfig } from "./environment";
 import type { ScheduledMessageCreate } from "../domain/entities/scheduledMessage";
+import { loadConfig } from "./environment";
 
 /**
  * スケジュールメッセージの設定

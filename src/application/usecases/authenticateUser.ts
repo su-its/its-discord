@@ -1,8 +1,7 @@
-import type { UserRecord } from "firebase-admin/lib/auth/user-record";
 import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
-import { firebaseAuthService } from "../../infrastructure/firebase";
 import logger from "../../infrastructure/logger";
 import { discordServerService } from "../services/discordServerService";
+import { emailAuthService } from "../services/emailAuthService";
 import { itsCoreService } from "../services/itsCoreService";
 import { assignDepartmentRole } from "./assignDepartmentRole";
 
@@ -38,11 +37,9 @@ export async function authenticateUser(
       };
     }
 
-    // 2. Firebaseでメール認証状況を確認
-    const user: UserRecord = await firebaseAuthService.getUserByEmail(
-      member.mail,
-    );
-    if (!user.emailVerified) {
+    // 2. EmailAuthServiceでメール認証状況を確認
+    const isEmailVerified = await emailAuthService.isEmailVerified(member.mail);
+    if (!isEmailVerified) {
       logger.warn(`Email not verified for user: ${member.mail}`);
       return {
         success: false,
@@ -77,17 +74,20 @@ export async function authenticateUser(
     ]);
 
     logger.info(
-      `User authentication successful: ${discordUserId} (${member.name})`,
+      `User authenticated successfully: ${member.name} (${member.mail})`,
     );
     return {
       success: true,
-      message: "認証に成功しました! ITSへようこそ!",
+      message: "認証が完了しました！ロールが付与されました。",
     };
   } catch (error) {
-    logger.error(`Authentication error for user ${discordUserId}:`, error);
+    logger.error(
+      `Error during user authentication for Discord ID ${discordUserId}:`,
+      error,
+    );
     return {
       success: false,
-      message: "認証に失敗しました",
+      message: "認証処理中にエラーが発生しました。管理者に連絡してください。",
       reason: "TECHNICAL_ERROR",
     };
   }
