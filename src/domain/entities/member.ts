@@ -8,6 +8,7 @@ interface Member {
   department: department;
   mail: string;
   discordId?: string;
+  discordNickname?: string;
 }
 
 export default Member;

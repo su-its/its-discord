@@ -3,6 +3,7 @@ import type {
   ITSCorePort,
   MemberConnectionData,
   MemberRegistrationData,
+  MemberNicknameUpdateData,
 } from "../../application/ports/itsCorePort";
 import type InternalMember from "../../domain/entities/member";
 import { toInternalMember } from "./mapper";
@@ -55,6 +56,16 @@ export class ITSCoreAdaptor implements ITSCorePort {
   async getMemberList(): Promise<InternalMember[]> {
     const result = await this.useCases.getMemberList.execute({});
     return result.members.map((member) => toInternalMember(member));
+  }
+
+  /**
+   * メンバーのDiscordニックネームを変更する
+   */
+  async updateMemberNickname(
+    data: MemberNicknameUpdateData,
+  ): Promise<InternalMember> {
+    const result = await this.useCases.changeDiscordNickName.execute(data);
+    return toInternalMember(result.member);
   }
 }
 

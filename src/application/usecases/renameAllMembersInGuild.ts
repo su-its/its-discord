@@ -2,6 +2,7 @@ import logger from "../../infrastructure/logger";
 import type { DiscordMember } from "../ports/discordMemberPort";
 import { discordServerService } from "../services/discordServerService";
 import { itsCoreService } from "../services/itsCoreService";
+import { getDiscordDisplayName } from "../utils/memberDisplayName";
 
 /**
  * メンバーリネーム結果
@@ -14,18 +15,24 @@ export interface MemberRenameResult {
 
 /**
  * ギルド内の全メンバーのニックネームを一括変更するUsecase
- * ITSCoreの情報を元に、Discord上のニックネームを実名に設定する
+ * ITSCoreの情報を元に、Discord上のニックネームを設定する
+ * ニックネームが設定されている場合は「本名 / ニックネーム」、設定されていない場合は「本名」を使用する
  */
 export async function renameAllMembersInGuild(
   guildId: string,
 ): Promise<MemberRenameResult> {
-  // 1. ITSCoreから全メンバーのDiscordIDと名前のマッピングを取得
+  // 1. ITSCoreから全メンバーのDiscordIDと表示名のマッピングを取得
   const members = await itsCoreService.getMemberList();
   const memberNameMap = new Map<string, string>();
 
   for (const member of members) {
     if (member.discordId) {
-      memberNameMap.set(member.discordId, member.name);
+      // Discord表示名ルールに従って表示名を決定
+      const displayName = getDiscordDisplayName(
+        member.name,
+        member.discordNickname,
+      );
+      memberNameMap.set(member.discordId, displayName);
     }
   }
 
