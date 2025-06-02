@@ -25,6 +25,7 @@ function mapDepartment(department: ItsCoreDepartment): InternalDepartment {
   if (deptString.includes("IA")) return InternalDepartment.IA;
   if (deptString.includes("GRADUATE")) return InternalDepartment.GRADUATE;
   if (deptString.includes("ALUMNI")) return InternalDepartment.OBOG;
+  if (deptString.includes("OTHERS")) return InternalDepartment.OTHERS;
   throw new Error(`Invalid department: ${department}`);
 }
 
