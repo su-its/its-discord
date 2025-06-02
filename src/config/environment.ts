@@ -37,7 +37,9 @@ export function loadConfig(): AppConfig {
   }
 
   if (!generalChannelId) {
-    throw new Error("Missing required environment variable: GENERAL_CHANNEL_ID");
+    throw new Error(
+      "Missing required environment variable: GENERAL_CHANNEL_ID",
+    );
   }
 
   return {
@@ -65,23 +67,33 @@ export function loadFirebaseConfig(): FirebaseConfig {
   }
 
   if (!authDomain) {
-    throw new Error("Missing required environment variable: FIREBASE_AUTH_DOMAIN");
+    throw new Error(
+      "Missing required environment variable: FIREBASE_AUTH_DOMAIN",
+    );
   }
 
   if (!projectId) {
-    throw new Error("Missing required environment variable: FIREBASE_PROJECT_ID");
+    throw new Error(
+      "Missing required environment variable: FIREBASE_PROJECT_ID",
+    );
   }
 
   if (!storageBucket) {
-    throw new Error("Missing required environment variable: FIREBASE_STORAGE_BUCKET");
+    throw new Error(
+      "Missing required environment variable: FIREBASE_STORAGE_BUCKET",
+    );
   }
 
   if (!messagingSenderId) {
-    throw new Error("Missing required environment variable: FIREBASE_MESSAGING_SENDER_ID");
+    throw new Error(
+      "Missing required environment variable: FIREBASE_MESSAGING_SENDER_ID",
+    );
   }
 
   if (!messageSenderId) {
-    throw new Error("Missing required environment variable: FIREBASE_MESSAGING_SENDER_ID");
+    throw new Error(
+      "Missing required environment variable: FIREBASE_MESSAGING_SENDER_ID",
+    );
   }
 
   if (!appId) {
@@ -89,7 +101,9 @@ export function loadFirebaseConfig(): FirebaseConfig {
   }
 
   if (!measurementId) {
-    throw new Error("Missing required environment variable: FIREBASE_MESUREMENT_ID");
+    throw new Error(
+      "Missing required environment variable: FIREBASE_MESUREMENT_ID",
+    );
   }
 
   return {
