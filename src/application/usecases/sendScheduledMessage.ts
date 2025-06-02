@@ -36,6 +36,17 @@ export async function sendScheduledMessage(
     } else {
       // 関数の場合は実行（既存のUsecaseはvoidを返すので、戻り値の処理は不要）
       const constnt = await targetMessage.messageContent();
+      if (typeof constnt === "object" && constnt.title) {
+        await discordServerService.sendEmbedToChannel(
+          targetMessage.channelId,
+          constnt as Embed,
+        );
+      } else {
+        await discordServerService.sendMessageToChannel(
+          targetMessage.channelId,
+          constnt as string,
+        );
+      }
       logger.debug(
         `Executed message function for channel ${targetMessage.channelId}`,
       );
