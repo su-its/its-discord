@@ -1454,13 +1454,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shizuoka-its/core@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@shizuoka-its/core@npm:2.0.0"
+"@shizuoka-its/core@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@shizuoka-its/core@npm:2.0.1"
   dependencies:
     "@prisma/client": "npm:^5.22.0"
     uuid: "npm:^11.1.0"
-  checksum: 10c0/bead3f3d77646db427f2a15c464935f23f36b52fd718c4587b28e243717041d3ac78a69c20ecabda0a82b7743534f9aab4247ce931dc3a828fbfa8599833a259
+  checksum: 10c0/43132a4f79b2401e476aa5c871354ec6814e574d3662efac504ed3715d3a09cb77838be2fd1b7550b65276e7a4fb179fa1f44e5de5ccbef76bd3f7123db2bea6
   languageName: node
   linkType: hard
 
@@ -3139,7 +3139,7 @@ __metadata:
   resolution: "its-discord-auth@workspace:."
   dependencies:
     "@biomejs/biome": "npm:^1.9.2"
-    "@shizuoka-its/core": "npm:^2.0.0"
+    "@shizuoka-its/core": "npm:^2.0.1"
     "@types/node": "npm:^22.13.1"
     "@types/uuid": "npm:^10.0.0"
     "@vitest/coverage-v8": "npm:^3.0.5"
