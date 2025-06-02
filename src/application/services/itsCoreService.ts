@@ -65,6 +65,12 @@ export class ITSCoreService {
   async getMemberList(): Promise<ReturnType<ITSCorePort["getMemberList"]>> {
     return this.port.getMemberList();
   }
+
+  async updateMemberNickname(
+    data: Parameters<ITSCorePort["updateMemberNickname"]>[0],
+  ): Promise<ReturnType<ITSCorePort["updateMemberNickname"]>> {
+    return this.port.updateMemberNickname(data);
+  }
 }
 
 // Application層で使用するサービスインスタンス

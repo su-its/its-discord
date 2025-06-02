@@ -6,13 +6,17 @@ import InternalDepartment from "../../domain/entities/department";
 import type InternalMember from "../../domain/entities/member";
 
 export function toInternalMember(member: ItsCoreMember): InternalMember {
+  const discordAccounts = member.getDiscordAccounts();
+  const firstDiscordAccount = discordAccounts[0];
+
   return {
     id: member.id,
     name: member.getName(),
     student_number: member.getStudentId(),
     department: mapDepartment(member.getDepartment()),
     mail: member.getEmail().getValue(),
-    discordId: member.getDiscordAccounts()[0]?.id,
+    discordId: firstDiscordAccount?.id,
+    discordNickname: firstDiscordAccount?.getNickName(),
   };
 }
 

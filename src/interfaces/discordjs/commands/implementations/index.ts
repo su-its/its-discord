@@ -2,6 +2,7 @@ export * from "./auth";
 export * from "./healthCheck";
 export * from "./hotChannels";
 export * from "./kill";
+export * from "./nick";
 export * from "./ps";
 export * from "./register";
 export * from "./renameAll";
