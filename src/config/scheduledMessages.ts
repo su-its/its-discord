@@ -24,18 +24,8 @@ export const SCHEDULED_MESSAGE_CONFIGS: Array<
       const channelActivities = await getHotChannels(guildId);
       return createHotChannelsEmbed(guildId, channelActivities);
     },
-    // 午後四時
-    cronSchedule: "21 16 * * *",
-  },
-  {
-    id: "test",
-    description: "テスト",
-    channelId: config.generalChannelId,
-    messageContent: async () => {
-      const test: string = "String関数テスト";
-      return test;
-    },
-    cronSchedule: "25 16 * * *",
+    // 深夜0時
+    cronSchedule: "0 0 * * *",
   },
   {
     id: "garbage-collection-reminder",
