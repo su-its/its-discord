@@ -1,17 +1,21 @@
 import CommandRegistry from "./core/commandRegistry";
-import auth from "./implementations/auth";
-import healthCheck from "./implementations/healthCheck";
-import hotChannels from "./implementations/hotChannels";
-import kill from "./implementations/kill";
-import nick from "./implementations/nick";
-import ps from "./implementations/ps";
-import register from "./implementations/register";
-import renameAll from "./implementations/renameAll";
-import who from "./implementations/who";
+import {
+  auth,
+  authDM,
+  healthCheck,
+  hotChannels,
+  kill,
+  nick,
+  ps,
+  register,
+  renameAll,
+  who,
+} from "./implementations";
 
 const registry = new CommandRegistry();
 
 registry.register(auth);
+registry.register(authDM);
 registry.register(healthCheck);
 registry.register(hotChannels);
 registry.register(kill);

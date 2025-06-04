@@ -33,7 +33,7 @@ function mapDepartment(department: ItsCoreDepartment): InternalDepartment {
   throw new Error(`Invalid department: ${department}`);
 }
 
-export function toInternalDepartment(
+function toInternalDepartment(
   department: ItsCoreDepartment,
 ): InternalDepartment {
   return mapDepartment(department);

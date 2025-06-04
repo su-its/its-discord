@@ -33,7 +33,7 @@ export const itsCoreServiceContainer = new ITSCoreServiceContainer();
  * Application層でITSCorePortを使用するためのサービスクラス
  * ヘキサゴナルアーキテクチャに従い、Portのみに依存
  */
-export class ITSCoreService {
+class ITSCoreService {
   private get port(): ITSCorePort {
     return itsCoreServiceContainer.getITSCorePort();
   }

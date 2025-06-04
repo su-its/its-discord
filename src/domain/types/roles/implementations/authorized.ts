@@ -7,4 +7,4 @@ const authorizedRoleProperty: Role = {
 };
 
 export default authorizedRoleProperty;
-export const authorizedRoleKey = authorizedRoleProperty.name;
+const authorizedRoleKey = authorizedRoleProperty.name;

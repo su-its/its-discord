@@ -33,7 +33,7 @@ export const emailAuthServiceContainer = new EmailAuthServiceContainer();
  * Application層でEmailAuthPortを使用するためのサービスクラス
  * ヘキサゴナルアーキテクチャに従い、Portのみに依存
  */
-export class EmailAuthService {
+class EmailAuthService {
   private get port(): EmailAuthPort {
     return emailAuthServiceContainer.getEmailAuthPort();
   }

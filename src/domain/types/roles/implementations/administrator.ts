@@ -7,4 +7,4 @@ const administratorRoleProperty: Role = {
 };
 
 export default administratorRoleProperty;
-export const administratorRoleKey = administratorRoleProperty.name;
+const administratorRoleKey = administratorRoleProperty.name;

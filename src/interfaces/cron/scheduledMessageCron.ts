@@ -92,7 +92,7 @@ class ScheduledMessageCronManager {
 }
 
 // シングルトンインスタンス
-export const scheduledMessageCronManager = new ScheduledMessageCronManager();
+const scheduledMessageCronManager = new ScheduledMessageCronManager();
 
 /**
  * 新しいスケジュールメッセージのCronジョブを追加する
@@ -110,6 +110,6 @@ export function addScheduledMessageJob(
  * スケジュールメッセージのCronジョブを削除する
  * @param messageId メッセージID
  */
-export function removeScheduledMessageJob(messageId: string): void {
+function removeScheduledMessageJob(messageId: string): void {
   scheduledMessageCronManager.stopJob(messageId);
 }

@@ -6,7 +6,7 @@ import { getDiscordDisplayName } from "../utils/memberDisplayName";
 /**
  * メンバーのニックネーム変更処理の結果
  */
-export interface NicknameUpdateResult {
+interface NicknameUpdateResult {
   success: boolean;
   message: string;
   reason?: "MEMBER_NOT_FOUND" | "UPDATE_FAILED" | "DISCORD_UPDATE_FAILED";

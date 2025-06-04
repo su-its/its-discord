@@ -72,7 +72,7 @@ export async function sendScheduledMessage(
  * すべてのアクティブなスケジュールメッセージを実行するユースケース
  * 主にCronジョブから呼び出される
  */
-export async function executeAllScheduledMessages(): Promise<void> {
+async function executeAllScheduledMessages(): Promise<void> {
   try {
     const activeMessages =
       await scheduledMessageService.getAllActiveScheduledMessages();

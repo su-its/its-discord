@@ -7,7 +7,7 @@ import { getDiscordDisplayName } from "../utils/memberDisplayName";
 /**
  * メンバーリネーム結果
  */
-export interface MemberRenameResult {
+interface MemberRenameResult {
   successCount: number;
   failureCount: number;
   failedMembers: DiscordMember[];
