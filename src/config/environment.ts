@@ -3,13 +3,13 @@ import dotenv from "dotenv";
 // 環境変数を読み込み
 dotenv.config();
 
-export interface AppConfig {
+interface AppConfig {
   discordToken: string;
   hotChannelId: string;
   generalChannelId: string;
 }
 
-export interface FirebaseConfig {
+interface FirebaseConfig {
   apiKey: string;
   authDomain: string;
   projectId: string;

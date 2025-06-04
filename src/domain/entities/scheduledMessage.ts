@@ -9,7 +9,7 @@ export interface Embed {
   timestamp?: string;
 }
 
-export type MessageContent =
+type MessageContent =
   | string // 静的テキストメッセージ
   | (() => Promise<string>) // 動的テキスト生成関数
   | (() => Promise<Embed>); // Embedデータ生成関数

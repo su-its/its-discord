@@ -4,7 +4,7 @@ import logger from "../../infrastructure/logger";
 import handleMemberRegistration from "./authController";
 import { verifyMemberCredentials } from "./verifyMemberCredentials";
 
-export interface ProcessDMAuthenticationResult {
+interface ProcessDMAuthenticationResult {
   success: boolean;
   message: string;
 }

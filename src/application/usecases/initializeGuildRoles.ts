@@ -6,7 +6,7 @@ import { discordServerService } from "../services/discordServerService";
  * 指定されたギルドのロールを初期化するUsecase
  * RoleRegistryに登録されたすべてのロールを作成・確認する
  */
-export async function initializeGuildRoles(guildId: string): Promise<void> {
+async function initializeGuildRoles(guildId: string): Promise<void> {
   const roles = roleRegistry.getAllRoles();
   logger.info(`Found ${roles.length} roles for guild ${guildId}`);
 

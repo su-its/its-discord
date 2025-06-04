@@ -13,7 +13,7 @@ import { toInternalMember } from "./mapper";
  * YAGNIの原則に従い、実際に使用される機能のみを公開
  * ITSCoreのモデルを内部モデルに変換して返す責務も持つ
  */
-export class ITSCoreAdaptor implements ITSCorePort {
+class ITSCoreAdaptor implements ITSCorePort {
   private useCases = createMemberUseCases();
 
   /**

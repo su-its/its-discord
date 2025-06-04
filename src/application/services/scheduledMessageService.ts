@@ -32,7 +32,7 @@ export const scheduledMessageServiceContainer =
  * Application層でScheduledMessagePortを使用するためのサービスクラス（簡素版）
  * ヘキサゴナルアーキテクチャに従い、Portのみに依存
  */
-export class ScheduledMessageService {
+class ScheduledMessageService {
   async createScheduledMessage(
     message: ScheduledMessageCreate,
   ): Promise<ScheduledMessage> {

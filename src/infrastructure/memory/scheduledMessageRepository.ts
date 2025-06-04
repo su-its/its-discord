@@ -10,7 +10,7 @@ import logger from "../logger";
  * メモリベースのスケジュールメッセージリポジトリ（簡素版）
  * 本格的な実装では、データベース（Firebase、PostgreSQL等）を使用することを推奨
  */
-export class MemoryScheduledMessageRepository implements ScheduledMessagePort {
+class MemoryScheduledMessageRepository implements ScheduledMessagePort {
   private messages: Map<string, ScheduledMessage> = new Map();
 
   async create(messageData: ScheduledMessageCreate): Promise<ScheduledMessage> {

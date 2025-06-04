@@ -92,7 +92,7 @@ export const discordServerServiceContainer =
  * Application層で分割されたDiscord Portを使用するためのサービスクラス
  * ヘキサゴナルアーキテクチャに従い、Portのみに依存
  */
-export class DiscordServerService {
+class DiscordServerService {
   // Member operations
   async getGuildMembers(guildId: string): Promise<DiscordMember[]> {
     return discordServerServiceContainer

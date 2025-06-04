@@ -8,7 +8,7 @@ import { assignDepartmentRole } from "./assignDepartmentRole";
 /**
  * ユーザー認証処理の結果
  */
-export interface AuthenticationResult {
+interface AuthenticationResult {
   success: boolean;
   message: string;
   reason?: "MEMBER_NOT_FOUND" | "EMAIL_NOT_VERIFIED" | "TECHNICAL_ERROR";
