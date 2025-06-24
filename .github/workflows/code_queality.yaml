@@ -30,6 +30,3 @@ jobs:
 
       - name: Run CI scripts
         run: yarn ci
-
-      - name: Run Vitest
-        run: # yarn test

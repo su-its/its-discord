@@ -1,4 +1,3 @@
-import type AuthData from "./domain/types/authData";
 import { CustomClient } from "./domain/types/customClient";
 import logger from "./infrastructure/logger";
 // DIコンテナの初期化（アプリケーション起動時に実行される）
@@ -18,7 +17,6 @@ process.on("unhandledRejection", (reason, promise) => {
 });
 
 const client = new CustomClient();
-const userStates = new Map<string, AuthData>();
 
 async function main() {
   try {
@@ -34,7 +32,7 @@ async function main() {
     }
 
     // イベントハンドラを設定
-    setupEventHandlers(client, userStates);
+    setupEventHandlers(client);
 
     // クライアントをログイン
     await client.login(config.discordToken);

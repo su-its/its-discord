@@ -1,5 +1,6 @@
 import CommandRegistry from "./core/commandRegistry";
 import auth from "./implementations/auth";
+import dmAuth from "./implementations/dmAuth";
 import healthCheck from "./implementations/healthCheck";
 import hotChannels from "./implementations/hotChannels";
 import kill from "./implementations/kill";
@@ -12,6 +13,7 @@ import who from "./implementations/who";
 const registry = new CommandRegistry();
 
 registry.register(auth);
+registry.register(dmAuth);
 registry.register(healthCheck);
 registry.register(hotChannels);
 registry.register(kill);

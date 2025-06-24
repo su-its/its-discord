@@ -1,5 +1,5 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { updateMemberNickname } from "../../../../application/usecases/updateMemberNickname";
+import { DIContainer } from "../../../../application/services/DIContainer";
 import type Command from "../../../../domain/types/command";
 
 const nickCommand: Command = {
@@ -38,13 +38,19 @@ async function nickCommandHandler(interaction: CommandInteraction) {
   await interaction.deferReply();
 
   try {
-    const result = await updateMemberNickname(
-      interaction.user.id,
-      interaction.guild.id,
-      nickname.trim(),
-    );
+    const diContainer = DIContainer.getInstance();
+    const updateMemberNicknameUseCase = diContainer.getUpdateMemberNicknameUseCase();
+    
+    const result = await updateMemberNicknameUseCase.execute({
+      discordId: interaction.user.id,
+      newNickname: nickname.trim(),
+    });
 
-    await interaction.followUp(result.message);
+    if (result.isSuccess()) {
+      await interaction.followUp(result.getValue().message);
+    } else {
+      await interaction.followUp(result.getError().message);
+    }
   } catch (error) {
     await interaction.followUp(
       "ニックネームの変更中にエラーが発生しました。後でもう一度お試しください。",
