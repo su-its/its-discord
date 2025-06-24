@@ -1,10 +1,10 @@
-import { Result, Ok, Err } from "../../../../../domain/common/Result";
-import { MemberRepository } from "../../../../../domain/repositories/MemberRepository";
-import { Member } from "../../../../../domain/entities/NewMember";
-import { MemberId } from "../../../../../domain/valueObjects/ids/MemberId";
-import { DiscordId } from "../../../../../domain/valueObjects/ids/DiscordId";
-import { Email } from "../../../../../domain/valueObjects/Email";
-import { StudentNumber } from "../../../../../domain/valueObjects/StudentNumber";
+import { Err, Ok, type Result } from "../../../../../domain/common/Result";
+import type { Member } from "../../../../../domain/entities/NewMember";
+import type { MemberRepository } from "../../../../../domain/repositories/MemberRepository";
+import type { Email } from "../../../../../domain/valueObjects/Email";
+import type { StudentNumber } from "../../../../../domain/valueObjects/StudentNumber";
+import type { DiscordId } from "../../../../../domain/valueObjects/ids/DiscordId";
+import type { MemberId } from "../../../../../domain/valueObjects/ids/MemberId";
 
 export class MockMemberRepository implements MemberRepository {
   private members: Map<string, Member> = new Map();
@@ -21,7 +21,9 @@ export class MockMemberRepository implements MemberRepository {
     return Ok(member);
   }
 
-  async findByDiscordId(discordId: DiscordId): Promise<Result<Member | null, Error>> {
+  async findByDiscordId(
+    discordId: DiscordId,
+  ): Promise<Result<Member | null, Error>> {
     for (const member of this.members.values()) {
       if (member.discordProfile?.discordId.equals(discordId)) {
         return Ok(member);
@@ -39,7 +41,9 @@ export class MockMemberRepository implements MemberRepository {
     return Ok(null);
   }
 
-  async findByStudentNumber(studentNumber: StudentNumber): Promise<Result<Member | null, Error>> {
+  async findByStudentNumber(
+    studentNumber: StudentNumber,
+  ): Promise<Result<Member | null, Error>> {
     for (const member of this.members.values()) {
       if (member.studentNumber.equals(studentNumber)) {
         return Ok(member);

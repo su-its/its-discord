@@ -1,9 +1,9 @@
-import { Result, Ok, Err } from "../../../domain/common/Result";
-import { UseCase } from "../../common/UseCase";
-import { EventDispatcher } from "../../common/DomainEventHandler";
-import { MemberAggregateFactory } from "../../../domain/factories/MemberAggregateFactory";
-import { MemberRepository } from "../../../domain/repositories/MemberRepository";
+import { Err, Ok, type Result } from "../../../domain/common/Result";
+import type { MemberAggregateFactory } from "../../../domain/factories/MemberAggregateFactory";
+import type { MemberRepository } from "../../../domain/repositories/MemberRepository";
 import { DiscordId } from "../../../domain/valueObjects/ids/DiscordId";
+import type { EventDispatcher } from "../../common/DomainEventHandler";
+import type { UseCase } from "../../common/UseCase";
 
 export interface UpdateMemberNicknameRequest {
   discordId: string;
@@ -17,14 +17,18 @@ export interface UpdateMemberNicknameResponse {
   message: string;
 }
 
-export class UpdateMemberNicknameUseCase implements UseCase<UpdateMemberNicknameRequest, UpdateMemberNicknameResponse> {
+export class UpdateMemberNicknameUseCase
+  implements UseCase<UpdateMemberNicknameRequest, UpdateMemberNicknameResponse>
+{
   constructor(
     private readonly memberAggregateFactory: MemberAggregateFactory,
     private readonly memberRepository: MemberRepository,
-    private readonly eventDispatcher: EventDispatcher
+    private readonly eventDispatcher: EventDispatcher,
   ) {}
 
-  async execute(request: UpdateMemberNicknameRequest): Promise<Result<UpdateMemberNicknameResponse, Error>> {
+  async execute(
+    request: UpdateMemberNicknameRequest,
+  ): Promise<Result<UpdateMemberNicknameResponse, Error>> {
     try {
       // Discord ID の検証
       const discordIdResult = DiscordId.create(request.discordId);
@@ -33,7 +37,9 @@ export class UpdateMemberNicknameUseCase implements UseCase<UpdateMemberNickname
       }
 
       // メンバー取得
-      const memberResult = await this.memberRepository.findByDiscordId(discordIdResult.getValue());
+      const memberResult = await this.memberRepository.findByDiscordId(
+        discordIdResult.getValue(),
+      );
       if (memberResult.isFailure()) {
         return Err(memberResult.getError());
       }
@@ -45,7 +51,9 @@ export class UpdateMemberNicknameUseCase implements UseCase<UpdateMemberNickname
 
       // 認証状態チェック
       if (!member.status.isAuthenticated()) {
-        return Err(new Error("Member must be authenticated to update nickname"));
+        return Err(
+          new Error("Member must be authenticated to update nickname"),
+        );
       }
 
       // 集約の復元
@@ -61,7 +69,9 @@ export class UpdateMemberNicknameUseCase implements UseCase<UpdateMemberNickname
       }
 
       // 永続化
-      const saveResult = await this.memberRepository.save(memberAggregate.getMember());
+      const saveResult = await this.memberRepository.save(
+        memberAggregate.getMember(),
+      );
       if (saveResult.isFailure()) {
         return Err(saveResult.getError());
       }
@@ -77,11 +87,12 @@ export class UpdateMemberNicknameUseCase implements UseCase<UpdateMemberNickname
         memberId: member.id.toValue(),
         oldNickname,
         newNickname: request.newNickname,
-        message: "ニックネームが更新されました。"
+        message: "ニックネームが更新されました。",
       });
-
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Nickname update failed"));
+      return Err(
+        error instanceof Error ? error : new Error("Nickname update failed"),
+      );
     }
   }
 }

@@ -1,5 +1,5 @@
 import { Entity } from "../common/Entity";
-import { DiscordId } from "../valueObjects/ids/DiscordId";
+import type { DiscordId } from "../valueObjects/ids/DiscordId";
 
 export class DiscordProfile extends Entity<DiscordId> {
   private _nickname: string | null;
@@ -8,7 +8,7 @@ export class DiscordProfile extends Entity<DiscordId> {
   private constructor(
     discordId: DiscordId,
     nickname: string | null = null,
-    roles: string[] = []
+    roles: string[] = [],
   ) {
     super(discordId);
     this._nickname = nickname;
@@ -22,7 +22,7 @@ export class DiscordProfile extends Entity<DiscordId> {
   static restore(
     discordId: DiscordId,
     nickname: string | null,
-    roles: string[]
+    roles: string[],
   ): DiscordProfile {
     return new DiscordProfile(discordId, nickname, roles);
   }
@@ -50,7 +50,7 @@ export class DiscordProfile extends Entity<DiscordId> {
   }
 
   removeRole(roleName: string): void {
-    this._roles = this._roles.filter(role => role !== roleName);
+    this._roles = this._roles.filter((role) => role !== roleName);
   }
 
   hasRole(roleName: string): boolean {

@@ -1,6 +1,6 @@
 export enum MemberStatusType {
   PENDING = "PENDING",
-  DISCORD_REGISTERED = "DISCORD_REGISTERED", 
+  DISCORD_REGISTERED = "DISCORD_REGISTERED",
   EMAIL_VERIFIED = "EMAIL_VERIFIED",
   AUTHENTICATED = "AUTHENTICATED",
   INACTIVE = "INACTIVE",
@@ -10,9 +10,15 @@ export class MemberStatus {
   private constructor(private readonly value: MemberStatusType) {}
 
   static readonly PENDING = new MemberStatus(MemberStatusType.PENDING);
-  static readonly DISCORD_REGISTERED = new MemberStatus(MemberStatusType.DISCORD_REGISTERED);
-  static readonly EMAIL_VERIFIED = new MemberStatus(MemberStatusType.EMAIL_VERIFIED);
-  static readonly AUTHENTICATED = new MemberStatus(MemberStatusType.AUTHENTICATED);
+  static readonly DISCORD_REGISTERED = new MemberStatus(
+    MemberStatusType.DISCORD_REGISTERED,
+  );
+  static readonly EMAIL_VERIFIED = new MemberStatus(
+    MemberStatusType.EMAIL_VERIFIED,
+  );
+  static readonly AUTHENTICATED = new MemberStatus(
+    MemberStatusType.AUTHENTICATED,
+  );
   static readonly INACTIVE = new MemberStatus(MemberStatusType.INACTIVE);
 
   getValue(): MemberStatusType {

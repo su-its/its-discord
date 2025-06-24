@@ -1,4 +1,4 @@
-import { Result, Ok, Err } from "../common/Result";
+import { Err, Ok, type Result } from "../common/Result";
 
 export class Email {
   private constructor(private readonly value: string) {}

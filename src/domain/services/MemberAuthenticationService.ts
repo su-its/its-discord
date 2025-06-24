@@ -1,30 +1,28 @@
-import { Result, Ok, Err } from "../common/Result";
-import { StudentNumber } from "../valueObjects/StudentNumber";
-import { Email } from "../valueObjects/Email";
-import { Department } from "../valueObjects/Department";
-import { ITSCoreAdapter, MemberCredentials } from "./ITSCoreAdapter";
+import { Err, Ok, type Result } from "../common/Result";
+import type { Department } from "../valueObjects/Department";
+import type { Email } from "../valueObjects/Email";
+import type { StudentNumber } from "../valueObjects/StudentNumber";
+import type { ITSCoreAdapter, MemberCredentials } from "./ITSCoreAdapter";
 
 export class MemberAuthenticationService {
-  constructor(
-    private readonly itsCoreAdapter: ITSCoreAdapter
-  ) {}
+  constructor(private readonly itsCoreAdapter: ITSCoreAdapter) {}
 
   async verifyMemberCredentials(
     name: string,
     studentNumber: StudentNumber,
     email: Email,
-    department: Department
+    department: Department,
   ): Promise<Result<boolean, Error>> {
     try {
       const credentials: MemberCredentials = {
         name,
         studentNumber,
         email,
-        department
+        department,
       };
 
       const result = await this.itsCoreAdapter.findMember(credentials);
-      
+
       if (result.isFailure()) {
         return Err(result.getError());
       }
@@ -35,7 +33,7 @@ export class MemberAuthenticationService {
       }
 
       // 厳密な照合
-      const isValid = 
+      const isValid =
         itsMember.name === name &&
         itsMember.studentNumber === studentNumber.getValue() &&
         itsMember.email === email.getValue() &&
@@ -43,7 +41,9 @@ export class MemberAuthenticationService {
 
       return Ok(isValid);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Unknown error occurred"));
+      return Err(
+        error instanceof Error ? error : new Error("Unknown error occurred"),
+      );
     }
   }
 }

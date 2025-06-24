@@ -1,12 +1,18 @@
-import { Result, Ok, Err } from "../../domain/common/Result";
-import { ITSCoreAdapter, ITSCoreMember, MemberCredentials } from "../../domain/services/ITSCoreAdapter";
 import { itsCoreService } from "../../application/services/itsCoreService";
+import { Err, Ok, type Result } from "../../domain/common/Result";
+import type {
+  ITSCoreAdapter,
+  ITSCoreMember,
+  MemberCredentials,
+} from "../../domain/services/ITSCoreAdapter";
 
 export class ITSCoreAdapterImpl implements ITSCoreAdapter {
-  async findMember(credentials: MemberCredentials): Promise<Result<ITSCoreMember | null, Error>> {
+  async findMember(
+    credentials: MemberCredentials,
+  ): Promise<Result<ITSCoreMember | null, Error>> {
     try {
       const members = await itsCoreService.getMemberList();
-      
+
       const matchingMember = members.find((member) => {
         return (
           member.name === credentials.name &&
@@ -21,31 +27,35 @@ export class ITSCoreAdapterImpl implements ITSCoreAdapter {
           name: matchingMember.name,
           studentNumber: matchingMember.student_number,
           email: matchingMember.mail,
-          department: matchingMember.department
+          department: matchingMember.department,
         };
         return Ok(itsMember);
       }
 
       return Ok(null);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to find member"));
+      return Err(
+        error instanceof Error ? error : new Error("Failed to find member"),
+      );
     }
   }
 
   async getAllMembers(): Promise<Result<ITSCoreMember[], Error>> {
     try {
       const members = await itsCoreService.getMemberList();
-      
-      const itsMembers: ITSCoreMember[] = members.map(member => ({
+
+      const itsMembers: ITSCoreMember[] = members.map((member) => ({
         name: member.name,
         studentNumber: member.student_number,
         email: member.mail,
-        department: member.department
+        department: member.department,
       }));
 
       return Ok(itsMembers);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to get all members"));
+      return Err(
+        error instanceof Error ? error : new Error("Failed to get all members"),
+      );
     }
   }
 }

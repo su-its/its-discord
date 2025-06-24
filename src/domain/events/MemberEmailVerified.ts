@@ -1,11 +1,11 @@
 import { DomainEvent } from "../common/DomainEvent";
-import { MemberId } from "../valueObjects/ids/MemberId";
-import { Email } from "../valueObjects/Email";
+import type { Email } from "../valueObjects/Email";
+import type { MemberId } from "../valueObjects/ids/MemberId";
 
 export class MemberEmailVerified extends DomainEvent {
   constructor(
     public readonly memberId: MemberId,
-    public readonly email: Email
+    public readonly email: Email,
   ) {
     super();
   }

@@ -1,7 +1,9 @@
-import { Result, Ok, Err } from "../common/Result";
+import { Err, Ok, type Result } from "../common/Result";
 
 export class MessageContent {
-  private constructor(private readonly value: string | (() => Promise<string>)) {}
+  private constructor(
+    private readonly value: string | (() => Promise<string>),
+  ) {}
 
   static createStatic(content: string): Result<MessageContent, Error> {
     if (!content || content.trim().length === 0) {
@@ -15,7 +17,9 @@ export class MessageContent {
     return Ok(new MessageContent(content.trim()));
   }
 
-  static createDynamic(contentGenerator: () => Promise<string>): MessageContent {
+  static createDynamic(
+    contentGenerator: () => Promise<string>,
+  ): MessageContent {
     return new MessageContent(contentGenerator);
   }
 

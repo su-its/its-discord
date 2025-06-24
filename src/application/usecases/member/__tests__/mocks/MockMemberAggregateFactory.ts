@@ -1,25 +1,19 @@
-import { Result, Ok } from "../../../../../domain/common/Result";
+import type { MemberAggregate } from "../../../../../domain/aggregates/MemberAggregate";
+import { Ok, type Result } from "../../../../../domain/common/Result";
+import type {
+  Member,
+  MemberProps,
+} from "../../../../../domain/entities/NewMember";
 import { MemberAggregateFactory } from "../../../../../domain/factories/MemberAggregateFactory";
-import { MemberAggregate } from "../../../../../domain/aggregates/MemberAggregate";
-import { Member, MemberProps } from "../../../../../domain/entities/NewMember";
-import { MemberId } from "../../../../../domain/valueObjects/ids/MemberId";
-import { MemberAuthenticationService } from "../../../../../domain/services/MemberAuthenticationService";
-import { RoleAssignmentService } from "../../../../../domain/services/RoleAssignmentService";
-import { NicknameGenerationService } from "../../../../../domain/services/NicknameGenerationService";
-import { EmailAuthAdapter } from "../../../../../domain/services/EmailAuthAdapter";
+import type { EmailAuthAdapter } from "../../../../../domain/services/EmailAuthAdapter";
+import type { MemberAuthenticationService } from "../../../../../domain/services/MemberAuthenticationService";
+import type { NicknameGenerationService } from "../../../../../domain/services/NicknameGenerationService";
+import type { RoleAssignmentService } from "../../../../../domain/services/RoleAssignmentService";
+import type { MemberId } from "../../../../../domain/valueObjects/ids/MemberId";
 
 export class MockMemberAggregateFactory extends MemberAggregateFactory {
   public createNewCallCount = 0;
   public restoreCallCount = 0;
-
-  constructor(
-    authenticationService: MemberAuthenticationService,
-    roleAssignmentService: RoleAssignmentService,
-    nicknameGenerationService: NicknameGenerationService,
-    emailAuthAdapter: EmailAuthAdapter
-  ) {
-    super(authenticationService, roleAssignmentService, nicknameGenerationService, emailAuthAdapter);
-  }
 
   async createNew(props: MemberProps): Promise<Result<MemberAggregate, Error>> {
     this.createNewCallCount++;

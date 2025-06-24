@@ -1,9 +1,9 @@
-import { Result, Ok, Err } from "../../../domain/common/Result";
-import { UseCase } from "../../common/UseCase";
-import { EventDispatcher } from "../../common/DomainEventHandler";
-import { MemberAggregateFactory } from "../../../domain/factories/MemberAggregateFactory";
-import { MemberRepository } from "../../../domain/repositories/MemberRepository";
+import { Err, Ok, type Result } from "../../../domain/common/Result";
+import type { MemberAggregateFactory } from "../../../domain/factories/MemberAggregateFactory";
+import type { MemberRepository } from "../../../domain/repositories/MemberRepository";
 import { DiscordId } from "../../../domain/valueObjects/ids/DiscordId";
+import type { EventDispatcher } from "../../common/DomainEventHandler";
+import type { UseCase } from "../../common/UseCase";
 
 export interface AuthenticateMemberRequest {
   discordId: string;
@@ -18,14 +18,18 @@ export interface AuthenticateMemberResponse {
   message: string;
 }
 
-export class AuthenticateMemberUseCase implements UseCase<AuthenticateMemberRequest, AuthenticateMemberResponse> {
+export class AuthenticateMemberUseCase
+  implements UseCase<AuthenticateMemberRequest, AuthenticateMemberResponse>
+{
   constructor(
     private readonly memberAggregateFactory: MemberAggregateFactory,
     private readonly memberRepository: MemberRepository,
-    private readonly eventDispatcher: EventDispatcher
+    private readonly eventDispatcher: EventDispatcher,
   ) {}
 
-  async execute(request: AuthenticateMemberRequest): Promise<Result<AuthenticateMemberResponse, Error>> {
+  async execute(
+    request: AuthenticateMemberRequest,
+  ): Promise<Result<AuthenticateMemberResponse, Error>> {
     try {
       // Discord ID の検証
       const discordIdResult = DiscordId.create(request.discordId);
@@ -34,7 +38,9 @@ export class AuthenticateMemberUseCase implements UseCase<AuthenticateMemberRequ
       }
 
       // メンバー取得
-      const memberResult = await this.memberRepository.findByDiscordId(discordIdResult.getValue());
+      const memberResult = await this.memberRepository.findByDiscordId(
+        discordIdResult.getValue(),
+      );
       if (memberResult.isFailure()) {
         return Err(memberResult.getError());
       }
@@ -48,13 +54,16 @@ export class AuthenticateMemberUseCase implements UseCase<AuthenticateMemberRequ
       const memberAggregate = this.memberAggregateFactory.restore(member);
 
       // 認証実行
-      const authenticationResult = await memberAggregate.completeAuthentication();
+      const authenticationResult =
+        await memberAggregate.completeAuthentication();
       if (authenticationResult.isFailure()) {
         return Err(authenticationResult.getError());
       }
 
       // 永続化
-      const saveResult = await this.memberRepository.save(memberAggregate.getMember());
+      const saveResult = await this.memberRepository.save(
+        memberAggregate.getMember(),
+      );
       if (saveResult.isFailure()) {
         return Err(saveResult.getError());
       }
@@ -75,11 +84,12 @@ export class AuthenticateMemberUseCase implements UseCase<AuthenticateMemberRequ
         department: authenticatedMember.department.getValue(),
         assignedRoles: discordProfile ? Array.from(discordProfile.roles) : [],
         nickname: discordProfile?.nickname || null,
-        message: "認証が完了しました。ロールとニックネームが設定されました。"
+        message: "認証が完了しました。ロールとニックネームが設定されました。",
       });
-
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Authentication failed"));
+      return Err(
+        error instanceof Error ? error : new Error("Authentication failed"),
+      );
     }
   }
 }

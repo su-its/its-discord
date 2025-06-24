@@ -1,16 +1,19 @@
-import { Member } from "../entities/NewMember";
-import { Result, Ok, Err } from "../common/Result";
+import { Err, Ok, type Result } from "../common/Result";
+import type { Member } from "../entities/NewMember";
 
 export class NicknameGenerationService {
-  
   generateNickname(member: Member): Result<string, Error> {
     try {
       // 基本形式: [部署] 名前
-      const departmentPrefix = this.getDepartmentPrefix(member.department.getValue());
+      const departmentPrefix = this.getDepartmentPrefix(
+        member.department.getValue(),
+      );
       const name = member.name;
-      
+
       if (!name || name.trim().length === 0) {
-        return Err(new Error("Member name is required for nickname generation"));
+        return Err(
+          new Error("Member name is required for nickname generation"),
+        );
       }
 
       // 最大長チェック（Discordのニックネーム制限は32文字）
@@ -24,7 +27,11 @@ export class NicknameGenerationService {
 
       return Ok(nickname);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to generate nickname"));
+      return Err(
+        error instanceof Error
+          ? error
+          : new Error("Failed to generate nickname"),
+      );
     }
   }
 

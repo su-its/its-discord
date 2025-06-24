@@ -1,5 +1,8 @@
-import { EventDispatcher, DomainEventHandler } from "../../../../common/DomainEventHandler";
-import { DomainEvent } from "../../../../../domain/common/DomainEvent";
+import type { DomainEvent } from "../../../../../domain/common/DomainEvent";
+import type {
+  DomainEventHandler,
+  EventDispatcher,
+} from "../../../../common/DomainEventHandler";
 
 export class MockEventDispatcher implements EventDispatcher {
   private handlers: Map<string, DomainEventHandler<any>[]> = new Map();
@@ -8,18 +11,18 @@ export class MockEventDispatcher implements EventDispatcher {
 
   register<T extends DomainEvent>(
     eventType: string,
-    handler: DomainEventHandler<T>
+    handler: DomainEventHandler<T>,
   ): void {
     if (!this.handlers.has(eventType)) {
       this.handlers.set(eventType, []);
     }
-    this.handlers.get(eventType)!.push(handler);
+    this.handlers.get(eventType)?.push(handler);
   }
 
   async dispatch(events: DomainEvent[]): Promise<void> {
     this.dispatchCallCount++;
     this.dispatchedEvents.push(...events);
-    
+
     // 実際のハンドラー実行はテストでは省略
     // テストでは dispatchedEvents を確認するだけ
   }
@@ -31,6 +34,8 @@ export class MockEventDispatcher implements EventDispatcher {
   }
 
   getEventsByType(eventType: string): DomainEvent[] {
-    return this.dispatchedEvents.filter(event => event.getEventName() === eventType);
+    return this.dispatchedEvents.filter(
+      (event) => event.getEventName() === eventType,
+    );
   }
 }

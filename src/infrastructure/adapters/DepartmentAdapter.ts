@@ -1,9 +1,11 @@
+import type { Result } from "../../domain/common/Result";
 import OldDepartment from "../../domain/entities/department";
 import { Department } from "../../domain/valueObjects/Department";
-import { Result } from "../../domain/common/Result";
 
 export class DepartmentAdapter {
-  static fromOldDepartment(oldDepartment: OldDepartment): Result<Department, Error> {
+  static fromOldDepartment(
+    oldDepartment: OldDepartment,
+  ): Result<Department, Error> {
     return Department.create(oldDepartment);
   }
 

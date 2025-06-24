@@ -1,10 +1,10 @@
-import { Result, Ok, Err } from "../../domain/common/Result";
-import { MemberRepository } from "../../domain/repositories/MemberRepository";
-import { Member } from "../../domain/entities/NewMember";
-import { MemberId } from "../../domain/valueObjects/ids/MemberId";
-import { DiscordId } from "../../domain/valueObjects/ids/DiscordId";
-import { Email } from "../../domain/valueObjects/Email";
-import { StudentNumber } from "../../domain/valueObjects/StudentNumber";
+import { Err, Ok, type Result } from "../../domain/common/Result";
+import type { Member } from "../../domain/entities/NewMember";
+import type { MemberRepository } from "../../domain/repositories/MemberRepository";
+import type { Email } from "../../domain/valueObjects/Email";
+import type { StudentNumber } from "../../domain/valueObjects/StudentNumber";
+import type { DiscordId } from "../../domain/valueObjects/ids/DiscordId";
+import type { MemberId } from "../../domain/valueObjects/ids/MemberId";
 
 // 仮のインメモリ実装 - 後でFirebase/DBで置き換え
 export class InMemoryMemberRepository implements MemberRepository {
@@ -15,7 +15,9 @@ export class InMemoryMemberRepository implements MemberRepository {
       this.members.set(member.id.toValue(), member);
       return Ok(undefined);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to save member"));
+      return Err(
+        error instanceof Error ? error : new Error("Failed to save member"),
+      );
     }
   }
 
@@ -24,11 +26,17 @@ export class InMemoryMemberRepository implements MemberRepository {
       const member = this.members.get(id.toValue()) || null;
       return Ok(member);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to find member by ID"));
+      return Err(
+        error instanceof Error
+          ? error
+          : new Error("Failed to find member by ID"),
+      );
     }
   }
 
-  async findByDiscordId(discordId: DiscordId): Promise<Result<Member | null, Error>> {
+  async findByDiscordId(
+    discordId: DiscordId,
+  ): Promise<Result<Member | null, Error>> {
     try {
       for (const member of this.members.values()) {
         if (member.discordProfile?.discordId.equals(discordId)) {
@@ -37,7 +45,11 @@ export class InMemoryMemberRepository implements MemberRepository {
       }
       return Ok(null);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to find member by Discord ID"));
+      return Err(
+        error instanceof Error
+          ? error
+          : new Error("Failed to find member by Discord ID"),
+      );
     }
   }
 
@@ -50,11 +62,17 @@ export class InMemoryMemberRepository implements MemberRepository {
       }
       return Ok(null);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to find member by email"));
+      return Err(
+        error instanceof Error
+          ? error
+          : new Error("Failed to find member by email"),
+      );
     }
   }
 
-  async findByStudentNumber(studentNumber: StudentNumber): Promise<Result<Member | null, Error>> {
+  async findByStudentNumber(
+    studentNumber: StudentNumber,
+  ): Promise<Result<Member | null, Error>> {
     try {
       for (const member of this.members.values()) {
         if (member.studentNumber.equals(studentNumber)) {
@@ -63,7 +81,11 @@ export class InMemoryMemberRepository implements MemberRepository {
       }
       return Ok(null);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to find member by student number"));
+      return Err(
+        error instanceof Error
+          ? error
+          : new Error("Failed to find member by student number"),
+      );
     }
   }
 
@@ -72,7 +94,9 @@ export class InMemoryMemberRepository implements MemberRepository {
       this.members.delete(id.toValue());
       return Ok(undefined);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to delete member"));
+      return Err(
+        error instanceof Error ? error : new Error("Failed to delete member"),
+      );
     }
   }
 }

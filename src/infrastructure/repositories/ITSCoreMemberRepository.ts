@@ -1,14 +1,14 @@
-import { Result, Ok, Err } from "../../domain/common/Result";
-import { MemberRepository } from "../../domain/repositories/MemberRepository";
-import { Member, MemberProps } from "../../domain/entities/NewMember";
-import { MemberId } from "../../domain/valueObjects/ids/MemberId";
-import { DiscordId } from "../../domain/valueObjects/ids/DiscordId";
-import { Email } from "../../domain/valueObjects/Email";
-import { StudentNumber } from "../../domain/valueObjects/StudentNumber";
-import { Department } from "../../domain/valueObjects/Department";
-import { MemberStatus } from "../../domain/valueObjects/MemberStatus";
-import { DiscordProfile } from "../../domain/entities/DiscordProfile";
 import { itsCoreService } from "../../application/services/itsCoreService";
+import { Err, Ok, type Result } from "../../domain/common/Result";
+import { DiscordProfile } from "../../domain/entities/DiscordProfile";
+import { Member, type MemberProps } from "../../domain/entities/NewMember";
+import type { MemberRepository } from "../../domain/repositories/MemberRepository";
+import { Department } from "../../domain/valueObjects/Department";
+import { Email } from "../../domain/valueObjects/Email";
+import { MemberStatus } from "../../domain/valueObjects/MemberStatus";
+import { StudentNumber } from "../../domain/valueObjects/StudentNumber";
+import { DiscordId } from "../../domain/valueObjects/ids/DiscordId";
+import type { MemberId } from "../../domain/valueObjects/ids/MemberId";
 
 export class ITSCoreMemberRepository implements MemberRepository {
   private memberCache: Map<string, Member> = new Map();
@@ -19,7 +19,9 @@ export class ITSCoreMemberRepository implements MemberRepository {
       this.memberCache.set(member.id.toValue(), member);
       return Ok(undefined);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to save member"));
+      return Err(
+        error instanceof Error ? error : new Error("Failed to save member"),
+      );
     }
   }
 
@@ -28,11 +30,17 @@ export class ITSCoreMemberRepository implements MemberRepository {
       const member = this.memberCache.get(id.toValue()) || null;
       return Ok(member);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to find member by ID"));
+      return Err(
+        error instanceof Error
+          ? error
+          : new Error("Failed to find member by ID"),
+      );
     }
   }
 
-  async findByDiscordId(discordId: DiscordId): Promise<Result<Member | null, Error>> {
+  async findByDiscordId(
+    discordId: DiscordId,
+  ): Promise<Result<Member | null, Error>> {
     try {
       // まずキャッシュをチェック
       for (const member of this.memberCache.values()) {
@@ -42,13 +50,18 @@ export class ITSCoreMemberRepository implements MemberRepository {
       }
 
       // ITSCoreから検索
-      const itsMember = await itsCoreService.getMemberByDiscordId(discordId.getValue());
+      const itsMember = await itsCoreService.getMemberByDiscordId(
+        discordId.getValue(),
+      );
       if (!itsMember) {
         return Ok(null);
       }
 
       // ITSCoreからのデータをDomainオブジェクトに変換
-      const memberResult = await this.convertITSMemberToDomainMember(itsMember, discordId);
+      const memberResult = await this.convertITSMemberToDomainMember(
+        itsMember,
+        discordId,
+      );
       if (memberResult.isFailure()) {
         return Err(memberResult.getError());
       }
@@ -57,7 +70,11 @@ export class ITSCoreMemberRepository implements MemberRepository {
       this.memberCache.set(member.id.toValue(), member);
       return Ok(member);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to find member by Discord ID"));
+      return Err(
+        error instanceof Error
+          ? error
+          : new Error("Failed to find member by Discord ID"),
+      );
     }
   }
 
@@ -86,7 +103,10 @@ export class ITSCoreMemberRepository implements MemberRepository {
         return Err(discordIdResult.getError());
       }
 
-      const memberResult = await this.convertITSMemberToDomainMember(itsMember, discordIdResult.getValue());
+      const memberResult = await this.convertITSMemberToDomainMember(
+        itsMember,
+        discordIdResult.getValue(),
+      );
       if (memberResult.isFailure()) {
         return Err(memberResult.getError());
       }
@@ -95,11 +115,17 @@ export class ITSCoreMemberRepository implements MemberRepository {
       this.memberCache.set(member.id.toValue(), member);
       return Ok(member);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to find member by email"));
+      return Err(
+        error instanceof Error
+          ? error
+          : new Error("Failed to find member by email"),
+      );
     }
   }
 
-  async findByStudentNumber(studentNumber: StudentNumber): Promise<Result<Member | null, Error>> {
+  async findByStudentNumber(
+    studentNumber: StudentNumber,
+  ): Promise<Result<Member | null, Error>> {
     try {
       // キャッシュをチェック
       for (const member of this.memberCache.values()) {
@@ -112,7 +138,11 @@ export class ITSCoreMemberRepository implements MemberRepository {
       // ここでは簡易実装でnullを返す
       return Ok(null);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to find member by student number"));
+      return Err(
+        error instanceof Error
+          ? error
+          : new Error("Failed to find member by student number"),
+      );
     }
   }
 
@@ -121,17 +151,21 @@ export class ITSCoreMemberRepository implements MemberRepository {
       this.memberCache.delete(id.toValue());
       return Ok(undefined);
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to delete member"));
+      return Err(
+        error instanceof Error ? error : new Error("Failed to delete member"),
+      );
     }
   }
 
   private async convertITSMemberToDomainMember(
     itsMember: any,
-    discordId: DiscordId
+    discordId: DiscordId,
   ): Promise<Result<Member, Error>> {
     try {
       // StudentNumber作成
-      const studentNumberResult = StudentNumber.create(itsMember.student_number);
+      const studentNumberResult = StudentNumber.create(
+        itsMember.student_number,
+      );
       if (studentNumberResult.isFailure()) {
         return Err(studentNumberResult.getError());
       }
@@ -158,7 +192,7 @@ export class ITSCoreMemberRepository implements MemberRepository {
         email: emailResult.getValue(),
         department: departmentResult.getValue(),
         discordProfile: discordProfile,
-        status: MemberStatus.DISCORD_REGISTERED // ITSCoreにDiscordIDがあるということは登録済み
+        status: MemberStatus.DISCORD_REGISTERED, // ITSCoreにDiscordIDがあるということは登録済み
       };
 
       const memberResult = Member.create(memberProps);
@@ -168,7 +202,11 @@ export class ITSCoreMemberRepository implements MemberRepository {
 
       return Ok(memberResult.getValue());
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Failed to convert ITS member to domain member"));
+      return Err(
+        error instanceof Error
+          ? error
+          : new Error("Failed to convert ITS member to domain member"),
+      );
     }
   }
 }

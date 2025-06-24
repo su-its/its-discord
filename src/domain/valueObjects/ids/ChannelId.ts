@@ -1,5 +1,5 @@
 import { Identifier } from "../../common/Identifier";
-import { Result, Ok, Err } from "../../common/Result";
+import { Err, Ok, type Result } from "../../common/Result";
 
 export class ChannelId extends Identifier<string> {
   private constructor(value: string) {
@@ -10,7 +10,7 @@ export class ChannelId extends Identifier<string> {
     if (!value) {
       return Err(new Error("Channel ID cannot be empty"));
     }
-    
+
     if (!/^\d{17,19}$/.test(value)) {
       return Err(new Error("Channel ID must be 17-19 digits"));
     }

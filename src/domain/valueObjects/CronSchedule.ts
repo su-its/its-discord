@@ -1,4 +1,4 @@
-import { Result, Ok, Err } from "../common/Result";
+import { Err, Ok, type Result } from "../common/Result";
 
 export class CronSchedule {
   private constructor(private readonly expression: string) {}
@@ -22,7 +22,7 @@ export class CronSchedule {
     }
 
     // 基本的な検証：各パートが空でないことをチェック
-    return cronParts.every(part => part && part.length > 0);
+    return cronParts.every((part) => part && part.length > 0);
   }
 
   getExpression(): string {

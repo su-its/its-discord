@@ -1,14 +1,17 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { RegisterMemberUseCase, RegisterMemberRequest } from "../RegisterMemberUseCase";
-import { MockMemberRepository } from "./mocks/MockMemberRepository";
-import { MockEventDispatcher } from "./mocks/MockEventDispatcher";
-import { MemberAuthenticationService } from "../../../../domain/services/MemberAuthenticationService";
-import { RoleAssignmentService } from "../../../../domain/services/RoleAssignmentService";
-import { NicknameGenerationService } from "../../../../domain/services/NicknameGenerationService";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Ok, Result } from "../../../../domain/common/Result";
 import { MemberAggregateFactory } from "../../../../domain/factories/MemberAggregateFactory";
-import { ITSCoreAdapter } from "../../../../domain/services/ITSCoreAdapter";
-import { EmailAuthAdapter } from "../../../../domain/services/EmailAuthAdapter";
-import { Result, Ok } from "../../../../domain/common/Result";
+import type { EmailAuthAdapter } from "../../../../domain/services/EmailAuthAdapter";
+import type { ITSCoreAdapter } from "../../../../domain/services/ITSCoreAdapter";
+import { MemberAuthenticationService } from "../../../../domain/services/MemberAuthenticationService";
+import { NicknameGenerationService } from "../../../../domain/services/NicknameGenerationService";
+import { RoleAssignmentService } from "../../../../domain/services/RoleAssignmentService";
+import {
+  type RegisterMemberRequest,
+  RegisterMemberUseCase,
+} from "../RegisterMemberUseCase";
+import { MockEventDispatcher } from "./mocks/MockEventDispatcher";
+import { MockMemberRepository } from "./mocks/MockMemberRepository";
 
 // モックの作成
 const mockITSCoreAdapter: ITSCoreAdapter = {
@@ -17,12 +20,12 @@ const mockITSCoreAdapter: ITSCoreAdapter = {
       name: "山田太郎",
       studentNumber: "12345678",
       email: "yamada@shizuoka.ac.jp",
-      department: "CS"
+      department: "CS",
     });
   },
   async getAllMembers() {
     return Ok([]);
-  }
+  },
 };
 
 const mockEmailAuthAdapter: EmailAuthAdapter = {
@@ -31,7 +34,7 @@ const mockEmailAuthAdapter: EmailAuthAdapter = {
   },
   async verifyEmailAuth() {
     return Ok(true);
-  }
+  },
 };
 
 describe("RegisterMemberUseCase", () => {
@@ -43,22 +46,24 @@ describe("RegisterMemberUseCase", () => {
   beforeEach(() => {
     mockRepository = new MockMemberRepository();
     mockEventDispatcher = new MockEventDispatcher();
-    
-    const authenticationService = new MemberAuthenticationService(mockITSCoreAdapter);
+
+    const authenticationService = new MemberAuthenticationService(
+      mockITSCoreAdapter,
+    );
     const roleAssignmentService = new RoleAssignmentService();
     const nicknameGenerationService = new NicknameGenerationService();
-    
+
     memberAggregateFactory = new MemberAggregateFactory(
       authenticationService,
       roleAssignmentService,
       nicknameGenerationService,
-      mockEmailAuthAdapter
+      mockEmailAuthAdapter,
     );
 
     useCase = new RegisterMemberUseCase(
       memberAggregateFactory,
       mockRepository,
-      mockEventDispatcher
+      mockEventDispatcher,
     );
 
     mockRepository.clear();
@@ -71,7 +76,7 @@ describe("RegisterMemberUseCase", () => {
       studentNumber: "12345678",
       email: "yamada@shizuoka.ac.jp",
       department: "CS",
-      discordId: "123456789012345678"
+      discordId: "123456789012345678",
     };
 
     it("正常なリクエストでメンバー登録ができる", async () => {
@@ -79,7 +84,9 @@ describe("RegisterMemberUseCase", () => {
 
       expect(result.isSuccess()).toBe(true);
       const response = result.getValue();
-      expect(response.message).toBe("認証メールを送信しました。メールを確認して認証を完了してください。");
+      expect(response.message).toBe(
+        "認証メールを送信しました。メールを確認して認証を完了してください。",
+      );
       expect(response.memberId).toBeDefined();
     });
 
@@ -94,31 +101,39 @@ describe("RegisterMemberUseCase", () => {
       await useCase.execute(validRequest);
 
       expect(mockEventDispatcher.dispatchCallCount).toBe(1);
-      expect(mockEventDispatcher.getEventsByType("MemberRegistered")).toHaveLength(1);
-      expect(mockEventDispatcher.getEventsByType("MemberDiscordRegistered")).toHaveLength(1);
+      expect(
+        mockEventDispatcher.getEventsByType("MemberRegistered"),
+      ).toHaveLength(1);
+      expect(
+        mockEventDispatcher.getEventsByType("MemberDiscordRegistered"),
+      ).toHaveLength(1);
     });
 
     it("無効な学籍番号の場合はエラー", async () => {
       const invalidRequest = { ...validRequest, studentNumber: "invalid" };
-      
+
       const result = await useCase.execute(invalidRequest);
 
       expect(result.isFailure()).toBe(true);
-      expect(result.getError().message).toBe("Student number must be 8 alphanumeric characters");
+      expect(result.getError().message).toBe(
+        "Student number must be 8 alphanumeric characters",
+      );
     });
 
     it("無効なメールアドレスの場合はエラー", async () => {
       const invalidRequest = { ...validRequest, email: "invalid@gmail.com" };
-      
+
       const result = await useCase.execute(invalidRequest);
 
       expect(result.isFailure()).toBe(true);
-      expect(result.getError().message).toBe("Email must be from shizuoka.ac.jp domain");
+      expect(result.getError().message).toBe(
+        "Email must be from shizuoka.ac.jp domain",
+      );
     });
 
     it("無効な学科の場合はエラー", async () => {
       const invalidRequest = { ...validRequest, department: "INVALID" };
-      
+
       const result = await useCase.execute(invalidRequest);
 
       expect(result.isFailure()).toBe(true);
@@ -127,7 +142,7 @@ describe("RegisterMemberUseCase", () => {
 
     it("無効なDiscord IDの場合はエラー", async () => {
       const invalidRequest = { ...validRequest, discordId: "invalid" };
-      
+
       const result = await useCase.execute(invalidRequest);
 
       expect(result.isFailure()).toBe(true);

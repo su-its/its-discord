@@ -1,12 +1,12 @@
-import { Result, Ok, Err } from "../../../domain/common/Result";
-import { UseCase } from "../../common/UseCase";
-import { EventDispatcher } from "../../common/DomainEventHandler";
-import { MemberAggregateFactory } from "../../../domain/factories/MemberAggregateFactory";
-import { MemberRepository } from "../../../domain/repositories/MemberRepository";
-import { StudentNumber } from "../../../domain/valueObjects/StudentNumber";
-import { Email } from "../../../domain/valueObjects/Email";
+import { Err, Ok, type Result } from "../../../domain/common/Result";
+import type { MemberAggregateFactory } from "../../../domain/factories/MemberAggregateFactory";
+import type { MemberRepository } from "../../../domain/repositories/MemberRepository";
 import { Department } from "../../../domain/valueObjects/Department";
+import { Email } from "../../../domain/valueObjects/Email";
+import { StudentNumber } from "../../../domain/valueObjects/StudentNumber";
 import { DiscordId } from "../../../domain/valueObjects/ids/DiscordId";
+import type { EventDispatcher } from "../../common/DomainEventHandler";
+import type { UseCase } from "../../common/UseCase";
 
 export interface RegisterMemberRequest {
   name: string;
@@ -21,14 +21,18 @@ export interface RegisterMemberResponse {
   message: string;
 }
 
-export class RegisterMemberUseCase implements UseCase<RegisterMemberRequest, RegisterMemberResponse> {
+export class RegisterMemberUseCase
+  implements UseCase<RegisterMemberRequest, RegisterMemberResponse>
+{
   constructor(
     private readonly memberAggregateFactory: MemberAggregateFactory,
     private readonly memberRepository: MemberRepository,
-    private readonly eventDispatcher: EventDispatcher
+    private readonly eventDispatcher: EventDispatcher,
   ) {}
 
-  async execute(request: RegisterMemberRequest): Promise<Result<RegisterMemberResponse, Error>> {
+  async execute(
+    request: RegisterMemberRequest,
+  ): Promise<Result<RegisterMemberResponse, Error>> {
     try {
       // バリューオブジェクトの作成
       const studentNumberResult = StudentNumber.create(request.studentNumber);
@@ -52,7 +56,9 @@ export class RegisterMemberUseCase implements UseCase<RegisterMemberRequest, Reg
       }
 
       // 既存チェック
-      const existingMemberByEmail = await this.memberRepository.findByEmail(emailResult.getValue());
+      const existingMemberByEmail = await this.memberRepository.findByEmail(
+        emailResult.getValue(),
+      );
       if (existingMemberByEmail.isFailure()) {
         return Err(existingMemberByEmail.getError());
       }
@@ -60,7 +66,8 @@ export class RegisterMemberUseCase implements UseCase<RegisterMemberRequest, Reg
         return Err(new Error("Member with this email already exists"));
       }
 
-      const existingMemberByDiscord = await this.memberRepository.findByDiscordId(discordIdResult.getValue());
+      const existingMemberByDiscord =
+        await this.memberRepository.findByDiscordId(discordIdResult.getValue());
       if (existingMemberByDiscord.isFailure()) {
         return Err(existingMemberByDiscord.getError());
       }
@@ -69,12 +76,14 @@ export class RegisterMemberUseCase implements UseCase<RegisterMemberRequest, Reg
       }
 
       // メンバー集約の作成
-      const memberAggregateResult = await this.memberAggregateFactory.createNew({
-        name: request.name,
-        studentNumber: studentNumberResult.getValue(),
-        email: emailResult.getValue(),
-        department: departmentResult.getValue()
-      });
+      const memberAggregateResult = await this.memberAggregateFactory.createNew(
+        {
+          name: request.name,
+          studentNumber: studentNumberResult.getValue(),
+          email: emailResult.getValue(),
+          department: departmentResult.getValue(),
+        },
+      );
 
       if (memberAggregateResult.isFailure()) {
         return Err(memberAggregateResult.getError());
@@ -83,13 +92,17 @@ export class RegisterMemberUseCase implements UseCase<RegisterMemberRequest, Reg
       const memberAggregate = memberAggregateResult.getValue();
 
       // Discord登録と認証メール送信
-      const registrationResult = await memberAggregate.completeRegistration(discordIdResult.getValue());
+      const registrationResult = await memberAggregate.completeRegistration(
+        discordIdResult.getValue(),
+      );
       if (registrationResult.isFailure()) {
         return Err(registrationResult.getError());
       }
 
       // 永続化
-      const saveResult = await this.memberRepository.save(memberAggregate.getMember());
+      const saveResult = await this.memberRepository.save(
+        memberAggregate.getMember(),
+      );
       if (saveResult.isFailure()) {
         return Err(saveResult.getError());
       }
@@ -103,11 +116,13 @@ export class RegisterMemberUseCase implements UseCase<RegisterMemberRequest, Reg
 
       return Ok({
         memberId: memberAggregate.getMember().id.toValue(),
-        message: "認証メールを送信しました。メールを確認して認証を完了してください。"
+        message:
+          "認証メールを送信しました。メールを確認して認証を完了してください。",
       });
-
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Unknown error occurred"));
+      return Err(
+        error instanceof Error ? error : new Error("Unknown error occurred"),
+      );
     }
   }
 }

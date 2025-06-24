@@ -1,18 +1,18 @@
 import { AggregateRoot } from "../common/AggregateRoot";
-import { Result, Ok, Err } from "../common/Result";
-import { MemberId } from "../valueObjects/ids/MemberId";
-import { DiscordId } from "../valueObjects/ids/DiscordId";
-import { StudentNumber } from "../valueObjects/StudentNumber";
-import { Email } from "../valueObjects/Email";
-import { Department } from "../valueObjects/Department";
-import { MemberStatus } from "../valueObjects/MemberStatus";
-import { DiscordProfile } from "./DiscordProfile";
-import { MemberRegistered } from "../events/MemberRegistered";
+import { Err, Ok, type Result } from "../common/Result";
+import { MemberAuthenticated } from "../events/MemberAuthenticated";
 import { MemberDiscordRegistered } from "../events/MemberDiscordRegistered";
 import { MemberEmailVerified } from "../events/MemberEmailVerified";
-import { MemberAuthenticated } from "../events/MemberAuthenticated";
-import { MemberRoleAssigned } from "../events/MemberRoleAssigned";
 import { MemberNicknameChanged } from "../events/MemberNicknameChanged";
+import { MemberRegistered } from "../events/MemberRegistered";
+import { MemberRoleAssigned } from "../events/MemberRoleAssigned";
+import type { Department } from "../valueObjects/Department";
+import type { Email } from "../valueObjects/Email";
+import { MemberStatus } from "../valueObjects/MemberStatus";
+import type { StudentNumber } from "../valueObjects/StudentNumber";
+import type { DiscordId } from "../valueObjects/ids/DiscordId";
+import { MemberId } from "../valueObjects/ids/MemberId";
+import { DiscordProfile } from "./DiscordProfile";
 
 export interface MemberProps {
   name: string;
@@ -31,10 +31,7 @@ export class Member extends AggregateRoot<MemberId> {
   private _discordProfile: DiscordProfile | null;
   private _status: MemberStatus;
 
-  private constructor(
-    id: MemberId,
-    props: MemberProps
-  ) {
+  private constructor(id: MemberId, props: MemberProps) {
     super(id);
     this._name = props.name;
     this._studentNumber = props.studentNumber;
@@ -51,23 +48,22 @@ export class Member extends AggregateRoot<MemberId> {
 
     const id = MemberId.generate();
     const member = new Member(id, props);
-    
+
     // ドメインイベントを発行
-    member.addDomainEvent(new MemberRegistered(
-      id,
-      props.name,
-      props.studentNumber,
-      props.email,
-      props.department
-    ));
-    
+    member.addDomainEvent(
+      new MemberRegistered(
+        id,
+        props.name,
+        props.studentNumber,
+        props.email,
+        props.department,
+      ),
+    );
+
     return Ok(member);
   }
 
-  static restore(
-    id: MemberId,
-    props: MemberProps
-  ): Member {
+  static restore(id: MemberId, props: MemberProps): Member {
     return new Member(id, props);
   }
 
@@ -101,15 +97,17 @@ export class Member extends AggregateRoot<MemberId> {
     }
 
     if (!this._status.canRegisterDiscord()) {
-      return Err(new Error(`Cannot register Discord account in status: ${this._status}`));
+      return Err(
+        new Error(`Cannot register Discord account in status: ${this._status}`),
+      );
     }
 
     this._discordProfile = DiscordProfile.create(discordId);
     this._status = MemberStatus.DISCORD_REGISTERED;
-    
+
     // ドメインイベントを発行
     this.addDomainEvent(new MemberDiscordRegistered(this._id, discordId));
-    
+
     return Ok(undefined);
   }
 
@@ -119,10 +117,10 @@ export class Member extends AggregateRoot<MemberId> {
     }
 
     this._status = MemberStatus.EMAIL_VERIFIED;
-    
+
     // ドメインイベントを発行
     this.addDomainEvent(new MemberEmailVerified(this._id, this._email));
-    
+
     return Ok(undefined);
   }
 
@@ -136,10 +134,12 @@ export class Member extends AggregateRoot<MemberId> {
     }
 
     this._status = MemberStatus.AUTHENTICATED;
-    
+
     // ドメインイベントを発行
-    this.addDomainEvent(new MemberAuthenticated(this._id, this._discordProfile.discordId));
-    
+    this.addDomainEvent(
+      new MemberAuthenticated(this._id, this._discordProfile.discordId),
+    );
+
     return Ok(undefined);
   }
 
@@ -154,15 +154,17 @@ export class Member extends AggregateRoot<MemberId> {
 
     const oldNickname = this._discordProfile.nickname;
     this._discordProfile.updateNickname(nickname.trim());
-    
+
     // ドメインイベントを発行
-    this.addDomainEvent(new MemberNicknameChanged(
-      this._id,
-      this._discordProfile.discordId,
-      oldNickname,
-      nickname.trim()
-    ));
-    
+    this.addDomainEvent(
+      new MemberNicknameChanged(
+        this._id,
+        this._discordProfile.discordId,
+        oldNickname,
+        nickname.trim(),
+      ),
+    );
+
     return Ok(undefined);
   }
 
@@ -176,14 +178,16 @@ export class Member extends AggregateRoot<MemberId> {
     }
 
     this._discordProfile.assignRole(roleName);
-    
+
     // ドメインイベントを発行
-    this.addDomainEvent(new MemberRoleAssigned(
-      this._id,
-      this._discordProfile.discordId,
-      roleName
-    ));
-    
+    this.addDomainEvent(
+      new MemberRoleAssigned(
+        this._id,
+        this._discordProfile.discordId,
+        roleName,
+      ),
+    );
+
     return Ok(undefined);
   }
 
@@ -198,7 +202,7 @@ export class Member extends AggregateRoot<MemberId> {
 
   getRequiredRoles(): string[] {
     const roles: string[] = [];
-    
+
     if (this._status.isAuthenticated()) {
       roles.push("AUTHORIZED");
       roles.push(this._department.getRoleName());

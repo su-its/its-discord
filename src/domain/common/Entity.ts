@@ -1,4 +1,4 @@
-import { Identifier } from "./Identifier";
+import type { Identifier } from "./Identifier";
 
 export abstract class Entity<T extends Identifier<any>> {
   protected readonly _id: T;

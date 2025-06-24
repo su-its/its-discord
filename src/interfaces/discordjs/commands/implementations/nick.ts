@@ -39,8 +39,9 @@ async function nickCommandHandler(interaction: CommandInteraction) {
 
   try {
     const diContainer = DIContainer.getInstance();
-    const updateMemberNicknameUseCase = diContainer.getUpdateMemberNicknameUseCase();
-    
+    const updateMemberNicknameUseCase =
+      diContainer.getUpdateMemberNicknameUseCase();
+
     const result = await updateMemberNicknameUseCase.execute({
       discordId: interaction.user.id,
       newNickname: nickname.trim(),

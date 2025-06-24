@@ -1,8 +1,8 @@
 import { DomainEvent } from "../common/DomainEvent";
-import { MemberId } from "../valueObjects/ids/MemberId";
-import { StudentNumber } from "../valueObjects/StudentNumber";
-import { Email } from "../valueObjects/Email";
-import { Department } from "../valueObjects/Department";
+import type { Department } from "../valueObjects/Department";
+import type { Email } from "../valueObjects/Email";
+import type { StudentNumber } from "../valueObjects/StudentNumber";
+import type { MemberId } from "../valueObjects/ids/MemberId";
 
 export class MemberRegistered extends DomainEvent {
   constructor(
@@ -10,7 +10,7 @@ export class MemberRegistered extends DomainEvent {
     public readonly name: string,
     public readonly studentNumber: StudentNumber,
     public readonly email: Email,
-    public readonly department: Department
+    public readonly department: Department,
   ) {
     super();
   }

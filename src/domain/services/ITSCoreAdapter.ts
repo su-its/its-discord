@@ -1,7 +1,7 @@
-import { Result } from "../common/Result";
-import { StudentNumber } from "../valueObjects/StudentNumber";
-import { Email } from "../valueObjects/Email";
-import { Department } from "../valueObjects/Department";
+import type { Result } from "../common/Result";
+import type { Department } from "../valueObjects/Department";
+import type { Email } from "../valueObjects/Email";
+import type { StudentNumber } from "../valueObjects/StudentNumber";
 
 export interface ITSCoreMember {
   name: string;
@@ -18,6 +18,8 @@ export interface MemberCredentials {
 }
 
 export interface ITSCoreAdapter {
-  findMember(credentials: MemberCredentials): Promise<Result<ITSCoreMember | null, Error>>;
+  findMember(
+    credentials: MemberCredentials,
+  ): Promise<Result<ITSCoreMember | null, Error>>;
   getAllMembers(): Promise<Result<ITSCoreMember[], Error>>;
 }

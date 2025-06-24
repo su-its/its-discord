@@ -1,8 +1,8 @@
-import { Result, Ok, Err } from "../common/Result";
+import { Err, Ok, type Result } from "../common/Result";
 
 export enum DepartmentType {
   CS = "CS",
-  BI = "BI", 
+  BI = "BI",
   IA = "IA",
   GRADUATE = "GRADUATE",
   OTHERS = "OTHERS",

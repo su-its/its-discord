@@ -1,5 +1,5 @@
 import { Events, type GuildMember } from "discord.js";
-import { handleNewMemberJoined } from "../../../application/usecases/handleNewMemberJoined";
+import { DIContainer } from "../../../application/services/DIContainer";
 import type { CustomClient } from "../../../domain/types/customClient";
 import logger from "../../../infrastructure/logger";
 
@@ -10,6 +10,31 @@ import logger from "../../../infrastructure/logger";
 export function setupGuildMemberAddHandler(client: CustomClient): void {
   client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
     logger.info(`New member joined: ${member.displayName} (${member.id})`);
-    await handleNewMemberJoined(member.guild.id, member.id, member.displayName);
+
+    try {
+      const diContainer = DIContainer.getInstance();
+      const handleMemberJoinUseCase = diContainer.getHandleMemberJoinUseCase();
+
+      const result = await handleMemberJoinUseCase.execute({
+        discordId: member.id,
+        guildId: member.guild.id,
+        displayName: member.displayName,
+      });
+
+      if (result.isSuccess()) {
+        logger.info(
+          `Successfully handled new member join: ${result.getValue().message}`,
+        );
+      } else {
+        logger.error(
+          `Failed to handle new member join: ${result.getError().message}`,
+        );
+      }
+    } catch (error) {
+      logger.error(
+        `Error handling new member join for ${member.displayName} (${member.id}):`,
+        error,
+      );
+    }
   });
 }

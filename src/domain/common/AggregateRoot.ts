@@ -1,8 +1,10 @@
+import type { DomainEvent } from "./DomainEvent";
 import { Entity } from "./Entity";
-import { DomainEvent } from "./DomainEvent";
-import { Identifier } from "./Identifier";
+import type { Identifier } from "./Identifier";
 
-export abstract class AggregateRoot<T extends Identifier<any>> extends Entity<T> {
+export abstract class AggregateRoot<
+  T extends Identifier<any>,
+> extends Entity<T> {
   private _domainEvents: DomainEvent[] = [];
 
   get domainEvents(): DomainEvent[] {

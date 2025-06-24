@@ -1,18 +1,18 @@
-import { Result } from "../common/Result";
 import { MemberAggregate } from "../aggregates/MemberAggregate";
-import { Member, MemberProps } from "../entities/NewMember";
-import { MemberId } from "../valueObjects/ids/MemberId";
-import { MemberAuthenticationService } from "../services/MemberAuthenticationService";
-import { RoleAssignmentService } from "../services/RoleAssignmentService";
-import { NicknameGenerationService } from "../services/NicknameGenerationService";
-import { EmailAuthAdapter } from "../services/EmailAuthAdapter";
+import type { Result } from "../common/Result";
+import { Member, type MemberProps } from "../entities/NewMember";
+import type { EmailAuthAdapter } from "../services/EmailAuthAdapter";
+import type { MemberAuthenticationService } from "../services/MemberAuthenticationService";
+import type { NicknameGenerationService } from "../services/NicknameGenerationService";
+import type { RoleAssignmentService } from "../services/RoleAssignmentService";
+import type { MemberId } from "../valueObjects/ids/MemberId";
 
 export class MemberAggregateFactory {
   constructor(
     private readonly authenticationService: MemberAuthenticationService,
     private readonly roleAssignmentService: RoleAssignmentService,
     private readonly nicknameGenerationService: NicknameGenerationService,
-    private readonly emailAuthAdapter: EmailAuthAdapter
+    private readonly emailAuthAdapter: EmailAuthAdapter,
   ) {}
 
   async createNew(props: MemberProps): Promise<Result<MemberAggregate, Error>> {
@@ -21,7 +21,7 @@ export class MemberAggregateFactory {
       this.authenticationService,
       this.roleAssignmentService,
       this.nicknameGenerationService,
-      this.emailAuthAdapter
+      this.emailAuthAdapter,
     );
   }
 
@@ -31,14 +31,11 @@ export class MemberAggregateFactory {
       this.authenticationService,
       this.roleAssignmentService,
       this.nicknameGenerationService,
-      this.emailAuthAdapter
+      this.emailAuthAdapter,
     );
   }
 
-  restoreFromData(
-    id: MemberId,
-    props: MemberProps
-  ): MemberAggregate {
+  restoreFromData(id: MemberId, props: MemberProps): MemberAggregate {
     const member = Member.restore(id, props);
     return this.restore(member);
   }

@@ -1,15 +1,15 @@
-import { Result, Ok, Err } from "../common/Result";
-import { DomainEvent } from "../common/DomainEvent";
-import { Member, MemberProps } from "../entities/NewMember";
-import { MemberId } from "../valueObjects/ids/MemberId";
-import { DiscordId } from "../valueObjects/ids/DiscordId";
-import { StudentNumber } from "../valueObjects/StudentNumber";
-import { Email } from "../valueObjects/Email";
+import type { DomainEvent } from "../common/DomainEvent";
+import { Err, Ok, type Result } from "../common/Result";
+import { Member, type MemberProps } from "../entities/NewMember";
+import type { EmailAuthAdapter } from "../services/EmailAuthAdapter";
+import type { MemberAuthenticationService } from "../services/MemberAuthenticationService";
+import type { NicknameGenerationService } from "../services/NicknameGenerationService";
+import type { RoleAssignmentService } from "../services/RoleAssignmentService";
 import { Department } from "../valueObjects/Department";
-import { MemberAuthenticationService } from "../services/MemberAuthenticationService";
-import { RoleAssignmentService } from "../services/RoleAssignmentService";
-import { NicknameGenerationService } from "../services/NicknameGenerationService";
-import { EmailAuthAdapter } from "../services/EmailAuthAdapter";
+import { Email } from "../valueObjects/Email";
+import { StudentNumber } from "../valueObjects/StudentNumber";
+import type { DiscordId } from "../valueObjects/ids/DiscordId";
+import { MemberId } from "../valueObjects/ids/MemberId";
 
 export class MemberAggregate {
   constructor(
@@ -17,7 +17,7 @@ export class MemberAggregate {
     private readonly authenticationService: MemberAuthenticationService,
     private readonly roleAssignmentService: RoleAssignmentService,
     private readonly nicknameGenerationService: NicknameGenerationService,
-    private readonly emailAuthAdapter: EmailAuthAdapter
+    private readonly emailAuthAdapter: EmailAuthAdapter,
   ) {}
 
   static async createNewMember(
@@ -25,16 +25,16 @@ export class MemberAggregate {
     authenticationService: MemberAuthenticationService,
     roleAssignmentService: RoleAssignmentService,
     nicknameGenerationService: NicknameGenerationService,
-    emailAuthAdapter: EmailAuthAdapter
+    emailAuthAdapter: EmailAuthAdapter,
   ): Promise<Result<MemberAggregate, Error>> {
-    
     // メンバー情報の検証
-    const verificationResult = await authenticationService.verifyMemberCredentials(
-      props.name,
-      props.studentNumber,
-      props.email,
-      props.department
-    );
+    const verificationResult =
+      await authenticationService.verifyMemberCredentials(
+        props.name,
+        props.studentNumber,
+        props.email,
+        props.department,
+      );
 
     if (verificationResult.isFailure()) {
       return Err(verificationResult.getError());
@@ -51,14 +51,16 @@ export class MemberAggregate {
     }
 
     const member = memberResult.getValue();
-    
-    return Ok(new MemberAggregate(
-      member,
-      authenticationService,
-      roleAssignmentService,
-      nicknameGenerationService,
-      emailAuthAdapter
-    ));
+
+    return Ok(
+      new MemberAggregate(
+        member,
+        authenticationService,
+        roleAssignmentService,
+        nicknameGenerationService,
+        emailAuthAdapter,
+      ),
+    );
   }
 
   static restore(
@@ -66,18 +68,20 @@ export class MemberAggregate {
     authenticationService: MemberAuthenticationService,
     roleAssignmentService: RoleAssignmentService,
     nicknameGenerationService: NicknameGenerationService,
-    emailAuthAdapter: EmailAuthAdapter
+    emailAuthAdapter: EmailAuthAdapter,
   ): MemberAggregate {
     return new MemberAggregate(
       member,
       authenticationService,
       roleAssignmentService,
       nicknameGenerationService,
-      emailAuthAdapter
+      emailAuthAdapter,
     );
   }
 
-  async completeRegistration(discordId: DiscordId): Promise<Result<DomainEvent[], Error>> {
+  async completeRegistration(
+    discordId: DiscordId,
+  ): Promise<Result<DomainEvent[], Error>> {
     try {
       // Discord アカウント登録
       const registerResult = this.member.registerDiscordAccount(discordId);
@@ -89,7 +93,7 @@ export class MemberAggregate {
       const emailResult = await this.emailAuthAdapter.sendAuthEmail(
         this.member.email,
         this.member.studentNumber,
-        this.member.department
+        this.member.department,
       );
 
       if (emailResult.isFailure()) {
@@ -99,16 +103,19 @@ export class MemberAggregate {
       // 現在までのドメインイベントを取得
       const events = [...this.member.domainEvents];
       return Ok(events);
-      
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Registration failed"));
+      return Err(
+        error instanceof Error ? error : new Error("Registration failed"),
+      );
     }
   }
 
   async completeAuthentication(): Promise<Result<DomainEvent[], Error>> {
     try {
       // メール認証確認
-      const emailVerified = await this.emailAuthAdapter.verifyEmailAuth(this.member.email);
+      const emailVerified = await this.emailAuthAdapter.verifyEmailAuth(
+        this.member.email,
+      );
       if (emailVerified.isFailure()) {
         return Err(emailVerified.getError());
       }
@@ -130,7 +137,9 @@ export class MemberAggregate {
       }
 
       // 必要なロールを取得・割り当て
-      const requiredRoles = this.roleAssignmentService.getRequiredRoles(this.member);
+      const requiredRoles = this.roleAssignmentService.getRequiredRoles(
+        this.member,
+      );
       for (const role of requiredRoles) {
         const roleResult = this.member.assignRole(role);
         if (roleResult.isFailure()) {
@@ -139,9 +148,13 @@ export class MemberAggregate {
       }
 
       // ニックネーム生成・設定
-      const nicknameResult = this.nicknameGenerationService.generateNickname(this.member);
+      const nicknameResult = this.nicknameGenerationService.generateNickname(
+        this.member,
+      );
       if (nicknameResult.isSuccess()) {
-        const updateResult = this.member.updateNickname(nicknameResult.getValue());
+        const updateResult = this.member.updateNickname(
+          nicknameResult.getValue(),
+        );
         if (updateResult.isFailure()) {
           return Err(updateResult.getError());
         }
@@ -150,15 +163,17 @@ export class MemberAggregate {
       // 現在までのドメインイベントを取得
       const events = [...this.member.domainEvents];
       return Ok(events);
-      
     } catch (error) {
-      return Err(error instanceof Error ? error : new Error("Authentication failed"));
+      return Err(
+        error instanceof Error ? error : new Error("Authentication failed"),
+      );
     }
   }
 
   updateNickname(newNickname: string): Result<DomainEvent[], Error> {
     // ニックネーム検証
-    const validationResult = this.nicknameGenerationService.validateNickname(newNickname);
+    const validationResult =
+      this.nicknameGenerationService.validateNickname(newNickname);
     if (validationResult.isFailure()) {
       return Err(validationResult.getError());
     }

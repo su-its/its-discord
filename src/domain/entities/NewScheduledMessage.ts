@@ -1,9 +1,9 @@
 import { Entity } from "../common/Entity";
-import { Result, Ok, Err } from "../common/Result";
+import { Err, Ok, type Result } from "../common/Result";
+import type { CronSchedule } from "../valueObjects/CronSchedule";
+import type { MessageContent } from "../valueObjects/MessageContent";
+import type { ChannelId } from "../valueObjects/ids/ChannelId";
 import { ScheduledMessageId } from "../valueObjects/ids/ScheduledMessageId";
-import { ChannelId } from "../valueObjects/ids/ChannelId";
-import { CronSchedule } from "../valueObjects/CronSchedule";
-import { MessageContent } from "../valueObjects/MessageContent";
 
 export interface ScheduledMessageProps {
   channelId: ChannelId;
@@ -24,10 +24,7 @@ export class ScheduledMessage extends Entity<ScheduledMessageId> {
   private _lastExecuted: Date | null;
   private _nextExecution: Date | null;
 
-  private constructor(
-    id: ScheduledMessageId,
-    props: ScheduledMessageProps
-  ) {
+  private constructor(id: ScheduledMessageId, props: ScheduledMessageProps) {
     super(id);
     this._channelId = props.channelId;
     this._cronSchedule = props.cronSchedule;
@@ -45,7 +42,7 @@ export class ScheduledMessage extends Entity<ScheduledMessageId> {
 
   static restore(
     id: ScheduledMessageId,
-    props: ScheduledMessageProps
+    props: ScheduledMessageProps,
   ): ScheduledMessage {
     return new ScheduledMessage(id, props);
   }
@@ -113,7 +110,7 @@ export class ScheduledMessage extends Entity<ScheduledMessageId> {
 
     this._lastExecuted = executedAt;
     this._nextExecution = this.calculateNextExecution(executedAt);
-    
+
     return Ok(undefined);
   }
 

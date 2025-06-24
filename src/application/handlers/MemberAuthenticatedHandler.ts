@@ -1,14 +1,16 @@
-import { DomainEventHandler } from "../common/DomainEventHandler";
-import { MemberAuthenticated } from "../../domain/events/MemberAuthenticated";
-import { discordServerService } from "../services/discordServerService";
+import type { MemberAuthenticated } from "../../domain/events/MemberAuthenticated";
 import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
+import type { DomainEventHandler } from "../common/DomainEventHandler";
+import { discordServerService } from "../services/discordServerService";
 
-export class MemberAuthenticatedHandler implements DomainEventHandler<MemberAuthenticated> {
+export class MemberAuthenticatedHandler
+  implements DomainEventHandler<MemberAuthenticated>
+{
   constructor(private readonly guildId: string) {}
 
   async handle(event: MemberAuthenticated): Promise<void> {
     const discordId = event.discordId.getValue();
-    
+
     // 並列で以下の操作を実行
     await Promise.all([
       // 承認済みロールの付与
