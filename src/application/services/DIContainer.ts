@@ -7,8 +7,11 @@ import { RoleAssignmentService } from "../../domain/services/RoleAssignmentServi
 import { NicknameGenerationService } from "../../domain/services/NicknameGenerationService";
 import { ITSCoreAdapterImpl } from "../../infrastructure/adapters/ITSCoreAdapterImpl";
 import { EmailAuthAdapterImpl } from "../../infrastructure/adapters/EmailAuthAdapterImpl";
-import { InMemoryMemberRepository } from "../../infrastructure/repositories/InMemoryMemberRepository";
+import { ITSCoreMemberRepository } from "../../infrastructure/repositories/ITSCoreMemberRepository";
 import { SimpleEventDispatcher } from "../../infrastructure/events/SimpleEventDispatcher";
+import { MemberAuthenticatedHandler } from "../handlers/MemberAuthenticatedHandler";
+import { MemberRoleAssignedHandler } from "../handlers/MemberRoleAssignedHandler";
+import { MemberNicknameChangedHandler } from "../handlers/MemberNicknameChangedHandler";
 
 export class DIContainer {
   private static instance: DIContainer;
@@ -16,7 +19,7 @@ export class DIContainer {
   // Infrastructure dependencies
   private readonly itsCoreAdapter = new ITSCoreAdapterImpl();
   private readonly emailAuthAdapter = new EmailAuthAdapterImpl();
-  private readonly memberRepository = new InMemoryMemberRepository();
+  private readonly memberRepository = new ITSCoreMemberRepository();
   private readonly eventDispatcher = new SimpleEventDispatcher();
   
   // Domain services
@@ -32,7 +35,28 @@ export class DIContainer {
     this.emailAuthAdapter
   );
 
-  private constructor() {}
+  private constructor() {
+    // イベントハンドラーは初期化時に登録する
+    // guildIdは後で設定される予定
+  }
+
+  setupEventHandlers(guildId: string): void {
+    // ドメインイベントハンドラーを登録
+    this.eventDispatcher.register(
+      "MemberAuthenticated",
+      new MemberAuthenticatedHandler(guildId)
+    );
+    
+    this.eventDispatcher.register(
+      "MemberRoleAssigned", 
+      new MemberRoleAssignedHandler(guildId)
+    );
+    
+    this.eventDispatcher.register(
+      "MemberNicknameChanged",
+      new MemberNicknameChangedHandler(guildId)
+    );
+  }
 
   static getInstance(): DIContainer {
     if (!DIContainer.instance) {

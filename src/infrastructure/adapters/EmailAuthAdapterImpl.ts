@@ -25,10 +25,15 @@ export class EmailAuthAdapterImpl implements EmailAuthAdapter {
 
   async verifyEmailAuth(email: Email): Promise<Result<boolean, Error>> {
     try {
-      // 現在のFirebase実装では、メール認証の確認は外部で行われるため
-      // ここでは常にtrueを返す（実際の実装では Firebase Auth API を使用）
-      return Ok(true);
+      // Firebase Auth API を使用してメール認証状況を確認
+      const { firebaseAuthService } = await import("../../infrastructure/firebase");
+      const user = await firebaseAuthService.getUserByEmail(email.getValue());
+      return Ok(user.emailVerified);
     } catch (error) {
+      // ユーザーが見つからない場合は認証されていないとみなす
+      if (error instanceof Error && error.message.includes("USER_NOT_FOUND")) {
+        return Ok(false);
+      }
       return Err(error instanceof Error ? error : new Error("Failed to verify email auth"));
     }
   }
