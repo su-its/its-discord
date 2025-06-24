@@ -2,8 +2,8 @@ import { createMemberUseCases } from "@shizuoka-its/core";
 import type {
   ITSCorePort,
   MemberConnectionData,
-  MemberRegistrationData,
   MemberNicknameUpdateData,
+  MemberRegistrationData,
 } from "../../application/ports/itsCorePort";
 import type InternalMember from "../../domain/entities/member";
 import { toInternalMember } from "./mapper";
