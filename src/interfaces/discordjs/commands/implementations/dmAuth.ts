@@ -1,9 +1,8 @@
 import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
 import type Command from "../../../../domain/types/command";
 import Department from "../../../../domain/entities/department";
-import type { MemberCredentials } from "../../../../domain/types/memberCredentials";
-import { verifyMemberCredentials } from "../../../../application/usecases/verifyMemberCredentials";
-import handleMemberRegistration from "../../../../application/usecases/authController";
+import { DIContainer } from "../../../../application/services/DIContainer";
+import { DepartmentAdapter } from "../../../../infrastructure/adapters/DepartmentAdapter";
 import logger from "../../../../infrastructure/logger";
 
 const dmAuthCommand: Command = {
@@ -63,53 +62,46 @@ async function dmAuthCommandHandler(interaction: CommandInteraction) {
     // オプションから値を取得
     const name = interaction.options.get("name", true).value as string;
     const studentNumber = interaction.options.get("student_number", true).value as string;
-    const department = interaction.options.get("department", true).value as Department;
+    const oldDepartment = interaction.options.get("department", true).value as Department;
     const email = interaction.options.get("email", true).value as string;
 
-    // 入力値の検証
-    if (!/^[a-zA-Z0-9]{8}$/.test(studentNumber)) {
+    // 新しいUseCaseを使用
+    const diContainer = DIContainer.getInstance();
+    const registerMemberUseCase = diContainer.getRegisterMemberUseCase();
+
+    // Department の変換
+    const departmentResult = DepartmentAdapter.fromOldDepartment(oldDepartment);
+    if (departmentResult.isFailure()) {
       await interaction.editReply(
-        "❌ 学籍番号の形式が正しくありません。8文字の英数字で入力してください。"
+        `❌ 学科の変換でエラーが発生しました: ${departmentResult.getError().message}`
       );
       return;
     }
 
-    if (!email.endsWith("@shizuoka.ac.jp")) {
+    // UseCase実行
+    const result = await registerMemberUseCase.execute({
+      name,
+      studentNumber,
+      email,
+      department: departmentResult.getValue().getValue(),
+      discordId: interaction.user.id
+    });
+
+    if (result.isFailure()) {
+      const error = result.getError();
       await interaction.editReply(
-        "❌ 静岡大学のメールアドレス（@shizuoka.ac.jpで終わる）を入力してください。"
+        `❌ ${error.message}`
       );
+      logger.warn(`Member registration failed for user ${interaction.user.id}: ${error.message}`);
       return;
     }
 
-    // 認証データの作成
-    const credentials: MemberCredentials = {
-      discordId: interaction.user.id,
-      name: name,
-      student_number: studentNumber,
-      department: department,
-      mail: email,
-    };
-
-    // ITSCoreのメンバーリストと照合
-    const isAuthenticated = await verifyMemberCredentials(credentials);
-
-    if (!isAuthenticated) {
-      await interaction.editReply(
-        "❌ 認証に失敗しました。入力した情報がITSメンバーリストと一致しません。"
-      );
-      logger.warn(`Authentication failed for user: ${interaction.user.id}`);
-      return;
-    }
-
-    // Firebase認証とメール送信
-    await handleMemberRegistration(credentials);
-    
+    const response = result.getValue();
     await interaction.editReply(
-      "✅ 認証メールを送信しました！メールを確認して認証を完了してください。\n" +
-      "認証が完了したら、サーバーで `/auth` コマンドを実行してロールを取得してください。"
+      `✅ ${response.message}\n認証が完了したら、サーバーで \`/auth\` コマンドを実行してロールを取得してください。`
     );
     
-    logger.info(`Authentication process started for user: ${interaction.user.id}`);
+    logger.info(`Member registration completed for user: ${interaction.user.id}, member ID: ${response.memberId}`);
   } catch (error) {
     logger.error(`Error in DM auth command for user ${interaction.user.id}:`, error);
     await interaction.editReply(
