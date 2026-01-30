@@ -7,7 +7,6 @@ import { itsCoreService } from "../../../../application/services/itsCoreService"
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
 
-
 const whoCommand: AdminCommand = {
   data: new SlashCommandBuilder()
     .setName("who")
