@@ -18,24 +18,24 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "@biomejs/biome": "^1.9.2",
-    "@types/node": "^22.13.1",
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.19.7",
     "@types/uuid": "^10.0.0",
-    "@vitest/coverage-v8": "^3.0.5",
-    "nodemon": "^3.1.7",
+    "@vitest/coverage-v8": "^3.2.4",
+    "nodemon": "^3.1.11",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.2",
-    "vitest": "^3.0.5"
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@shizuoka-its/core": "^2.0.1",
-    "cron": "^3.1.7",
-    "discord.js": "^14.16.3",
-    "dotenv": "^16.4.5",
-    "firebase": "^10.14.0",
-    "firebase-admin": "^12.6.0",
+    "@shizuoka-its/core": "^2.2.0",
+    "cron": "^3.5.0",
+    "discord.js": "^14.25.1",
+    "dotenv": "^16.6.1",
+    "firebase": "^10.14.1",
+    "firebase-admin": "^12.7.0",
     "uuid": "^10.0.0",
-    "winston": "^3.17.0"
+    "winston": "^3.19.0"
   },
   "packageManager": "yarn@4.9.1"
 }
