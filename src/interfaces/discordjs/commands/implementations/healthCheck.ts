@@ -1,4 +1,4 @@
-import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
+import { type ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import type Command from "../../../../domain/types/command";
 
 const healthCheckCommand: Command = {
@@ -9,7 +9,7 @@ const healthCheckCommand: Command = {
   isDMAllowed: true,
 };
 
-async function healthCheckHandler(interaction: CommandInteraction) {
+async function healthCheckHandler(interaction: ChatInputCommandInteraction) {
   await interaction.reply("I am healthy!");
 }
 

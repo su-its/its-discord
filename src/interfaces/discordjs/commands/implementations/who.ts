@@ -1,5 +1,5 @@
 import {
-  type CommandInteraction,
+  type ChatInputCommandInteraction,
   SlashCommandBuilder,
   type User,
 } from "discord.js";
@@ -22,7 +22,7 @@ const whoCommand: AdminCommand = {
   isDMAllowed: false,
 };
 
-async function whoCommandHandler(interaction: CommandInteraction) {
+async function whoCommandHandler(interaction: ChatInputCommandInteraction) {
   const userOption = interaction.options.get("user");
   if (!userOption || !userOption.user) {
     await interaction.reply("ユーザーを指定してください。");

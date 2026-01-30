@@ -1,4 +1,4 @@
-import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
+import { type ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { authenticateUser } from "../../../../application/usecases/authenticateUser";
 import type Command from "../../../../domain/types/command";
 
@@ -10,7 +10,7 @@ const authCommand: Command = {
   isDMAllowed: false,
 };
 
-async function authCommandHandler(interaction: CommandInteraction) {
+async function authCommandHandler(interaction: ChatInputCommandInteraction) {
   // ギルドコンテキストの確認
   if (!interaction.guild) {
     throw new Error("Guild not found");

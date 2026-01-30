@@ -1,4 +1,4 @@
-import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
+import { type ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { updateMemberNickname } from "../../../../application/usecases/updateMemberNickname";
 import type Command from "../../../../domain/types/command";
 
@@ -16,7 +16,7 @@ const nickCommand: Command = {
   isDMAllowed: false,
 };
 
-async function nickCommandHandler(interaction: CommandInteraction) {
+async function nickCommandHandler(interaction: ChatInputCommandInteraction) {
   if (!interaction.guild) {
     await interaction.reply("このコマンドはサーバー内でのみ使用できます。");
     return;

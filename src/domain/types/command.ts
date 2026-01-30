@@ -1,4 +1,4 @@
-import type { CommandInteraction, SlashCommandBuilder } from "discord.js";
+import type { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 /**
  * Discord Slash Command の実装に必要な基本インターフェース
@@ -10,7 +10,7 @@ import type { CommandInteraction, SlashCommandBuilder } from "discord.js";
  *   data: new SlashCommandBuilder()
  *     .setName('ping')
  *     .setDescription('Replies with Pong!'),
- *   execute: async (interaction: CommandInteraction) => {
+ *   execute: async (interaction: ChatInputCommandInteraction) => {
  *     await interaction.reply('Pong!');
  *   },
  * };
@@ -18,6 +18,6 @@ import type { CommandInteraction, SlashCommandBuilder } from "discord.js";
  */
 export default interface Command {
   data: SlashCommandBuilder;
-  execute: (interaction: CommandInteraction) => Promise<void>;
+  execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
   isDMAllowed: boolean;
 }
