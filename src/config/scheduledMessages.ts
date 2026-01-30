@@ -40,7 +40,7 @@ export const SCHEDULED_MESSAGE_CONFIGS: Array<
     channelId: config.generalChannelId,
     messageContent: "月末が近いです。月次報告は出しましたか？",
     cronSchedule: "0 12 28 * *", // 毎月28日
-  }, 
+  },
   {
     id: "monthly-report-reminder",
     description: "月次報告のリマインダー",
