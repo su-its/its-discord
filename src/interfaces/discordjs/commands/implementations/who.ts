@@ -4,9 +4,10 @@ import {
   type User,
 } from "discord.js";
 import { itsCoreService } from "../../../../application/services/itsCoreService";
-import type Command from "../../../../domain/types/command";
+import type AdminCommand from "../../../../domain/types/adminCommand";
+import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
 
-const whoCommand: Command = {
+const whoCommand: AdminCommand = {
   data: new SlashCommandBuilder()
     .setName("who")
     .setDescription("ユーザー情報を表示します。")
@@ -16,6 +17,7 @@ const whoCommand: Command = {
         .setDescription("情報を表示するユーザー")
         .setRequired(true),
     ) as SlashCommandBuilder,
+  authorization: new AdminRoleSpecification(),
   execute: whoCommandHandler,
   isDMAllowed: false,
 };
