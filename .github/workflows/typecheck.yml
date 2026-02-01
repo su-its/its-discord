@@ -15,3 +15,5 @@ jobs:
       - run: corepack enable
       - run: yarn install --immutable
       - run: yarn tsc --noEmit
+        env:
+          FIREBASE_SERVICE_ACCOUNT: "{}"
