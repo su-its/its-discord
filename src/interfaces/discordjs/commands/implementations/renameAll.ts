@@ -1,4 +1,7 @@
-import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+  type ChatInputCommandInteraction,
+  SlashCommandBuilder,
+} from "discord.js";
 import { renameAllMembersInGuild } from "../../../../application/usecases/renameAllMembersInGuild";
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
@@ -12,7 +15,7 @@ const renameAll: AdminCommand = {
   isDMAllowed: false,
 };
 
-async function renameAllHandler(interaction: CommandInteraction) {
+async function renameAllHandler(interaction: ChatInputCommandInteraction) {
   if (!interaction.guild) throw new Error("Guild not found");
 
   // NOTE: 応答がタイムアウトしないように遅延させる

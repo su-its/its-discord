@@ -20,6 +20,19 @@ export interface FirebaseConfig {
   measurementId: string;
 }
 
+export interface FirebaseServiceAccount {
+  type: string;
+  project_id: string;
+  private_key_id: string;
+  private_key: string;
+  client_email: string;
+  client_id: string;
+  auth_uri: string;
+  token_uri: string;
+  auth_provider_x509_cert_url: string;
+  client_x509_cert_url: string;
+}
+
 /**
  * アプリケーション設定を読み込み、必須項目を検証する
  */
@@ -116,4 +129,25 @@ export function loadFirebaseConfig(): FirebaseConfig {
     appId,
     measurementId,
   };
+}
+
+/**
+ * Firebase Admin SDK用のサービスアカウント情報を読み込む
+ */
+export function loadFirebaseServiceAccount(): FirebaseServiceAccount {
+  const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT;
+
+  if (!serviceAccountJson) {
+    throw new Error(
+      "Missing required environment variable: FIREBASE_SERVICE_ACCOUNT",
+    );
+  }
+
+  try {
+    return JSON.parse(serviceAccountJson) as FirebaseServiceAccount;
+  } catch {
+    throw new Error(
+      "Invalid JSON in environment variable: FIREBASE_SERVICE_ACCOUNT",
+    );
+  }
 }
