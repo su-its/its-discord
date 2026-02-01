@@ -1,4 +1,7 @@
-import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+  type ChatInputCommandInteraction,
+  SlashCommandBuilder,
+} from "discord.js";
 import { killSelf } from "../../../../application/usecases/killSelf";
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
@@ -18,7 +21,7 @@ const killCommand: AdminCommand = {
   isDMAllowed: true,
 };
 
-async function killCommandHandler(interaction: CommandInteraction) {
+async function killCommandHandler(interaction: ChatInputCommandInteraction) {
   const targetPid = interaction.options.get("pid", true).value as string;
 
   await interaction.reply(`プロセス ${targetPid} を終了します...`);

@@ -1,4 +1,7 @@
-import { type CommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+  type ChatInputCommandInteraction,
+  SlashCommandBuilder,
+} from "discord.js";
 import { itsCoreService } from "../../../../application/services/itsCoreService";
 import Department from "../../../../domain/entities/department";
 import type AdminCommand from "../../../../domain/types/adminCommand";
@@ -28,7 +31,9 @@ const registerCommand: AdminCommand = {
   isDMAllowed: false,
 };
 
-async function addMemberCommandHandler(interaction: CommandInteraction) {
+async function addMemberCommandHandler(
+  interaction: ChatInputCommandInteraction,
+) {
   const mail = interaction.options.get("mail")?.value as string;
   const name = interaction.options.get("name")?.value as string;
   const department = interaction.options.get("department")?.value as string;
