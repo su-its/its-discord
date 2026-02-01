@@ -7,7 +7,9 @@ export class AdminRoleSpecification implements AuthorizationSpecification {
     private readonly roleName: string = administratorRoleProperty.name,
   ) {}
 
-  async isSatisfiedBy(interaction: ChatInputCommandInteraction): Promise<boolean> {
+  async isSatisfiedBy(
+    interaction: ChatInputCommandInteraction,
+  ): Promise<boolean> {
     const guild = interaction.guild;
     if (!guild) return false;
     const member = await guild.members.fetch(interaction.user.id);

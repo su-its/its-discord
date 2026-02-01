@@ -1,4 +1,7 @@
-import type { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import type {
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+} from "discord.js";
 
 /**
  * Discord Slash Command の実装に必要な基本インターフェース

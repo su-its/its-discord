@@ -1,4 +1,7 @@
-import { type ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+  type ChatInputCommandInteraction,
+  SlashCommandBuilder,
+} from "discord.js";
 import { authenticateUser } from "../../../../application/usecases/authenticateUser";
 import type Command from "../../../../domain/types/command";
 
