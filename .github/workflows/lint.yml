@@ -12,7 +12,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22.x'
-          cache: 'yarn'
-      - run: corepack enable && corepack prepare yarn@4.2.2 --activate
+      - run: corepack enable
       - run: yarn install --immutable
       - run: yarn ci
