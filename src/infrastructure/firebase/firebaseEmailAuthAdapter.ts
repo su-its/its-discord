@@ -7,14 +7,16 @@ import {
   getAuth,
   sendEmailVerification,
 } from "firebase/auth";
-import serviceAccount from "../../../its-discord-auth-firebase-adminsdk-wn2uo-ac781d8325.json";
 import type {
   AuthUser,
   EmailAuthCredentials,
   EmailAuthPort,
   EmailVerificationOptions,
 } from "../../application/ports/emailAuthPort";
-import { loadFirebaseConfig } from "../../config/environment";
+import {
+  loadFirebaseConfig,
+  loadFirebaseServiceAccount,
+} from "../../config/environment";
 import logger from "../logger";
 
 /**
@@ -27,6 +29,7 @@ export class FirebaseEmailAuthAdapter implements EmailAuthPort {
   constructor() {
     // Firebase Admin初期化
     if (!admin.apps.length) {
+      const serviceAccount = loadFirebaseServiceAccount();
       admin.initializeApp({
         credential: admin.credential.cert(
           serviceAccount as admin.ServiceAccount,

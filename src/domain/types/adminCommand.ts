@@ -1,4 +1,7 @@
-import type { CommandInteraction, SlashCommandBuilder } from "discord.js";
+import type {
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+} from "discord.js";
 import type Command from "./command";
 
 /**
@@ -12,7 +15,7 @@ import type Command from "./command";
  *   data: new SlashCommandBuilder()
  *     .setName('kill')
  *     .setDescription('プロセスを終了します'),
- *   execute: async (interaction: CommandInteraction) => {
+ *   execute: async (interaction: ChatInputCommandInteraction) => {
  *     await interaction.reply('プロセスを終了しました');
  *   },
  * };
@@ -20,10 +23,10 @@ import type Command from "./command";
  */
 export default interface AdminCommand extends Command {
   data: SlashCommandBuilder;
-  execute: (interaction: CommandInteraction) => Promise<void>;
+  execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
   authorization: AuthorizationSpecification;
 }
 
 export interface AuthorizationSpecification {
-  isSatisfiedBy: (interaction: CommandInteraction) => Promise<boolean>;
+  isSatisfiedBy: (interaction: ChatInputCommandInteraction) => Promise<boolean>;
 }
