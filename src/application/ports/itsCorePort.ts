@@ -13,6 +13,7 @@ export interface MemberRegistrationData {
 export interface MemberConnectionData {
   memberId: string;
   discordAccountId: string;
+  discordNickName: string;
 }
 
 export interface MemberNicknameUpdateData {
@@ -25,33 +26,10 @@ export interface MemberNicknameUpdateData {
  * Application層はこのインターフェースのみに依存し、Infrastructure層の詳細を知らない
  */
 export interface ITSCorePort {
-  /**
-   * 新しいメンバーを登録する
-   */
   registerMember(data: MemberRegistrationData): Promise<void>;
-
-  /**
-   * DiscordIDでメンバーを取得する
-   */
   getMemberByDiscordId(discordId: string): Promise<InternalMember | undefined>;
-
-  /**
-   * メールアドレスでメンバーを取得する
-   */
   getMemberByEmail(email: string): Promise<InternalMember | undefined>;
-
-  /**
-   * DiscordアカウントとITSCoreアカウントを紐づける
-   */
   connectDiscordAccount(data: MemberConnectionData): Promise<void>;
-
-  /**
-   * 全メンバーのリストを取得する
-   */
   getMemberList(): Promise<InternalMember[]>;
-
-  /**
-   * メンバーのDiscordニックネームを変更する
-   */
-  updateMemberNickname(data: MemberNicknameUpdateData): Promise<InternalMember>;
+  updateMemberNickname(data: MemberNicknameUpdateData): Promise<void>;
 }

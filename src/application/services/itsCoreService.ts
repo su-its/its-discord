@@ -68,8 +68,8 @@ export class ITSCoreService {
 
   async updateMemberNickname(
     data: Parameters<ITSCorePort["updateMemberNickname"]>[0],
-  ): Promise<ReturnType<ITSCorePort["updateMemberNickname"]>> {
-    return this.port.updateMemberNickname(data);
+  ): Promise<void> {
+    await this.port.updateMemberNickname(data);
   }
 }
 

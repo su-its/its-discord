@@ -34,6 +34,7 @@ async function handleMemberRegistration(userInfo: AuthData) {
   await itsCoreService.connectDiscordAccount({
     memberId: member.id,
     discordAccountId: memberRegistrationInfo.discordId,
+    discordNickName: member.name,
   });
 }
 
