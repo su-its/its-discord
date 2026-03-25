@@ -25,7 +25,7 @@ async function killCommandHandler(interaction: ChatInputCommandInteraction) {
   const targetPid = interaction.options.get("pid", true).value as string;
 
   await interaction.reply(`プロセス ${targetPid} を終了します...`);
-  const result = await killSelf(Number.parseInt(targetPid));
+  const result = await killSelf(Number.parseInt(targetPid, 10));
   if (!result) {
     await interaction.editReply(
       `プロセス ${targetPid} を終了できませんでした。`,

@@ -48,7 +48,7 @@ async function nickCommandHandler(interaction: ChatInputCommandInteraction) {
     );
 
     await interaction.followUp(result.message);
-  } catch (error) {
+  } catch (_error) {
     await interaction.followUp(
       "ニックネームの変更中にエラーが発生しました。後でもう一度お試しください。",
     );

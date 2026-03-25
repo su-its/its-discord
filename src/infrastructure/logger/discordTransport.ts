@@ -12,7 +12,7 @@ export default class DiscordTransport extends Transport {
     this.webhookUrl = opts.webhookUrl;
   }
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: winston Transport interface requires any
   public log(info: any, callback: () => void) {
     setImmediate(() => {
       this.emit("logged", info);
