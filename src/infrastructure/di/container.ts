@@ -2,27 +2,53 @@ import { discordServerServiceContainer } from "../../application/services/discor
 import { emailAuthServiceContainer } from "../../application/services/emailAuthService";
 import { itsCoreServiceContainer } from "../../application/services/itsCoreService";
 import { scheduledMessageServiceContainer } from "../../application/services/scheduledMessageService";
+import type { AdapterConfig } from "../../config/environment";
 import type { CustomClient } from "../../domain/types/customClient";
 import { DiscordServerAdapter } from "../discordjs/discordServerAdapter";
-import { FirebaseEmailAuthAdapter } from "../firebase/firebaseEmailAuthAdapter";
-import { itsCoreMemberRepository } from "../itscore/itsCoreAdaptor";
+import { InMemoryEmailAuthAdapter } from "../in-memory/inMemoryEmailAuthAdapter";
+import { InMemoryITSCoreAdapter } from "../in-memory/inMemoryITSCoreAdapter";
+import logger from "../logger";
 import { memoryScheduledMessageRepository } from "../memory/scheduledMessageRepository";
+
+function setupITSCorePort(adapterType: AdapterConfig["itsCore"]): void {
+  if (adapterType === "in-memory") {
+    itsCoreServiceContainer.setITSCorePort(new InMemoryITSCoreAdapter());
+    logger.info("ITSCore: in-memory adapter");
+    return;
+  }
+  const { itsCoreMemberRepository } = require("../itscore/itsCoreAdaptor");
+  itsCoreServiceContainer.setITSCorePort(itsCoreMemberRepository);
+  logger.info("ITSCore: production adapter");
+}
+
+function setupEmailAuthPort(adapterType: AdapterConfig["emailAuth"]): void {
+  if (adapterType === "in-memory") {
+    emailAuthServiceContainer.setEmailAuthPort(new InMemoryEmailAuthAdapter());
+    logger.info("EmailAuth: in-memory adapter");
+    return;
+  }
+  const {
+    FirebaseEmailAuthAdapter,
+  } = require("../firebase/firebaseEmailAuthAdapter");
+  emailAuthServiceContainer.setEmailAuthPort(new FirebaseEmailAuthAdapter());
+  logger.info("EmailAuth: firebase adapter");
+}
 
 /**
  * 依存性注入の設定
- * Infrastructure層からApplication層への依存性を注入する
+ * AdapterConfig に基づいて各 Port の実装を選択・注入する
  */
-export function setupDependencyInjection(client?: CustomClient): void {
-  // ITSCorePortの実装を注入
-  itsCoreServiceContainer.setITSCorePort(itsCoreMemberRepository);
+export function setupDependencyInjection(
+  adapters: AdapterConfig,
+  client?: CustomClient,
+): void {
+  setupITSCorePort(adapters.itsCore);
+  setupEmailAuthPort(adapters.emailAuth);
 
   // ScheduledMessagePortの実装を注入
   scheduledMessageServiceContainer.setScheduledMessagePort(
     memoryScheduledMessageRepository,
   );
-
-  // EmailAuthPortの実装を注入
-  emailAuthServiceContainer.setEmailAuthPort(new FirebaseEmailAuthAdapter());
 
   // DiscordServerPortの実装を注入（クライアントが利用可能な場合のみ）
   if (client) {
@@ -30,9 +56,3 @@ export function setupDependencyInjection(client?: CustomClient): void {
     discordServerServiceContainer.setDiscordServerPort(discordServerAdapter);
   }
 }
-
-/**
- * アプリケーション起動時に依存性注入を実行
- * DiscordServerAdapterはクライアント初期化後に別途設定される
- */
-setupDependencyInjection();

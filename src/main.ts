@@ -1,11 +1,17 @@
-import type AuthData from "./domain/types/authData";
-import { CustomClient } from "./domain/types/customClient";
-import logger from "./infrastructure/logger";
-// DIコンテナの初期化（アプリケーション起動時に実行される）
-import "./infrastructure/di/container";
+// .env.local を最優先で読み込む（他の import より前に実行する必要がある）
+import { existsSync } from "node:fs";
+import dotenv from "dotenv";
+
+if (existsSync(".env.local")) {
+  dotenv.config({ path: ".env.local", override: true });
+}
+
 import { initializeScheduledMessagesFromConfig } from "./application/usecases/initializeScheduledMessagesFromConfig";
 import { loadConfig } from "./config/environment";
+import type AuthData from "./domain/types/authData";
+import { CustomClient } from "./domain/types/customClient";
 import { setupDependencyInjection } from "./infrastructure/di/container";
+import logger from "./infrastructure/logger";
 import registry from "./interfaces/discordjs/commands";
 import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
 
@@ -26,6 +32,9 @@ async function main() {
     const config = loadConfig();
     logger.info("Configuration loaded and validated successfully");
 
+    // 依存性注入の設定（アダプタ選択）
+    setupDependencyInjection(config.adapters);
+
     // Registry からすべてのコマンドを取得し、クライアントに登録
     const commands = registry.getAllCommands();
     for (const command of commands) {
@@ -40,7 +49,7 @@ async function main() {
     await client.login(config.discordToken);
 
     // クライアント初期化後にDiscordServerAdapterを設定
-    setupDependencyInjection(client);
+    setupDependencyInjection(config.adapters, client);
 
     // 設定ファイルからスケジュールメッセージを初期化
     await initializeScheduledMessagesFromConfig();

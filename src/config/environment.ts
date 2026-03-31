@@ -1,12 +1,26 @@
+import { existsSync } from "node:fs";
 import dotenv from "dotenv";
 
-// 環境変数を読み込み
-dotenv.config();
+// .env.local があれば優先して読み込み、なければ .env を使用
+const envFile = existsSync(".env.local") ? ".env.local" : ".env";
+dotenv.config({ path: envFile });
+
+export type Environment = "production" | "local";
+
+export type AdapterType = "production" | "in-memory";
+
+export interface AdapterConfig {
+  itsCore: AdapterType;
+  emailAuth: AdapterType;
+}
 
 export interface AppConfig {
+  environment: Environment;
   discordToken: string;
   hotChannelId: string;
   generalChannelId: string;
+  authRedirectUrl: string;
+  adapters: AdapterConfig;
 }
 
 export interface FirebaseConfig {
@@ -33,13 +47,34 @@ export interface FirebaseServiceAccount {
   client_x509_cert_url: string;
 }
 
+function loadAdapterConfig(environment: Environment): AdapterConfig {
+  if (environment === "production") {
+    return { itsCore: "production", emailAuth: "production" };
+  }
+
+  return {
+    itsCore: parseAdapterType(process.env.ITSCORE_ADAPTER, "in-memory"),
+    emailAuth: parseAdapterType(process.env.EMAIL_AUTH_ADAPTER, "in-memory"),
+  };
+}
+
+function parseAdapterType(
+  value: string | undefined,
+  defaultValue: AdapterType,
+): AdapterType {
+  if (value === "production" || value === "in-memory") return value;
+  return defaultValue;
+}
+
 /**
  * アプリケーション設定を読み込み、必須項目を検証する
  */
 export function loadConfig(): AppConfig {
+  const environment = (process.env.ENVIRONMENT ?? "production") as Environment;
   const discordToken = process.env.TOKEN;
   const hotChannelId = process.env.HOT_CHANNEL_ID;
   const generalChannelId = process.env.GENERAL_CHANNEL_ID;
+  const authRedirectUrl = process.env.AUTH_REDIRECT_URL;
 
   if (!discordToken) {
     throw new Error("Missing required environment variable: TOKEN");
@@ -55,10 +90,17 @@ export function loadConfig(): AppConfig {
     );
   }
 
+  if (!authRedirectUrl) {
+    throw new Error("Missing required environment variable: AUTH_REDIRECT_URL");
+  }
+
   return {
+    environment,
     discordToken,
     hotChannelId,
     generalChannelId,
+    authRedirectUrl,
+    adapters: loadAdapterConfig(environment),
   };
 }
 
