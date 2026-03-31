@@ -10,9 +10,20 @@ import {
 export function setupModalSubmitHandler(client: CustomClient): void {
   client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isModalSubmit()) return;
+    if (interaction.customId !== AUTH_MODAL_ID) return;
 
-    if (interaction.customId === AUTH_MODAL_ID) {
+    try {
       await handleAuthModalSubmit(interaction);
+    } catch (error) {
+      logger.error("Unhandled error in modal submit handler:", error);
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction
+          .reply({
+            content: "処理中にエラーが発生しました。管理者に連絡してください。",
+            ephemeral: true,
+          })
+          .catch(() => {});
+      }
     }
   });
 }
@@ -35,13 +46,6 @@ async function handleAuthModalSubmit(
 
   await interaction.deferReply({ ephemeral: true });
 
-  try {
-    const result = await linkAndSendVerification(interaction.user.id, email);
-    await interaction.editReply(result.message);
-  } catch (error) {
-    logger.error("Error handling auth modal submit:", error);
-    await interaction.editReply(
-      "処理中にエラーが発生しました。管理者に連絡してください。",
-    );
-  }
+  const result = await linkAndSendVerification(interaction.user.id, email);
+  await interaction.editReply(result.message);
 }

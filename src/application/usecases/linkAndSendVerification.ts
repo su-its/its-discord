@@ -9,13 +9,17 @@ export interface LinkAndVerifyResult {
   reason?:
     | "MEMBER_NOT_FOUND"
     | "ALREADY_LINKED"
+    | "MEMBER_LINKED_TO_OTHER"
     | "ALREADY_VERIFIED"
     | "TECHNICAL_ERROR";
 }
 
+const VERIFICATION_REDIRECT_URL =
+  "https://discord.com/channels/1224047445714010143/1224047445714010146";
+
 /**
- * メールアドレスで core の会員を検索し、Discord アカウントを紐付け、
- * 認証メールを送信する。
+ * メールアドレスで core の会員を検索し、認証メールを送信してから
+ * Discord アカウントを紐付ける。
  */
 export async function linkAndSendVerification(
   discordUserId: string,
@@ -43,13 +47,21 @@ export async function linkAndSendVerification(
       };
     }
 
-    await itsCoreService.connectDiscordAccount({
-      memberId: member.id,
-      discordAccountId: discordUserId,
-    });
+    if (member.discordId) {
+      return {
+        success: false,
+        message:
+          "このメンバーは既に別のDiscordアカウントに紐付けられています。管理者に連絡してください。",
+        reason: "MEMBER_LINKED_TO_OTHER",
+      };
+    }
 
     const existingUser = await emailAuthService.getUserByEmail(email);
     if (existingUser?.emailVerified) {
+      await itsCoreService.connectDiscordAccount({
+        memberId: member.id,
+        discordAccountId: discordUserId,
+      });
       return {
         success: true,
         message:
@@ -58,21 +70,12 @@ export async function linkAndSendVerification(
       };
     }
 
-    if (!existingUser) {
-      const user = await emailAuthService.createUserWithEmailAndPassword({
-        email,
-        password: randomUUID(),
-      });
-      await emailAuthService.sendEmailVerification(user, {
-        url: "https://discord.com/channels/1224047445714010143/1224047445714010146",
-        handleCodeInApp: true,
-      });
-    } else {
-      await emailAuthService.sendEmailVerification(existingUser, {
-        url: "https://discord.com/channels/1224047445714010143/1224047445714010146",
-        handleCodeInApp: true,
-      });
-    }
+    await sendVerificationEmail(email, existingUser);
+
+    await itsCoreService.connectDiscordAccount({
+      memberId: member.id,
+      discordAccountId: discordUserId,
+    });
 
     logger.info(
       `Verification email sent to ${email} for Discord user ${discordUserId}`,
@@ -93,4 +96,32 @@ export async function linkAndSendVerification(
       reason: "TECHNICAL_ERROR",
     };
   }
+}
+
+async function sendVerificationEmail(
+  email: string,
+  existingUser: {
+    uid: string;
+    email: string | null;
+    emailVerified: boolean;
+  } | null,
+): Promise<void> {
+  const verificationOptions = {
+    url: VERIFICATION_REDIRECT_URL,
+    handleCodeInApp: true,
+  };
+
+  if (existingUser) {
+    await emailAuthService.sendEmailVerification(
+      existingUser,
+      verificationOptions,
+    );
+    return;
+  }
+
+  const user = await emailAuthService.createUserWithEmailAndPassword({
+    email,
+    password: randomUUID(),
+  });
+  await emailAuthService.sendEmailVerification(user, verificationOptions);
 }
