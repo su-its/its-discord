@@ -28,6 +28,8 @@ export function toInternalMember(
 
 function mapAffiliationToDepartment(member: ItsCoreMember): InternalDepartment {
   if (member.status === "former") return InternalDepartment.OBOG;
+  // TODO: unconfirmed には専用の Unconfirmed ロールを付与する。
+  // 次PRで Department enum を status ベースに見直し、ロール付与ロジックも変更する。
   if (member.status === "unconfirmed") return InternalDepartment.OTHERS;
 
   const affiliation = member.affiliation;
