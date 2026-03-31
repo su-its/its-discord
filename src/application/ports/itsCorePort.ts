@@ -31,5 +31,6 @@ export interface ITSCorePort {
   getMemberByEmail(email: string): Promise<InternalMember | undefined>;
   connectDiscordAccount(data: MemberConnectionData): Promise<void>;
   getMemberList(): Promise<InternalMember[]>;
+  getMemberListWithDiscord(): Promise<InternalMember[]>;
   updateMemberNickname(data: MemberNicknameUpdateData): Promise<void>;
 }

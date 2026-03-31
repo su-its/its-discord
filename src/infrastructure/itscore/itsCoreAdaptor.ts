@@ -47,14 +47,16 @@ export class ITSCoreAdaptor implements ITSCorePort {
     });
   }
 
-  // TODO: v3 では Member に discord 情報が含まれないため、
-  // renameAllMembersInGuild で discordId/discordNickname が取得できない。
-  // core に「全 DiscordAccount を取得する UseCase」または
-  // 「Member + DiscordAccount を結合して返す UseCase」があれば解決できる。
-  // 次PRで /auth 統合と合わせて再設計する。
   async getMemberList(): Promise<InternalMember[]> {
     const result = await this.service.list();
     return result.members.map((member) => toInternalMember(member));
+  }
+
+  // TODO: core の次リリース（listMembersWithDiscordAccounts 追加後）で
+  // service.listMembersWithDiscordAccounts() を使い discord 情報を結合する。
+  // 現在は getMemberList と同じ（discord 情報なし）にフォールバック。
+  async getMemberListWithDiscord(): Promise<InternalMember[]> {
+    return this.getMemberList();
   }
 
   async updateMemberNickname(data: MemberNicknameUpdateData): Promise<void> {
