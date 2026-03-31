@@ -1,10 +1,8 @@
 import {
-  type APIEmbedField,
   ChannelType,
   type Role as DiscordRole,
   EmbedBuilder,
   type Guild,
-  type GuildMember,
   SnowflakeUtil,
   type TextChannel,
 } from "discord.js";

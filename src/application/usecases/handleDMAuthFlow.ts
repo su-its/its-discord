@@ -89,7 +89,7 @@ export async function handleDMAuthFlow(
             "認証メールを送信しました。メールを確認して認証を完了してください。",
           );
           logger.info(`Authentication process started for user: ${userId}`);
-        } catch (error) {
+        } catch (_error) {
           await replyFunction(
             "認証に失敗しました。もう一度やり直してください。",
           );

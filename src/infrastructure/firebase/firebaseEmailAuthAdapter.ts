@@ -1,12 +1,12 @@
-import * as admin from "firebase-admin";
 import { type FirebaseApp, initializeApp } from "firebase/app";
 import {
   type Auth,
-  type UserCredential,
   createUserWithEmailAndPassword,
   getAuth,
   sendEmailVerification,
+  type UserCredential,
 } from "firebase/auth";
+import * as admin from "firebase-admin";
 import type {
   AuthUser,
   EmailAuthCredentials,
