@@ -6,8 +6,8 @@ import type InternalMember from "../../domain/entities/member";
 export interface MemberRegistrationData {
   email: string;
   name: string;
-  department: string;
   studentId: string;
+  affiliation: import("@shizuoka-its/core").CompleteAffiliation;
 }
 
 export interface MemberConnectionData {
