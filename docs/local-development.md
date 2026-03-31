@@ -24,14 +24,22 @@ EMAIL_AUTH_ADAPTER=in-memory
 3. Firebase 関連の値はダミーでOK（in-memory モードでは使用されない）。
 4. Discord Bot のトークン（`TOKEN`, `APP_ID`, `GUILD_ID`）は実際の値を設定する。
 
-### 起動
+### コマンドのデプロイと起動
 
 ```bash
+# テスト用ギルドにスラッシュコマンドを登録
+yarn deploy-commands:local
+
+# ローカルモードで起動
 yarn start:local
 ```
 
-`main.local.ts` が `.env.local` を読み込んで起動する。
-`yarn start` は `.env` を読む本番用エントリポイント。
+| コマンド | env ファイル | 対象ギルド |
+|---------|------------|-----------|
+| `yarn deploy-commands` | `.env` | 本番ギルド |
+| `yarn deploy-commands:local` | `.env.local` | テスト用ギルド |
+| `yarn start` | `.env` | 本番 |
+| `yarn start:local` | `.env.local` | テスト用 |
 
 ### アダプタの選択
 
