@@ -16,11 +16,7 @@ export async function handleNewMemberJoined(
     // ウェルカムDMを送信
     await discordServerService.sendDirectMessage(
       memberId,
-      `ようこそ ${memberDisplayName} さん！ ITS discord 認証botです!`,
-    );
-    await discordServerService.sendDirectMessage(
-      memberId,
-      "名前(フルネーム)を教えてください",
+      `ようこそ ${memberDisplayName} さん！\nサーバーで \`/auth\` コマンドを実行して認証を行ってください。`,
     );
     logger.info(`Sent welcome DM to ${memberDisplayName} (${memberId})`);
 
