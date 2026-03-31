@@ -38,10 +38,7 @@ function setupEmailAuthPort(adapterType: AdapterConfig["emailAuth"]): void {
  * 依存性注入の設定
  * AdapterConfig に基づいて各 Port の実装を選択・注入する
  */
-export function setupDependencyInjection(
-  adapters: AdapterConfig,
-  client?: CustomClient,
-): void {
+export function setupDependencyInjection(adapters: AdapterConfig): void {
   setupITSCorePort(adapters.itsCore);
   setupEmailAuthPort(adapters.emailAuth);
 
@@ -49,10 +46,12 @@ export function setupDependencyInjection(
   scheduledMessageServiceContainer.setScheduledMessagePort(
     memoryScheduledMessageRepository,
   );
+}
 
-  // DiscordServerPortの実装を注入（クライアントが利用可能な場合のみ）
-  if (client) {
-    const discordServerAdapter = new DiscordServerAdapter(client);
-    discordServerServiceContainer.setDiscordServerPort(discordServerAdapter);
-  }
+/**
+ * Discord クライアント初期化後に DiscordServerAdapter を注入する
+ */
+export function setupDiscordServerAdapter(client: CustomClient): void {
+  const discordServerAdapter = new DiscordServerAdapter(client);
+  discordServerServiceContainer.setDiscordServerPort(discordServerAdapter);
 }

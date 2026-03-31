@@ -6,7 +6,10 @@ import { initializeScheduledMessagesFromConfig } from "./application/usecases/in
 import { loadConfig } from "./config/environment";
 import type AuthData from "./domain/types/authData";
 import { CustomClient } from "./domain/types/customClient";
-import { setupDependencyInjection } from "./infrastructure/di/container";
+import {
+  setupDependencyInjection,
+  setupDiscordServerAdapter,
+} from "./infrastructure/di/container";
 import logger from "./infrastructure/logger";
 import registry from "./interfaces/discordjs/commands";
 import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
@@ -41,7 +44,7 @@ async function main() {
 
     await client.login(config.discordToken);
 
-    setupDependencyInjection(config.adapters, client);
+    setupDiscordServerAdapter(client);
 
     await initializeScheduledMessagesFromConfig();
 
