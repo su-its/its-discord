@@ -1,9 +1,8 @@
-import { existsSync } from "node:fs";
 import dotenv from "dotenv";
 
-// .env.local があれば優先して読み込み、なければ .env を使用
-const envFile = existsSync(".env.local") ? ".env.local" : ".env";
-dotenv.config({ path: envFile });
+// dotenv v17 は自動的に .env を読み込む
+// .env.local を使う場合は main.local.ts で先に読み込む
+dotenv.config();
 
 export type Environment = "production" | "local";
 

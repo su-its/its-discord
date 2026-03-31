@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
+
 import { initializeScheduledMessagesFromConfig } from "./application/usecases/initializeScheduledMessagesFromConfig";
 import { loadConfig } from "./config/environment";
 import type AuthData from "./domain/types/authData";
@@ -20,33 +24,28 @@ const userStates = new Map<string, AuthData>();
 
 async function main() {
   try {
-    // アプリケーション設定を読み込み・検証
     const config = loadConfig();
-    logger.info("Configuration loaded and validated successfully");
+    logger.info(
+      `Configuration loaded (environment: ${config.environment}, adapters: itsCore=${config.adapters.itsCore}, emailAuth=${config.adapters.emailAuth})`,
+    );
 
-    // 依存性注入の設定（アダプタ選択）
     setupDependencyInjection(config.adapters);
 
-    // Registry からすべてのコマンドを取得し、クライアントに登録
     const commands = registry.getAllCommands();
     for (const command of commands) {
       client.commands.set(command.data.name, command);
       logger.debug(`Loaded command: ${command.data.name}`);
     }
 
-    // イベントハンドラを設定
     setupEventHandlers(client, userStates);
 
-    // クライアントをログイン
     await client.login(config.discordToken);
 
-    // クライアント初期化後にDiscordServerAdapterを設定
     setupDependencyInjection(config.adapters, client);
 
-    // 設定ファイルからスケジュールメッセージを初期化
     await initializeScheduledMessagesFromConfig();
 
-    logger.info("Bot is running...");
+    logger.info("Bot is running (local mode)...");
   } catch (error) {
     logger.error("Failed to start application:", error);
     process.exit(1);

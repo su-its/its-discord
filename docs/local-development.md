@@ -27,10 +27,11 @@ EMAIL_AUTH_ADAPTER=in-memory
 ### 起動
 
 ```bash
-yarn dev
+yarn start:local
 ```
 
-`.env.local` が存在すれば自動的に `.env` より優先して読み込まれる。
+`main.local.ts` が `.env.local` を読み込んで起動する。
+`yarn start` は `.env` を読む本番用エントリポイント。
 
 ### アダプタの選択
 
@@ -61,6 +62,10 @@ EMAIL_AUTH_ADAPTER=in-memory
 | InMemoryITSCoreAdapter | 会員データを Map で管理。再起動でリセットされる |
 | InMemoryEmailAuthAdapter | メール送信をスキップし、認証は自動完了扱い |
 
-### 本番モードに戻す
+### 本番モードで起動する
 
-`.env.local` を削除するか、`ENVIRONMENT=production` に変更する。
+```bash
+yarn start
+```
+
+`yarn start` は `main.ts` を使い、`.env` を読み込む。`.env.local` は参照しない。
