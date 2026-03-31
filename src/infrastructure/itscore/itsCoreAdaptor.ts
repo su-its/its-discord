@@ -6,7 +6,11 @@ import type {
   MemberRegistrationData,
 } from "../../application/ports/itsCorePort";
 import type InternalMember from "../../domain/entities/member";
-import { departmentToAffiliation, toInternalMember } from "./mapper";
+import {
+  departmentToAffiliation,
+  memberWithDiscordToInternal,
+  toInternalMember,
+} from "./mapper";
 
 /**
  * ITSCoreのメンバー機能へのアクセスを提供するAdapter（ヘキサゴナルアーキテクチャ）
@@ -52,11 +56,9 @@ export class ITSCoreAdaptor implements ITSCorePort {
     return result.members.map((member) => toInternalMember(member));
   }
 
-  // TODO: core の次リリース（listMembersWithDiscordAccounts 追加後）で
-  // service.listMembersWithDiscordAccounts() を使い discord 情報を結合する。
-  // 現在は getMemberList と同じ（discord 情報なし）にフォールバック。
   async getMemberListWithDiscord(): Promise<InternalMember[]> {
-    return this.getMemberList();
+    const result = await this.service.listMembersWithDiscordAccounts();
+    return result.entries.map(memberWithDiscordToInternal);
   }
 
   async updateMemberNickname(data: MemberNicknameUpdateData): Promise<void> {

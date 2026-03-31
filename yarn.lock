@@ -1503,14 +1503,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shizuoka-its/core@npm:3.0.0-rc.1":
-  version: 3.0.0-rc.1
-  resolution: "@shizuoka-its/core@npm:3.0.0-rc.1"
+"@shizuoka-its/core@npm:3.0.0-rc.2":
+  version: 3.0.0-rc.2
+  resolution: "@shizuoka-its/core@npm:3.0.0-rc.2"
   dependencies:
     drizzle-orm: "npm:^0.45.1"
     pg: "npm:^8.20.0"
     uuid: "npm:^13.0.0"
-  checksum: 10c0/a4ca65e4240c895a058f06d48eb12e55d958a2d66813be3458f907cc234c4982d2b8dc9eeed52570d9090a905a98965860704bb066ca496d2b7ce46da7309cb8
+  checksum: 10c0/bef22c28b5123532455bb269aaccb4dd01b108415bdfd416d80f90249ecdaaa408ee0089b3b5e142364803432ac92470d3451bcb87d19233dec784a1b3ef5436
   languageName: node
   linkType: hard
 
@@ -3357,7 +3357,7 @@ __metadata:
   resolution: "its-discord-auth@workspace:."
   dependencies:
     "@biomejs/biome": "npm:^1.9.4"
-    "@shizuoka-its/core": "npm:3.0.0-rc.1"
+    "@shizuoka-its/core": "npm:3.0.0-rc.2"
     "@types/node": "npm:^22.19.7"
     "@types/uuid": "npm:^10.0.0"
     "@vitest/coverage-v8": "npm:^3.2.4"

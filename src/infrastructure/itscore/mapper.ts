@@ -1,6 +1,7 @@
 import type {
   CompleteAffiliation,
   Member as ItsCoreMember,
+  MemberWithDiscordAccounts,
 } from "@shizuoka-its/core";
 import InternalDepartment from "../../domain/entities/department";
 import type InternalMember from "../../domain/entities/member";
@@ -33,6 +34,45 @@ function mapAffiliationToDepartment(member: ItsCoreMember): InternalDepartment {
   if (member.status === "unconfirmed") return InternalDepartment.OTHERS;
 
   const affiliation = member.affiliation;
+  if (affiliation.type !== "undergraduate") return InternalDepartment.GRADUATE;
+
+  const value = affiliation.value;
+  if (
+    "faculty" in value &&
+    value.faculty === "情報学部" &&
+    "department" in value
+  ) {
+    const dept = value.department as string;
+    if (dept === "情報科学科") return InternalDepartment.CS;
+    if (dept === "行動情報学科") return InternalDepartment.BI;
+    if (dept === "情報社会学科") return InternalDepartment.IA;
+  }
+
+  return InternalDepartment.OTHERS;
+}
+
+export function memberWithDiscordToInternal(
+  entry: MemberWithDiscordAccounts,
+): InternalMember {
+  const firstAccount = entry.discordAccounts[0];
+  return {
+    id: entry.id,
+    name: entry.name,
+    student_number: entry.status === "active" ? entry.studentId : undefined,
+    department: mapDTOToDepartment(entry),
+    mail: entry.email,
+    discordId: firstAccount?.discordId,
+    discordNickname: firstAccount?.nickName,
+  };
+}
+
+function mapDTOToDepartment(
+  dto: MemberWithDiscordAccounts,
+): InternalDepartment {
+  if (dto.status === "former") return InternalDepartment.OBOG;
+  if (dto.status === "unconfirmed") return InternalDepartment.OTHERS;
+
+  const { affiliation } = dto;
   if (affiliation.type !== "undergraduate") return InternalDepartment.GRADUATE;
 
   const value = affiliation.value;
