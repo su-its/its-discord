@@ -1,4 +1,6 @@
 import { Events, type ModalSubmitInteraction } from "discord.js";
+import { itsCoreService } from "../../../application/services/itsCoreService";
+import { authenticateUser } from "../../../application/usecases/authenticateUser";
 import { linkAndSendVerification } from "../../../application/usecases/linkAndSendVerification";
 import type { CustomClient } from "../../../domain/types/customClient";
 import logger from "../../../infrastructure/logger";
@@ -45,6 +47,25 @@ async function handleAuthModalSubmit(
   }
 
   await interaction.deferReply({ ephemeral: true });
+
+  const existingMember = await itsCoreService.getMemberByDiscordId(
+    interaction.user.id,
+  );
+
+  if (existingMember) {
+    if (!interaction.guildId) {
+      await interaction.editReply(
+        "このコマンドはサーバー内でのみ使用可能です。",
+      );
+      return;
+    }
+    const result = await authenticateUser(
+      interaction.user.id,
+      interaction.guildId,
+    );
+    await interaction.editReply(result.message);
+    return;
+  }
 
   const result = await linkAndSendVerification(interaction.user.id, email);
   await interaction.editReply(result.message);

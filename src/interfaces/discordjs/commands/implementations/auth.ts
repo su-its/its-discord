@@ -6,8 +6,6 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from "discord.js";
-import { itsCoreService } from "../../../../application/services/itsCoreService";
-import { authenticateUser } from "../../../../application/usecases/authenticateUser";
 import type Command from "../../../../domain/types/command";
 
 export const AUTH_MODAL_ID = "auth-email-modal";
@@ -24,20 +22,6 @@ const authCommand: Command = {
 async function authCommandHandler(interaction: ChatInputCommandInteraction) {
   if (!interaction.guild) {
     throw new Error("Guild not found");
-  }
-
-  const existingMember = await itsCoreService.getMemberByDiscordId(
-    interaction.user.id,
-  );
-
-  if (existingMember) {
-    await interaction.deferReply({ ephemeral: true });
-    const result = await authenticateUser(
-      interaction.user.id,
-      interaction.guild.id,
-    );
-    await interaction.editReply(result.message);
-    return;
   }
 
   const modal = new ModalBuilder()
