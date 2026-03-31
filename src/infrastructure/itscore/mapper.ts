@@ -48,6 +48,7 @@ function mapAffiliationToDepartment(member: ItsCoreMember): InternalDepartment {
     if (dept === "情報社会学科") return InternalDepartment.IA;
   }
 
+  // TODO: 工学部など情報学部以外の学部ロールにも対応する
   return InternalDepartment.OTHERS;
 }
 
@@ -87,6 +88,7 @@ function mapDTOToDepartment(
     if (dept === "情報社会学科") return InternalDepartment.IA;
   }
 
+  // TODO: 工学部など情報学部以外の学部ロールにも対応する
   return InternalDepartment.OTHERS;
 }
 
