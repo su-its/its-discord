@@ -10,7 +10,7 @@ Discord API には本番（またはテスト用）Bot で接続する。
 1. `.env.local` を作成する:
 
 ```bash
-cp .env .env.local
+cp .env.example .env.local
 ```
 
 2. `.env.local` を編集:
