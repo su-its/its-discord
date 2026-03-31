@@ -1,40 +1,113 @@
 import type {
-  Department as ItsCoreDepartment,
+  CompleteAffiliation,
   Member as ItsCoreMember,
+  MemberWithDiscordAccounts,
 } from "@shizuoka-its/core";
 import InternalDepartment from "../../domain/entities/department";
 import type InternalMember from "../../domain/entities/member";
 
-export function toInternalMember(member: ItsCoreMember): InternalMember {
-  const discordAccounts = member.getDiscordAccounts();
-  const firstDiscordAccount = discordAccounts[0];
+interface DiscordInfo {
+  discordId?: string;
+  discordNickname?: string;
+}
 
+export function toInternalMember(
+  member: ItsCoreMember,
+  discordInfo?: DiscordInfo,
+): InternalMember {
   return {
     id: member.id,
-    name: member.getName(),
-    student_number: member.getStudentId(),
-    department: mapDepartment(member.getDepartment()),
-    mail: member.getEmail().getValue(),
-    discordId: firstDiscordAccount?.id,
-    discordNickname: firstDiscordAccount?.getNickName(),
+    name: member.name,
+    student_number:
+      member.status === "active" ? String(member.studentId) : undefined,
+    department: statusToDepartment(member),
+    mail: member.email.getValue(),
+    discordId: discordInfo?.discordId,
+    discordNickname: discordInfo?.discordNickname,
   };
 }
 
-function mapDepartment(department: ItsCoreDepartment): InternalDepartment {
-  // 部署の値に基づいて適切な内部部署列挙型にマッピング
-  const deptString = String(department.getValue()).toUpperCase();
+type HasStatusAndAffiliation =
+  | { status: "former" }
+  | { status: "unconfirmed" }
+  | { status: "active"; affiliation: CompleteAffiliation };
 
-  if (deptString.includes("CS")) return InternalDepartment.CS;
-  if (deptString.includes("BI")) return InternalDepartment.BI;
-  if (deptString.includes("IA")) return InternalDepartment.IA;
-  if (deptString.includes("GRADUATE")) return InternalDepartment.GRADUATE;
-  if (deptString.includes("ALUMNI")) return InternalDepartment.OBOG;
-  if (deptString.includes("OTHERS")) return InternalDepartment.OTHERS;
-  throw new Error(`Invalid department: ${department}`);
+function statusToDepartment(
+  member: HasStatusAndAffiliation,
+): InternalDepartment {
+  if (member.status === "former") return InternalDepartment.OBOG;
+  // TODO: unconfirmed には専用の Unconfirmed ロールを付与する。
+  // 次PRで Department enum を status ベースに見直し、ロール付与ロジックも変更する。
+  if (member.status === "unconfirmed") return InternalDepartment.OTHERS;
+
+  const { affiliation } = member;
+  if (affiliation.type !== "undergraduate") return InternalDepartment.GRADUATE;
+
+  const value = affiliation.value;
+  if (
+    "faculty" in value &&
+    value.faculty === "情報学部" &&
+    "department" in value
+  ) {
+    const dept = value.department as string;
+    if (dept === "情報科学科") return InternalDepartment.CS;
+    if (dept === "行動情報学科") return InternalDepartment.BI;
+    if (dept === "情報社会学科") return InternalDepartment.IA;
+  }
+
+  // TODO: 工学部など情報学部以外の学部ロールにも対応する
+  return InternalDepartment.OTHERS;
 }
 
-export function toInternalDepartment(
-  department: ItsCoreDepartment,
-): InternalDepartment {
-  return mapDepartment(department);
+export function memberWithDiscordToInternal(
+  entry: MemberWithDiscordAccounts,
+): InternalMember {
+  const firstAccount = entry.discordAccounts[0];
+  return {
+    id: entry.id,
+    name: entry.name,
+    student_number: entry.status === "active" ? entry.studentId : undefined,
+    department: statusToDepartment(entry),
+    mail: entry.email,
+    discordId: firstAccount?.discordId,
+    discordNickname: firstAccount?.nickName,
+  };
+}
+
+// TODO: 暫定マッピング。次PRで getAffiliationSteps() ベースの UI に置き換え、
+// year ハードコードを解消し、OBOG/OTHERS の登録にも対応する。
+const DEPARTMENT_AFFILIATION_MAP: Record<string, CompleteAffiliation> = {
+  [InternalDepartment.CS]: {
+    type: "undergraduate",
+    value: { faculty: "情報学部", department: "情報科学科", year: 1 },
+  },
+  [InternalDepartment.BI]: {
+    type: "undergraduate",
+    value: { faculty: "情報学部", department: "行動情報学科", year: 1 },
+  },
+  [InternalDepartment.IA]: {
+    type: "undergraduate",
+    value: { faculty: "情報学部", department: "情報社会学科", year: 1 },
+  },
+  [InternalDepartment.GRADUATE]: {
+    type: "master",
+    value: {
+      school: "総合科学技術研究科",
+      major: "情報学専攻",
+      course: "基盤情報学コース",
+      year: 1,
+    },
+  },
+};
+
+export function departmentToAffiliation(
+  department: string,
+): CompleteAffiliation {
+  const affiliation = DEPARTMENT_AFFILIATION_MAP[department];
+  if (!affiliation) {
+    throw new Error(
+      `Cannot convert department "${department}" to affiliation. Only CS, BI, IA, GRADUATE are supported for registration.`,
+    );
+  }
+  return affiliation;
 }

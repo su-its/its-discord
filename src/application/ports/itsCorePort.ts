@@ -53,5 +53,5 @@ export interface ITSCorePort {
   /**
    * メンバーのDiscordニックネームを変更する
    */
-  updateMemberNickname(data: MemberNicknameUpdateData): Promise<InternalMember>;
+  updateMemberNickname(data: MemberNicknameUpdateData): Promise<void>;
 }
