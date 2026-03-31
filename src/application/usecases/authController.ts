@@ -1,4 +1,3 @@
-import type Member from "../../domain/entities/member";
 import type AuthData from "../../domain/types/authData";
 import { itsCoreService } from "../services/itsCoreService";
 import sendAuthMail from "./sendAuthMail";
@@ -8,10 +7,12 @@ import sendAuthMail from "./sendAuthMail";
  * @param {AuthData} userInfo メンバーの登録に必要なデータ
  */
 
-// TODO: この型は何をするのかinlineドキュメント https://github.com/su-its/its-discord/issues/25
-// NOTE: AuthDataの設計意図がうまく組めなかったので、AuthDataに必須なデータ型をここだけで独自定義
-// NOTE: #25次第でこの型は不要になるかも
-interface MemberRegistrationInfo extends Omit<Member, "id" | "name"> {
+// TODO: 次PRで DM auth flow を廃止し /auth に統合する。
+// この型とファイル全体が不要になる。
+interface MemberRegistrationInfo {
+  mail: string;
+  student_number: string;
+  department: string;
   discordId: string;
 }
 

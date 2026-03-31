@@ -17,7 +17,8 @@ export function toInternalMember(
   return {
     id: member.id,
     name: member.name,
-    student_number: member.status === "active" ? String(member.studentId) : "",
+    student_number:
+      member.status === "active" ? String(member.studentId) : undefined,
     department: mapAffiliationToDepartment(member),
     mail: member.email.getValue(),
     discordId: discordInfo?.discordId,
@@ -47,6 +48,8 @@ function mapAffiliationToDepartment(member: ItsCoreMember): InternalDepartment {
   return InternalDepartment.OTHERS;
 }
 
+// TODO: 暫定マッピング。次PRで getAffiliationSteps() ベースの UI に置き換え、
+// year ハードコードを解消し、OBOG/OTHERS の登録にも対応する。
 const DEPARTMENT_AFFILIATION_MAP: Record<string, CompleteAffiliation> = {
   [InternalDepartment.CS]: {
     type: "undergraduate",
