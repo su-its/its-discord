@@ -66,12 +66,6 @@ export class ITSCoreService {
     return this.port.getMemberList();
   }
 
-  async getMemberListWithDiscord(): Promise<
-    ReturnType<ITSCorePort["getMemberListWithDiscord"]>
-  > {
-    return this.port.getMemberListWithDiscord();
-  }
-
   async updateMemberNickname(
     data: Parameters<ITSCorePort["updateMemberNickname"]>[0],
   ): Promise<void> {

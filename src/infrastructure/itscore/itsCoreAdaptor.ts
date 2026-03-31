@@ -52,11 +52,6 @@ export class ITSCoreAdaptor implements ITSCorePort {
   }
 
   async getMemberList(): Promise<InternalMember[]> {
-    const result = await this.service.list();
-    return result.members.map((member) => toInternalMember(member));
-  }
-
-  async getMemberListWithDiscord(): Promise<InternalMember[]> {
     const result = await this.service.listMembersWithDiscordAccounts();
     return result.entries.map(memberWithDiscordToInternal);
   }

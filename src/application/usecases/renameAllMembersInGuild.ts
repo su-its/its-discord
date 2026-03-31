@@ -21,8 +21,8 @@ export interface MemberRenameResult {
 export async function renameAllMembersInGuild(
   guildId: string,
 ): Promise<MemberRenameResult> {
-  // 1. ITSCoreから全メンバー（Discord情報付き）の表示名マッピングを取得
-  const members = await itsCoreService.getMemberListWithDiscord();
+  // 1. ITSCoreから全メンバーのDiscordIDと表示名のマッピングを取得
+  const members = await itsCoreService.getMemberList();
   const memberNameMap = new Map<string, string>();
 
   for (const member of members) {
