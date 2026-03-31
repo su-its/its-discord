@@ -13,7 +13,6 @@ export interface MemberRegistrationData {
 export interface MemberConnectionData {
   memberId: string;
   discordAccountId: string;
-  discordNickName?: string;
 }
 
 export interface MemberNicknameUpdateData {

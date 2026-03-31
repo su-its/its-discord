@@ -47,7 +47,6 @@ export class ITSCoreAdaptor implements ITSCorePort {
     await this.service.connectDiscordAccount({
       memberId: data.memberId,
       discordAccountId: data.discordAccountId,
-      discordNickName: data.discordNickName,
     });
   }
 
