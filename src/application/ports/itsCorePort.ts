@@ -46,7 +46,7 @@ export interface ITSCorePort {
   connectDiscordAccount(data: MemberConnectionData): Promise<void>;
 
   /**
-   * 全メンバーのリストを取得する（Discordアカウント情報付き）
+   * 全メンバーのリストを取得する
    */
   getMemberList(): Promise<InternalMember[]>;
 
