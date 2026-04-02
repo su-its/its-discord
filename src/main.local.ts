@@ -10,8 +10,10 @@ import type { AdapterConfig } from "./config/environment";
 import { loadConfig } from "./config/environment";
 import { CustomClient } from "./domain/types/customClient";
 import { DiscordServerAdapter } from "./infrastructure/discordjs/discordServerAdapter";
+import { FirebaseEmailAuthAdapter } from "./infrastructure/firebase/firebaseEmailAuthAdapter";
 import { InMemoryEmailAuthAdapter } from "./infrastructure/in-memory/inMemoryEmailAuthAdapter";
 import { InMemoryITSCoreAdapter } from "./infrastructure/in-memory/inMemoryITSCoreAdapter";
+import { ITSCoreAdaptor } from "./infrastructure/itscore/itsCoreAdaptor";
 import logger from "./infrastructure/logger";
 import { memoryScheduledMessageRepository } from "./infrastructure/memory/scheduledMessageRepository";
 import { scheduledMessageCronManager } from "./interfaces/cron/scheduledMessageCron";
@@ -28,30 +30,22 @@ process.on("unhandledRejection", (reason, promise) => {
 
 const client = new CustomClient();
 
-async function createITSCorePort(
-  adapterType: AdapterConfig["itsCore"],
-): Promise<ITSCorePort> {
+function createITSCorePort(adapterType: AdapterConfig["itsCore"]): ITSCorePort {
   if (adapterType === "in-memory") {
     logger.info("ITSCore: in-memory adapter");
     return new InMemoryITSCoreAdapter();
   }
-  const { ITSCoreAdaptor } = await import(
-    "./infrastructure/itscore/itsCoreAdaptor"
-  );
   logger.info("ITSCore: production adapter");
   return new ITSCoreAdaptor();
 }
 
-async function createEmailAuthPort(
+function createEmailAuthPort(
   adapterType: AdapterConfig["emailAuth"],
-): Promise<EmailAuthPort> {
+): EmailAuthPort {
   if (adapterType === "in-memory") {
     logger.info("EmailAuth: in-memory adapter");
     return new InMemoryEmailAuthAdapter();
   }
-  const { FirebaseEmailAuthAdapter } = await import(
-    "./infrastructure/firebase/firebaseEmailAuthAdapter"
-  );
   logger.info("EmailAuth: firebase adapter");
   return new FirebaseEmailAuthAdapter();
 }
@@ -74,8 +68,8 @@ async function main() {
     // Composition Root: adapter を生成し依存オブジェクトを組み立てる
     const discordServerAdapter = new DiscordServerAdapter(client);
     const deps: AppDeps = {
-      itsCorePort: await createITSCorePort(config.adapters.itsCore),
-      emailAuthPort: await createEmailAuthPort(config.adapters.emailAuth),
+      itsCorePort: createITSCorePort(config.adapters.itsCore),
+      emailAuthPort: createEmailAuthPort(config.adapters.emailAuth),
       discordMemberPort: discordServerAdapter,
       discordChannelPort: discordServerAdapter,
       discordGuildPort: discordServerAdapter,
