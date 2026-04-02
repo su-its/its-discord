@@ -5,9 +5,9 @@ import { AuthenticationRoleCategory } from "../authenticationRoleCategory";
 const unauthorizedRole: Role = buildRoleByCategory({
   roleCategory: AuthenticationRoleCategory,
   role: {
-    name: "未認証",
+    name: "メール未認証",
     color: "Grey",
-    reason: "未認証メンバーロール",
+    reason: "メール未認証メンバーロール",
   },
 });
 export default unauthorizedRole;

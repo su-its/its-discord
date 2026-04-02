@@ -4,18 +4,10 @@ import authorizedRole, {
 import unauthorizedRole, {
   unauthorizedRoleKey,
 } from "./implementations/unauthorized";
-import unconfirmedRole, {
-  unconfirmedRoleKey,
-} from "./implementations/unconfirmed";
 
-export const authenticationRoles = [
-  authorizedRole,
-  unauthorizedRole,
-  unconfirmedRole,
-];
+export const authenticationRoles = [authorizedRole, unauthorizedRole];
 
 export const authenticationRoleKeys = {
   authorizedRoleKey,
   unauthorizedRoleKey,
-  unconfirmedRoleKey,
 };
