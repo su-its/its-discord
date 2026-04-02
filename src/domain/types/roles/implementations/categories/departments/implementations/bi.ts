@@ -1,13 +1,14 @@
 import type Role from "../../../../../role";
+import buildRoleByCategory from "../../../../utils/buildRoleByCategory";
 import { DepartmentRoleCategory } from "../departmentRoleCategory";
-import buildRoleByCategory from "../utils/buildRoleByCategory";
 
 const biRole: Role = buildRoleByCategory({
   roleCategory: DepartmentRoleCategory,
   role: {
-    name: "BI",
+    name: "行動情報学科",
+    previousNames: ["DP:BI"],
     color: [0, 112, 255],
-    reason: "BI Department Role",
+    reason: "行動情報学科ロール",
   },
 });
 export default biRole;

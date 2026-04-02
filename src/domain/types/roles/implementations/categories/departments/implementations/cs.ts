@@ -1,13 +1,14 @@
 import type Role from "../../../../../role";
+import buildRoleByCategory from "../../../../utils/buildRoleByCategory";
 import { DepartmentRoleCategory } from "../departmentRoleCategory";
-import buildRoleByCategory from "../utils/buildRoleByCategory";
 
 const csRole: Role = buildRoleByCategory({
   roleCategory: DepartmentRoleCategory,
   role: {
-    name: "CS",
+    name: "情報科学科",
+    previousNames: ["DP:CS"],
     color: "Orange",
-    reason: "CS Department Role",
+    reason: "情報科学科ロール",
   },
 });
 export default csRole;

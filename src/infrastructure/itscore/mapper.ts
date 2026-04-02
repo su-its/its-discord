@@ -44,18 +44,17 @@ function statusToDepartment(
   if (affiliation.type !== "undergraduate") return InternalDepartment.GRADUATE;
 
   const value = affiliation.value;
-  if (
-    "faculty" in value &&
-    value.faculty === "情報学部" &&
-    "department" in value
-  ) {
-    const dept = value.department as string;
-    if (dept === "情報科学科") return InternalDepartment.CS;
-    if (dept === "行動情報学科") return InternalDepartment.BI;
-    if (dept === "情報社会学科") return InternalDepartment.IA;
+  if ("faculty" in value) {
+    const faculty = value.faculty as string;
+    if (faculty === "情報学部" && "department" in value) {
+      const dept = value.department as string;
+      if (dept === "情報科学科") return InternalDepartment.CS;
+      if (dept === "行動情報学科") return InternalDepartment.BI;
+      if (dept === "情報社会学科") return InternalDepartment.IA;
+    }
+    if (faculty === "工学部") return InternalDepartment.ENGINEERING;
   }
 
-  // TODO: 工学部など情報学部以外の学部ロールにも対応する
   return InternalDepartment.OTHERS;
 }
 

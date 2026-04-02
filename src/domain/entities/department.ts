@@ -3,6 +3,7 @@ enum Department {
   BI = "BI",
   IA = "IA",
   GRADUATE = "GRADUATE",
+  ENGINEERING = "ENGINEERING",
   OTHERS = "OTHERS",
   OBOG = "OB/OG",
 }

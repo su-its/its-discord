@@ -1,5 +1,5 @@
 import type RoleCategory from "../../../../roleCategory";
 
 export const DepartmentRoleCategory: RoleCategory = {
-  prefix: "DP:",
+  prefix: "所属:",
 };

@@ -1,7 +1,9 @@
 import type Role from "../../role";
+import { BOT_PREFIX } from "../constants";
 
 const administratorRoleProperty: Role = {
-  name: "Administrator",
+  name: `${BOT_PREFIX}管理者`,
+  previousNames: ["Administrator"],
   color: "Red",
   reason: "Role for administrators.",
 };

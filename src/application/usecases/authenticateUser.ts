@@ -63,7 +63,7 @@ export async function authenticateUser(
       discordServerService.removeRoleFromMember(
         guildId,
         discordUserId,
-        roleRegistry.getRole(roleRegistryKeys.unAuthorizedRoleKey),
+        roleRegistry.getRole(roleRegistryKeys.unauthorizedRoleKey),
       ),
       // ニックネーム設定（サーバーオーナー等、権限不足で失敗しても認証自体は続行する）
       discordServerService
