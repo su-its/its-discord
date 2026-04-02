@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client, Events, GatewayIntentBits } from "discord.js";
 import type Role from "../domain/types/role";
 import roleRegistry from "../domain/types/roles";
 import logger from "../infrastructure/logger";
@@ -20,65 +20,72 @@ export async function migrateRoles(
 ): Promise<void> {
   const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
-  await client.login(token);
+  try {
+    await client.login(token);
 
-  const guild = client.guilds.cache.get(guildId);
-  if (!guild) {
-    // キャッシュにない場合は fetch
-    await client.guilds.fetch(guildId);
-  }
-  const resolvedGuild = client.guilds.cache.get(guildId);
-  if (!resolvedGuild) {
-    throw new Error(`Guild not found: ${guildId}`);
-  }
+    // ready イベントを待ってキャッシュが確実に利用可能になるようにする
+    await new Promise<void>((resolve) => {
+      if (client.isReady()) {
+        resolve();
+      } else {
+        client.once(Events.ClientReady, () => resolve());
+      }
+    });
 
-  const discordRoles = await resolvedGuild.roles.fetch();
-  const allRoles: Role[] = roleRegistry.getAllRoles();
-
-  let renamed = 0;
-  let skipped = 0;
-  let created = 0;
-
-  for (const role of allRoles) {
-    // 現在の名前で既に存在する場合はスキップ
-    const existing = discordRoles.find((r) => r.name === role.name);
-    if (existing) {
-      logger.debug(`Role "${role.name}" already exists, skipping`);
-      skipped++;
-      continue;
+    const guild =
+      client.guilds.cache.get(guildId) ?? (await client.guilds.fetch(guildId));
+    if (!guild) {
+      throw new Error(`Guild not found: ${guildId}`);
     }
 
-    // 旧名で検索してリネーム
-    if (role.previousNames) {
-      const legacyRole = discordRoles.find((r) =>
-        role.previousNames?.includes(r.name),
-      );
-      if (legacyRole) {
-        const oldName = legacyRole.name;
-        await legacyRole.edit({
-          name: role.name,
-          color: role.color,
-          reason: `Migrated from "${oldName}"`,
-        });
-        logger.info(`Renamed role "${oldName}" → "${role.name}"`);
-        renamed++;
+    const discordRoles = await guild.roles.fetch();
+    const allRoles: Role[] = roleRegistry.getAllRoles();
+
+    let renamed = 0;
+    let skipped = 0;
+    let created = 0;
+
+    for (const role of allRoles) {
+      // 現在の名前で既に存在する場合はスキップ
+      const existing = discordRoles.find((r) => r.name === role.name);
+      if (existing) {
+        logger.debug(`Role "${role.name}" already exists, skipping`);
+        skipped++;
         continue;
       }
+
+      // 旧名で検索してリネーム
+      if (role.previousNames) {
+        const legacyRole = discordRoles.find((r) =>
+          role.previousNames?.includes(r.name),
+        );
+        if (legacyRole) {
+          const oldName = legacyRole.name;
+          await legacyRole.edit({
+            name: role.name,
+            color: role.color,
+            reason: `Migrated from "${oldName}"`,
+          });
+          logger.info(`Renamed role "${oldName}" → "${role.name}"`);
+          renamed++;
+          continue;
+        }
+      }
+
+      // どちらもなければ新規作成
+      await guild.roles.create({
+        name: role.name,
+        color: role.color,
+        reason: role.reason,
+      });
+      logger.info(`Created new role "${role.name}"`);
+      created++;
     }
 
-    // どちらもなければ新規作成
-    await resolvedGuild.roles.create({
-      name: role.name,
-      color: role.color,
-      reason: role.reason,
-    });
-    logger.info(`Created new role "${role.name}"`);
-    created++;
+    logger.info(
+      `Migration complete: ${renamed} renamed, ${created} created, ${skipped} skipped`,
+    );
+  } finally {
+    client.destroy();
   }
-
-  logger.info(
-    `Migration complete: ${renamed} renamed, ${created} created, ${skipped} skipped`,
-  );
-
-  client.destroy();
 }
