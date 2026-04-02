@@ -1,4 +1,5 @@
 import type {
+  AffiliationOption,
   ITSCorePort,
   MemberConnectionData,
   MemberNicknameUpdateData,
@@ -32,6 +33,15 @@ export class InMemoryITSCoreAdapter implements ITSCorePort {
   private members = new Map<string, Member>();
   private discordIdToMemberId = new Map<string, string>();
   private nextId = 1;
+
+  getAllAffiliationOptions(): AffiliationOption[] {
+    return AFFILIATION_VALUES.map((affiliation) => ({
+      label: affiliation,
+      courseType: "in-memory",
+      selections: { affiliation },
+      maxYear: 6,
+    }));
+  }
 
   async registerMember(data: MemberRegistrationData): Promise<void> {
     const id = `mem_${this.nextId++}`;

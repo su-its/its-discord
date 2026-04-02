@@ -1,8 +1,12 @@
 import {
   type CompleteAffiliation,
   createMemberService,
+  getAffiliationSteps,
+  getMaxYear,
+  UNIVERSITY_STRUCTURE,
 } from "@shizuoka-its/core";
 import type {
+  AffiliationOption,
   ITSCorePort,
   MemberConnectionData,
   MemberNicknameUpdateData,
@@ -11,12 +15,64 @@ import type {
 import type Member from "../../domain/entities/member";
 import { memberWithDiscordToInternal, toMember } from "./mapper";
 
+type CourseType = keyof typeof UNIVERSITY_STRUCTURE;
+const SEPARATOR = " / ";
+
+function enumerateAffiliations(): AffiliationOption[] {
+  const entries: AffiliationOption[] = [];
+  const courseTypes = Object.keys(UNIVERSITY_STRUCTURE) as CourseType[];
+
+  for (const courseType of courseTypes) {
+    const courseLabel = UNIVERSITY_STRUCTURE[courseType].label;
+    recurse(courseType, courseLabel, {}, 0, entries);
+  }
+
+  return entries;
+}
+
+function recurse(
+  courseType: CourseType,
+  prefix: string,
+  selections: Record<string, string>,
+  depth: number,
+  entries: AffiliationOption[],
+): void {
+  const steps = getAffiliationSteps(courseType, selections);
+  const currentStep = steps[depth];
+
+  if (!currentStep) {
+    entries.push({
+      label: prefix,
+      courseType,
+      selections,
+      maxYear: getMaxYear(courseType),
+    });
+    return;
+  }
+
+  for (const option of currentStep.options) {
+    const newSelections = { ...selections, [currentStep.field]: option };
+    recurse(
+      courseType,
+      `${prefix}${SEPARATOR}${option}`,
+      newSelections,
+      depth + 1,
+      entries,
+    );
+  }
+}
+
 /**
  * ITSCoreのメンバー機能へのアクセスを提供するAdapter（ヘキサゴナルアーキテクチャ）
  * v3のMemberService facadeを使用
  */
 export class ITSCoreAdaptor implements ITSCorePort {
   private service = createMemberService();
+  private affiliationOptions = enumerateAffiliations();
+
+  getAllAffiliationOptions(): AffiliationOption[] {
+    return this.affiliationOptions;
+  }
 
   async registerMember(data: MemberRegistrationData): Promise<void> {
     const affiliation: CompleteAffiliation = {
