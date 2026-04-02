@@ -10,6 +10,10 @@ interface BuildRoleByCategoryProps {
 /**
  * 指定された RoleCategory を利用して Role オブジェクトを構築する関数
  * [ITS-BOT] + カテゴリプレフィックス + ロール名 の形式でロール名を生成する
+ *
+ * @param {RoleCategory} roleCategory - ロールカテゴリー
+ * @param {Role} role - ロールオブジェクト
+ * @returns 構築された Role オブジェクト
  */
 function buildRoleByCategory({
   roleCategory,
