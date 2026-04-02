@@ -41,7 +41,7 @@ export function setupInteractionCreateHandler(client: CustomClient): void {
     );
 
     try {
-      if (command.isDMAllowed && !interaction.guild) {
+      if (!command.isDMAllowed && !interaction.guild) {
         await interaction.reply("このコマンドはサーバー内でのみ使用可能です。");
         logger.info(
           `Command failed: ${interaction.commandName} | User: ${userId} | Guild: ${guildId}`,
