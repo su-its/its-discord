@@ -6,11 +6,7 @@ import type {
   MemberRegistrationData,
 } from "../../application/ports/itsCorePort";
 import type InternalMember from "../../domain/entities/member";
-import {
-  departmentToAffiliation,
-  memberWithDiscordToInternal,
-  toInternalMember,
-} from "./mapper";
+import { memberWithDiscordToInternal, toInternalMember } from "./mapper";
 
 /**
  * ITSCoreのメンバー機能へのアクセスを提供するAdapter（ヘキサゴナルアーキテクチャ）
@@ -20,12 +16,11 @@ export class ITSCoreAdaptor implements ITSCorePort {
   private service = createMemberService();
 
   async registerMember(data: MemberRegistrationData): Promise<void> {
-    const affiliation = departmentToAffiliation(data.department);
     await this.service.register({
       name: data.name,
       studentId: data.studentId,
       email: data.email,
-      affiliation,
+      affiliation: data.affiliation,
     });
   }
 

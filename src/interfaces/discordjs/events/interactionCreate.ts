@@ -5,6 +5,21 @@ import logger from "../../../infrastructure/logger";
 
 export function setupInteractionCreateHandler(client: CustomClient): void {
   client.on(Events.InteractionCreate, async (interaction) => {
+    if (interaction.isAutocomplete()) {
+      const command = client.commands.get(interaction.commandName);
+      if (command?.autocomplete) {
+        try {
+          await command.autocomplete(interaction);
+        } catch (error) {
+          logger.error(
+            `Autocomplete failed: ${interaction.commandName}`,
+            error,
+          );
+        }
+      }
+      return;
+    }
+
     if (!interaction.isChatInputCommand()) return;
 
     const command = client.commands.get(interaction.commandName);
