@@ -54,12 +54,13 @@ export async function migrateRoles(
         role.previousNames?.includes(r.name),
       );
       if (legacyRole) {
+        const oldName = legacyRole.name;
         await legacyRole.edit({
           name: role.name,
           color: role.color,
-          reason: `Migrated from "${legacyRole.name}"`,
+          reason: `Migrated from "${oldName}"`,
         });
-        logger.info(`Renamed role "${legacyRole.name}" → "${role.name}"`);
+        logger.info(`Renamed role "${oldName}" → "${role.name}"`);
         renamed++;
         continue;
       }
