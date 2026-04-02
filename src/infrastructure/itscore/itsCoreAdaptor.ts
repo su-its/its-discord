@@ -125,6 +125,3 @@ export class ITSCoreAdaptor implements ITSCorePort {
     });
   }
 }
-
-// シングルトンとしてエクスポート
-export const itsCoreMemberRepository = new ITSCoreAdaptor();

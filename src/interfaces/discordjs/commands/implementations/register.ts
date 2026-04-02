@@ -4,18 +4,8 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import type { AppDeps } from "../../../../application/ports/deps";
-import type { AffiliationOption } from "../../../../application/ports/itsCorePort";
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
-
-let cachedOptions: AffiliationOption[] | null = null;
-
-function getOptions(deps: AppDeps): AffiliationOption[] {
-  if (!cachedOptions) {
-    cachedOptions = deps.itsCorePort.getAllAffiliationOptions();
-  }
-  return cachedOptions;
-}
 
 const registerCommand: AdminCommand = {
   data: new SlashCommandBuilder()
@@ -62,7 +52,7 @@ async function registerAutocompleteHandler(
   interaction: AutocompleteInteraction,
   deps: AppDeps,
 ): Promise<void> {
-  const options = getOptions(deps);
+  const options = deps.itsCorePort.getAllAffiliationOptions();
   const focused = interaction.options.getFocused(true);
 
   if (focused.name === "affiliation") {
@@ -98,7 +88,7 @@ async function registerCommandHandler(
   interaction: ChatInputCommandInteraction,
   deps: AppDeps,
 ): Promise<void> {
-  const options = getOptions(deps);
+  const options = deps.itsCorePort.getAllAffiliationOptions();
   const name = interaction.options.getString("name", true);
   const email = interaction.options.getString("email", true);
   const studentNumber = interaction.options.getString("student_number", true);
