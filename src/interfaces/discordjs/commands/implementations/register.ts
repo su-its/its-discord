@@ -1,3 +1,5 @@
+// TODO: interface 層が @shizuoka-its/core に直接依存している。
+// application 層のサービスとして wrap するか、core をドメイン依存として許容するか検討する
 import {
   type CompleteAffiliation,
   getAffiliationSteps,
