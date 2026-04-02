@@ -1,4 +1,4 @@
-import { discordServerService } from "../services/discordServerService";
+import type { AppDeps } from "../ports/deps";
 
 export interface ChannelActivity {
   id: string;
@@ -8,14 +8,15 @@ export interface ChannelActivity {
 
 export async function getHotChannels(
   guildId: string,
+  deps: Pick<AppDeps, "discordChannelPort">,
 ): Promise<ChannelActivity[]> {
-  const channels = await discordServerService.getTextChannels(guildId);
+  const channels = await deps.discordChannelPort.getTextChannels(guildId);
 
   const channelActivities = await Promise.all(
     channels.map(async (channel) => ({
       id: channel.id,
       name: channel.name,
-      count: await discordServerService.getChannelMessageCount(channel.id),
+      count: await deps.discordChannelPort.getChannelMessageCount(channel.id),
     })),
   );
 

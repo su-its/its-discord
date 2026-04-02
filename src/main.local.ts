@@ -2,14 +2,19 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 
+import type { AppDeps } from "./application/ports/deps";
+import type { EmailAuthPort } from "./application/ports/emailAuthPort";
+import type { ITSCorePort } from "./application/ports/itsCorePort";
 import { initializeScheduledMessagesFromConfig } from "./application/usecases/initializeScheduledMessagesFromConfig";
+import type { AdapterConfig } from "./config/environment";
 import { loadConfig } from "./config/environment";
 import { CustomClient } from "./domain/types/customClient";
-import {
-  setupDependencyInjection,
-  setupDiscordServerAdapter,
-} from "./infrastructure/di/container";
+import { DiscordServerAdapter } from "./infrastructure/discordjs/discordServerAdapter";
+import { InMemoryEmailAuthAdapter } from "./infrastructure/in-memory/inMemoryEmailAuthAdapter";
+import { InMemoryITSCoreAdapter } from "./infrastructure/in-memory/inMemoryITSCoreAdapter";
 import logger from "./infrastructure/logger";
+import { memoryScheduledMessageRepository } from "./infrastructure/memory/scheduledMessageRepository";
+import { scheduledMessageCronManager } from "./interfaces/cron/scheduledMessageCron";
 import registry from "./interfaces/discordjs/commands";
 import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
 
@@ -23,6 +28,30 @@ process.on("unhandledRejection", (reason, promise) => {
 
 const client = new CustomClient();
 
+function createITSCorePort(adapterType: AdapterConfig["itsCore"]): ITSCorePort {
+  if (adapterType === "in-memory") {
+    logger.info("ITSCore: in-memory adapter");
+    return new InMemoryITSCoreAdapter();
+  }
+  const { ITSCoreAdaptor } = require("./infrastructure/itscore/itsCoreAdaptor");
+  logger.info("ITSCore: production adapter");
+  return new ITSCoreAdaptor();
+}
+
+function createEmailAuthPort(
+  adapterType: AdapterConfig["emailAuth"],
+): EmailAuthPort {
+  if (adapterType === "in-memory") {
+    logger.info("EmailAuth: in-memory adapter");
+    return new InMemoryEmailAuthAdapter();
+  }
+  const {
+    FirebaseEmailAuthAdapter,
+  } = require("./infrastructure/firebase/firebaseEmailAuthAdapter");
+  logger.info("EmailAuth: firebase adapter");
+  return new FirebaseEmailAuthAdapter();
+}
+
 async function main() {
   try {
     const config = loadConfig();
@@ -30,21 +59,31 @@ async function main() {
       `Configuration loaded (environment: ${config.environment}, adapters: itsCore=${config.adapters.itsCore}, emailAuth=${config.adapters.emailAuth})`,
     );
 
-    setupDependencyInjection(config.adapters);
-
     const commands = registry.getAllCommands();
     for (const command of commands) {
       client.commands.set(command.data.name, command);
       logger.debug(`Loaded command: ${command.data.name}`);
     }
 
-    setupEventHandlers(client, config.guildId);
-
     await client.login(config.discordToken);
 
-    setupDiscordServerAdapter(client);
+    // Composition Root: adapter を生成し依存オブジェクトを組み立てる
+    const discordServerAdapter = new DiscordServerAdapter(client);
+    const deps: AppDeps = {
+      itsCorePort: createITSCorePort(config.adapters.itsCore),
+      emailAuthPort: createEmailAuthPort(config.adapters.emailAuth),
+      discordMemberPort: discordServerAdapter,
+      discordChannelPort: discordServerAdapter,
+      discordGuildPort: discordServerAdapter,
+      discordMessagePort: discordServerAdapter,
+      scheduledMessagePort: memoryScheduledMessageRepository,
+    };
 
-    await initializeScheduledMessagesFromConfig();
+    scheduledMessageCronManager.setDeps(deps);
+
+    setupEventHandlers(client, config.guildId, deps);
+
+    await initializeScheduledMessagesFromConfig(deps);
 
     logger.info("Bot is running (local mode)...");
   } catch (error) {

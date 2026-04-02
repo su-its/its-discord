@@ -1,6 +1,6 @@
 import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
 import logger from "../../infrastructure/logger";
-import { discordServerService } from "../services/discordServerService";
+import type { AppDeps } from "../ports/deps";
 
 /**
  * 新規メンバーが参加した際の初期化処理を行うUsecase
@@ -10,10 +10,11 @@ export async function handleNewMemberJoined(
   guildId: string,
   memberId: string,
   memberDisplayName: string,
+  deps: Pick<AppDeps, "discordMemberPort" | "discordMessagePort">,
 ): Promise<void> {
   try {
     // ウェルカムDMを送信
-    await discordServerService.sendDirectMessage(
+    await deps.discordMessagePort.sendDirectMessage(
       memberId,
       `ようこそ ${memberDisplayName} さん！\nサーバーで \`/auth\` コマンドを実行して認証を行ってください。`,
     );
@@ -21,7 +22,7 @@ export async function handleNewMemberJoined(
 
     // 未承認ロールを付与
     const role = roleRegistry.getRole(roleRegistryKeys.unauthorizedRoleKey);
-    await discordServerService.addRoleToMember(guildId, memberId, role);
+    await deps.discordMemberPort.addRoleToMember(guildId, memberId, role);
     logger.info(
       `Assigned Unauthorized role (${role.name}) to ${memberDisplayName} (${memberId})`,
     );

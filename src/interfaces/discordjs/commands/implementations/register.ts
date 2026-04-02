@@ -1,5 +1,3 @@
-// TODO: interface 層が @shizuoka-its/core に直接依存している。
-// application 層のサービスとして wrap するか、core をドメイン依存として許容するか検討する
 import {
   type CompleteAffiliation,
   getAffiliationSteps,
@@ -11,7 +9,7 @@ import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
-import { itsCoreService } from "../../../../application/services/itsCoreService";
+import type { AppDeps } from "../../../../application/ports/deps";
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
 
@@ -113,6 +111,7 @@ const registerCommand: AdminCommand = {
 
 async function registerAutocompleteHandler(
   interaction: AutocompleteInteraction,
+  _deps: unknown,
 ): Promise<void> {
   const focused = interaction.options.getFocused(true);
 
@@ -152,6 +151,7 @@ function parseAffiliationEntry(label: string): AffiliationEntry | undefined {
 
 async function registerCommandHandler(
   interaction: ChatInputCommandInteraction,
+  deps: AppDeps,
 ): Promise<void> {
   const name = interaction.options.getString("name", true);
   const email = interaction.options.getString("email", true);
@@ -194,7 +194,7 @@ async function registerCommandHandler(
       value: { ...entry.selections, year },
     } as CompleteAffiliation;
 
-    await itsCoreService.registerMember({
+    await deps.itsCorePort.registerMember({
       email,
       name,
       studentId: studentNumber,

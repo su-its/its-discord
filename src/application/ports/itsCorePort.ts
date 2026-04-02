@@ -1,16 +1,13 @@
-// TODO: Port が @shizuoka-its/core に直接依存している。Member リモデリング時に
-// domain 層の型として再定義し、adapter でマッピングする設計に移行を検討する
-import type { CompleteAffiliation } from "@shizuoka-its/core";
 import type Member from "../../domain/entities/member";
 
 /**
  * ITSCoreとの連携に必要な最小限のデータ型
  */
-export interface MemberRegistrationData {
+export interface MemberRegistrationData<TAffiliation = unknown> {
   email: string;
   name: string;
   studentId: string;
-  affiliation: CompleteAffiliation;
+  affiliation: TAffiliation;
 }
 
 export interface MemberConnectionData {
@@ -26,12 +23,15 @@ export interface MemberNicknameUpdateData {
 /**
  * ITSCoreへのアクセスを抽象化するPort（ヘキサゴナルアーキテクチャ）
  * Application層はこのインターフェースのみに依存し、Infrastructure層の詳細を知らない
+ *
+ * @typeParam TAffiliation registerMember で使用する所属データの型。
+ * adapter が具体型（CompleteAffiliation 等）をバインドする。
  */
-export interface ITSCorePort {
+export interface ITSCorePort<TAffiliation = unknown> {
   /**
    * 新しいメンバーを登録する
    */
-  registerMember(data: MemberRegistrationData): Promise<void>;
+  registerMember(data: MemberRegistrationData<TAffiliation>): Promise<void>;
 
   /**
    * DiscordIDでメンバーを取得する

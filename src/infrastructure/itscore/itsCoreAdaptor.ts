@@ -1,4 +1,7 @@
-import { createMemberService } from "@shizuoka-its/core";
+import {
+  type CompleteAffiliation,
+  createMemberService,
+} from "@shizuoka-its/core";
 import type {
   ITSCorePort,
   MemberConnectionData,
@@ -12,10 +15,12 @@ import { memberWithDiscordToInternal, toMember } from "./mapper";
  * ITSCoreのメンバー機能へのアクセスを提供するAdapter（ヘキサゴナルアーキテクチャ）
  * v3のMemberService facadeを使用
  */
-export class ITSCoreAdaptor implements ITSCorePort {
+export class ITSCoreAdaptor implements ITSCorePort<CompleteAffiliation> {
   private service = createMemberService();
 
-  async registerMember(data: MemberRegistrationData): Promise<void> {
+  async registerMember(
+    data: MemberRegistrationData<CompleteAffiliation>,
+  ): Promise<void> {
     await this.service.register({
       name: data.name,
       studentId: data.studentId,

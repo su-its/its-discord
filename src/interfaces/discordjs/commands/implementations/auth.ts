@@ -19,7 +19,10 @@ const authCommand: Command = {
   isDMAllowed: false,
 };
 
-async function authCommandHandler(interaction: ChatInputCommandInteraction) {
+async function authCommandHandler(
+  interaction: ChatInputCommandInteraction,
+  _deps: unknown,
+) {
   if (!interaction.guild) {
     throw new Error("Guild not found");
   }

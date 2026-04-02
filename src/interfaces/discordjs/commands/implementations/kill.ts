@@ -21,7 +21,10 @@ const killCommand: AdminCommand = {
   isDMAllowed: true,
 };
 
-async function killCommandHandler(interaction: ChatInputCommandInteraction) {
+async function killCommandHandler(
+  interaction: ChatInputCommandInteraction,
+  _deps: unknown,
+) {
   const targetPid = interaction.options.get("pid", true).value as string;
 
   await interaction.reply(`プロセス ${targetPid} を終了します...`);

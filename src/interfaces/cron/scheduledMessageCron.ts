@@ -1,4 +1,5 @@
 import { CronJob } from "cron";
+import type { AppDeps } from "../../application/ports/deps";
 import { sendScheduledMessage } from "../../application/usecases/sendScheduledMessage";
 import logger from "../../infrastructure/logger";
 
@@ -7,6 +8,14 @@ import logger from "../../infrastructure/logger";
  */
 class ScheduledMessageCronManager {
   private jobs: Map<string, CronJob> = new Map();
+  private deps: AppDeps | null = null;
+
+  /**
+   * 依存オブジェクトを設定する
+   */
+  setDeps(deps: AppDeps): void {
+    this.deps = deps;
+  }
 
   /**
    * 特定のスケジュールメッセージのCronジョブを作成する
@@ -14,6 +23,13 @@ class ScheduledMessageCronManager {
    * @param cronSchedule Cron式
    */
   createJobForMessage(messageId: string, cronSchedule: string): void {
+    if (!this.deps) {
+      throw new Error(
+        "Dependencies not set. Call setDeps() before creating jobs.",
+      );
+    }
+    const deps = this.deps;
+
     try {
       // 既存のジョブがあれば停止
       this.stopJob(messageId);
@@ -22,7 +38,7 @@ class ScheduledMessageCronManager {
         cronSchedule,
         async () => {
           try {
-            await sendScheduledMessage(messageId);
+            await sendScheduledMessage(messageId, deps);
           } catch (error) {
             logger.error(
               `Error executing scheduled message ${messageId}:`,

@@ -2,6 +2,7 @@ import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import type { AppDeps } from "../../../../application/ports/deps";
 import { renameAllMembersInGuild } from "../../../../application/usecases/renameAllMembersInGuild";
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
@@ -15,14 +16,16 @@ const renameAll: AdminCommand = {
   isDMAllowed: false,
 };
 
-async function renameAllHandler(interaction: ChatInputCommandInteraction) {
+async function renameAllHandler(
+  interaction: ChatInputCommandInteraction,
+  deps: AppDeps,
+) {
   if (!interaction.guild) throw new Error("Guild not found");
 
-  // NOTE: 応答がタイムアウトしないように遅延させる
   await interaction.deferReply();
 
   const { successCount, failureCount, failedMembers } =
-    await renameAllMembersInGuild(interaction.guild.id);
+    await renameAllMembersInGuild(interaction.guild.id, deps);
   const failedMembersMessage =
     failedMembers.length > 0
       ? failedMembers.length >= 10

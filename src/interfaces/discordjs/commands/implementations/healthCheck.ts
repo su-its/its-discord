@@ -12,7 +12,10 @@ const healthCheckCommand: Command = {
   isDMAllowed: true,
 };
 
-async function healthCheckHandler(interaction: ChatInputCommandInteraction) {
+async function healthCheckHandler(
+  interaction: ChatInputCommandInteraction,
+  _deps: unknown,
+) {
   await interaction.reply("I am healthy!");
 }
 

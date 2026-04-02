@@ -1,6 +1,5 @@
 import logger from "../../infrastructure/logger";
-import { discordServerService } from "../services/discordServerService";
-import { itsCoreService } from "../services/itsCoreService";
+import type { AppDeps } from "../ports/deps";
 import { getDiscordDisplayName } from "../utils/memberDisplayName";
 
 /**
@@ -20,10 +19,11 @@ export async function updateMemberNickname(
   discordUserId: string,
   guildId: string,
   newNickname: string,
+  deps: Pick<AppDeps, "itsCorePort" | "discordMemberPort">,
 ): Promise<NicknameUpdateResult> {
   try {
     // 1. ITSCoreでメンバー情報を確認
-    const member = await itsCoreService.getMemberByDiscordId(discordUserId);
+    const member = await deps.itsCorePort.getMemberByDiscordId(discordUserId);
     if (!member) {
       logger.warn(
         `Member not found in ITSCore for Discord ID: ${discordUserId}`,
@@ -38,7 +38,7 @@ export async function updateMemberNickname(
 
     // 2. ITSCoreでニックネームを更新
     try {
-      await itsCoreService.updateMemberNickname({
+      await deps.itsCorePort.updateMemberNickname({
         discordAccountId: discordUserId,
         discordNickName: newNickname,
       });
@@ -60,7 +60,7 @@ export async function updateMemberNickname(
         member.name,
         newNickname,
       );
-      await discordServerService.setMemberNickname(
+      await deps.discordMemberPort.setMemberNickname(
         guildId,
         discordUserId,
         discordDisplayName,

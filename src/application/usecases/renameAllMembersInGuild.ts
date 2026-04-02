@@ -1,7 +1,6 @@
 import logger from "../../infrastructure/logger";
+import type { AppDeps } from "../ports/deps";
 import type { DiscordMember } from "../ports/discordMemberPort";
-import { discordServerService } from "../services/discordServerService";
-import { itsCoreService } from "../services/itsCoreService";
 import { getDiscordDisplayName } from "../utils/memberDisplayName";
 
 /**
@@ -20,9 +19,10 @@ export interface MemberRenameResult {
  */
 export async function renameAllMembersInGuild(
   guildId: string,
+  deps: Pick<AppDeps, "itsCorePort" | "discordMemberPort">,
 ): Promise<MemberRenameResult> {
   // 1. ITSCoreから全メンバーのDiscordIDと表示名のマッピングを取得
-  const members = await itsCoreService.getMemberList();
+  const members = await deps.itsCorePort.getMemberList();
   const memberNameMap = new Map<string, string>();
 
   for (const member of members) {
@@ -37,7 +37,7 @@ export async function renameAllMembersInGuild(
   }
 
   // 2. Discordから現在のギルドメンバー一覧を取得
-  const guildMembers = await discordServerService.getGuildMembers(guildId);
+  const guildMembers = await deps.discordMemberPort.getGuildMembers(guildId);
 
   // 3. 各メンバーのニックネームを個別に変更（単一操作の組み合わせ）
   let successCount = 0;
@@ -49,7 +49,11 @@ export async function renameAllMembersInGuild(
       const newName = memberNameMap.get(member.id);
       if (!newName) return; // ITSCoreに登録されていないメンバーはスキップ
 
-      await discordServerService.setMemberNickname(guildId, member.id, newName);
+      await deps.discordMemberPort.setMemberNickname(
+        guildId,
+        member.id,
+        newName,
+      );
       successCount++;
     } catch (error) {
       failureCount++;

@@ -15,7 +15,10 @@ const psCommand: AdminCommand = {
   isDMAllowed: true,
 };
 
-async function psCommandHandler(interaction: ChatInputCommandInteraction) {
+async function psCommandHandler(
+  interaction: ChatInputCommandInteraction,
+  _deps: unknown,
+) {
   const processInfo = await getProcessInfo();
   await interaction.reply(
     `ボットプロセス情報:\nPID: ${processInfo.pid}\nホスト名: ${processInfo.hostname}`,
