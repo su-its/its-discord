@@ -1,5 +1,5 @@
 import type Role from "../../../../../role";
-import buildRoleByCategory from "../../departments/utils/buildRoleByCategory";
+import buildRoleByCategory from "../../../../utils/buildRoleByCategory";
 import { AuthenticationRoleCategory } from "../authenticationRoleCategory";
 
 const authorizedRole: Role = buildRoleByCategory({
