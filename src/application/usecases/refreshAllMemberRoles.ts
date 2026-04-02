@@ -40,12 +40,19 @@ export async function refreshAllMemberRoles(
 
   const promises = guildMembers.map(async (guildMember) => {
     const member = memberByDiscordId.get(guildMember.id);
-    if (!member) {
-      skippedCount++;
-      return;
-    }
 
     try {
+      if (!member) {
+        // ITSCore 未登録 → 未認証ロールを付与
+        await deps.discordMemberPort.addRoleToMember(
+          guildId,
+          guildMember.id,
+          roleRegistry.getRole(roleRegistryKeys.unauthorizedRoleKey),
+        );
+        skippedCount++;
+        return;
+      }
+
       await refreshMemberRoles(guildId, guildMember.id, member, deps);
       successCount++;
     } catch (error) {
@@ -77,6 +84,11 @@ async function refreshMemberRoles(
   );
 
   if (!isEmailVerified) {
+    await deps.discordMemberPort.addRoleToMember(
+      guildId,
+      discordUserId,
+      roleRegistry.getRole(roleRegistryKeys.unauthorizedRoleKey),
+    );
     return;
   }
 
