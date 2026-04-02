@@ -205,35 +205,16 @@ export class DiscordServerAdapter
     role: Role,
   ): Promise<DiscordRole> {
     const roles = await guild.roles.fetch();
-
-    // 現在の名前で検索
     let discordRole = roles.find((r) => r.name === role.name);
-    if (discordRole) return discordRole;
 
-    // 旧名で検索し、見つかればリネーム
-    if (role.previousNames) {
-      const legacyRole = roles.find((r) =>
-        role.previousNames?.includes(r.name),
-      );
-      if (legacyRole) {
-        discordRole = await legacyRole.edit({
-          name: role.name,
-          color: role.color,
-          reason: `Renamed from "${legacyRole.name}": ${role.reason}`,
-        });
-        logger.info(
-          `Renamed role "${legacyRole.name}" → "${role.name}" in guild ${guild.id}`,
-        );
-        return discordRole;
-      }
+    if (!discordRole) {
+      discordRole = await guild.roles.create({
+        name: role.name,
+        color: role.color,
+        reason: role.reason,
+      });
     }
 
-    // どちらもなければ新規作成
-    discordRole = await guild.roles.create({
-      name: role.name,
-      color: role.color,
-      reason: role.reason,
-    });
     return discordRole;
   }
 }
