@@ -43,6 +43,7 @@ export class DiscordServerAdapter
       id: member.id,
       displayName: member.displayName,
       nickname: member.nickname || undefined,
+      isBot: member.user.bot ?? false,
     }));
   }
 

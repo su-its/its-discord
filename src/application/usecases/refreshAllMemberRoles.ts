@@ -8,7 +8,7 @@ import type { DiscordMember } from "../ports/discordMemberPort";
 
 export interface RoleRefreshResult {
   successCount: number;
-  skippedCount: number;
+  unregisteredCount: number;
   failureCount: number;
   failedMembers: DiscordMember[];
 }
@@ -49,10 +49,11 @@ export async function refreshAllMemberRoles(
     }
   }
 
-  const guildMembers = await deps.discordMemberPort.getGuildMembers(guildId);
+  const allGuildMembers = await deps.discordMemberPort.getGuildMembers(guildId);
+  const guildMembers = allGuildMembers.filter((m) => !m.isBot);
 
   let successCount = 0;
-  let skippedCount = 0;
+  let unregisteredCount = 0;
   let failureCount = 0;
   const failedMembers: DiscordMember[] = [];
 
@@ -66,7 +67,7 @@ export async function refreshAllMemberRoles(
       if (member) {
         successCount++;
       } else {
-        skippedCount++;
+        unregisteredCount++;
       }
     } catch (error) {
       failureCount++;
@@ -81,9 +82,9 @@ export async function refreshAllMemberRoles(
   await Promise.all(promises);
 
   logger.info(
-    `Role refresh completed: ${successCount} success, ${skippedCount} skipped, ${failureCount} failed`,
+    `Role refresh completed: ${successCount} success, ${unregisteredCount} skipped, ${failureCount} failed`,
   );
-  return { successCount, skippedCount, failureCount, failedMembers };
+  return { successCount, unregisteredCount, failureCount, failedMembers };
 }
 
 /**

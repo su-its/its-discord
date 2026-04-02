@@ -26,7 +26,7 @@ async function refreshRolesHandler(
 
   await interaction.deferReply();
 
-  const { successCount, skippedCount, failureCount, failedMembers } =
+  const { successCount, unregisteredCount, failureCount, failedMembers } =
     await refreshAllMemberRoles(interaction.guild.id, deps);
 
   const failedMembersMessage =
@@ -37,7 +37,7 @@ async function refreshRolesHandler(
       : "";
 
   await interaction.followUp(
-    `ロールのリフレッシュが完了しました。\n成功: ${successCount}件\nスキップ: ${skippedCount}件\n失敗: ${failureCount}件${failedMembersMessage}`,
+    `ロールのリフレッシュが完了しました。\n成功: ${successCount}件\n未登録: ${unregisteredCount}件\n失敗: ${failureCount}件${failedMembersMessage}`,
   );
 }
 
