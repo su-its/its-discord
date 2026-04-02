@@ -1,9 +1,10 @@
+import type Affiliation from "../../domain/entities/affiliation";
 import type Member from "../../domain/entities/member";
+import type Role from "../../domain/types/role";
 import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
 import logger from "../../infrastructure/logger";
 import type { AppDeps } from "../ports/deps";
 import type { DiscordMember } from "../ports/discordMemberPort";
-import { assignMemberRole } from "./assignDepartmentRole";
 
 export interface RoleRefreshResult {
   successCount: number;
@@ -12,11 +13,37 @@ export interface RoleRefreshResult {
   failedMembers: DiscordMember[];
 }
 
+const AFFILIATION_ROLE_MAP: Record<Affiliation, string> = {
+  情報科学科: roleRegistryKeys.csRoleKey,
+  行動情報学科: roleRegistryKeys.biRoleKey,
+  情報社会学科: roleRegistryKeys.iaRoleKey,
+  工学部: roleRegistryKeys.engineeringRoleKey,
+  大学院: roleRegistryKeys.graduateRoleKey,
+  その他: roleRegistryKeys.othersRoleKey,
+};
+
+/** bot が管理するロールのうちリフレッシュ対象（administrator を除く） */
+const MANAGED_ROLE_KEYS = [
+  roleRegistryKeys.authorizedRoleKey,
+  roleRegistryKeys.unauthorizedRoleKey,
+  roleRegistryKeys.unconfirmedRoleKey,
+  roleRegistryKeys.formerMemberRoleKey,
+  roleRegistryKeys.csRoleKey,
+  roleRegistryKeys.biRoleKey,
+  roleRegistryKeys.iaRoleKey,
+  roleRegistryKeys.engineeringRoleKey,
+  roleRegistryKeys.graduateRoleKey,
+  roleRegistryKeys.othersRoleKey,
+];
+
+const MANAGED_ROLES: readonly Role[] = MANAGED_ROLE_KEYS.map((key) =>
+  roleRegistry.getRole(key),
+);
+
 /**
  * ギルド内の全メンバーのロールを ITSCore の最新情報に基づいてリフレッシュする
- * - ITSCore に登録済み＋メール認証済み → 認証済みロール＋所属ロール
- * - ITSCore に登録済み＋メール未認証 → メール未認証ロールのまま
- * - ITSCore 未登録 → スキップ
+ *
+ * 古いロール（所属変更前のロール等）は自動的に外れる
  */
 export async function refreshAllMemberRoles(
   guildId: string,
@@ -42,19 +69,14 @@ export async function refreshAllMemberRoles(
     const member = memberByDiscordId.get(guildMember.id);
 
     try {
-      if (!member) {
-        // ITSCore 未登録 → 未認証ロールを付与
-        await deps.discordMemberPort.addRoleToMember(
-          guildId,
-          guildMember.id,
-          roleRegistry.getRole(roleRegistryKeys.unauthorizedRoleKey),
-        );
-        skippedCount++;
-        return;
-      }
+      const rolesToAdd = await resolveRoles(member, deps);
+      await applyRoles(guildId, guildMember.id, rolesToAdd, deps);
 
-      await refreshMemberRoles(guildId, guildMember.id, member, deps);
-      successCount++;
+      if (member) {
+        successCount++;
+      } else {
+        skippedCount++;
+      }
     } catch (error) {
       failureCount++;
       failedMembers.push(guildMember);
@@ -73,36 +95,71 @@ export async function refreshAllMemberRoles(
   return { successCount, skippedCount, failureCount, failedMembers };
 }
 
-async function refreshMemberRoles(
-  guildId: string,
-  discordUserId: string,
-  member: Member,
-  deps: Pick<AppDeps, "emailAuthPort" | "discordMemberPort">,
-): Promise<void> {
+/**
+ * メンバーの状態に応じて付与すべきロールの集合を決定する
+ */
+async function resolveRoles(
+  member: Member | undefined,
+  deps: Pick<AppDeps, "emailAuthPort">,
+): Promise<ReadonlySet<Role>> {
+  if (!member) {
+    return new Set([
+      roleRegistry.getRole(roleRegistryKeys.unauthorizedRoleKey),
+    ]);
+  }
+
   const isEmailVerified = await deps.emailAuthPort.isEmailVerified(
     member.universityEmail,
   );
-
   if (!isEmailVerified) {
-    await deps.discordMemberPort.addRoleToMember(
-      guildId,
-      discordUserId,
+    return new Set([
       roleRegistry.getRole(roleRegistryKeys.unauthorizedRoleKey),
-    );
-    return;
+    ]);
   }
 
-  await Promise.all([
-    assignMemberRole(guildId, discordUserId, member, deps),
-    deps.discordMemberPort.addRoleToMember(
-      guildId,
-      discordUserId,
-      roleRegistry.getRole(roleRegistryKeys.authorizedRoleKey),
-    ),
-    deps.discordMemberPort.removeRoleFromMember(
-      guildId,
-      discordUserId,
-      roleRegistry.getRole(roleRegistryKeys.unauthorizedRoleKey),
-    ),
-  ]);
+  const roles = new Set<Role>();
+  roles.add(roleRegistry.getRole(roleRegistryKeys.authorizedRoleKey));
+  roles.add(getStatusRole(member));
+  return roles;
+}
+
+function getStatusRole(member: Member): Role {
+  switch (member.status) {
+    case "former":
+      return roleRegistry.getRole(roleRegistryKeys.formerMemberRoleKey);
+    case "unconfirmed":
+      return roleRegistry.getRole(roleRegistryKeys.unconfirmedRoleKey);
+    case "active":
+      return roleRegistry.getRole(AFFILIATION_ROLE_MAP[member.affiliation]);
+  }
+}
+
+/**
+ * 付与すべきロールを追加し、それ以外の管理対象ロールを外す
+ */
+async function applyRoles(
+  guildId: string,
+  discordUserId: string,
+  rolesToAdd: ReadonlySet<Role>,
+  deps: Pick<AppDeps, "discordMemberPort">,
+): Promise<void> {
+  const operations: Promise<void>[] = [];
+
+  for (const role of MANAGED_ROLES) {
+    if (rolesToAdd.has(role)) {
+      operations.push(
+        deps.discordMemberPort.addRoleToMember(guildId, discordUserId, role),
+      );
+    } else {
+      operations.push(
+        deps.discordMemberPort.removeRoleFromMember(
+          guildId,
+          discordUserId,
+          role,
+        ),
+      );
+    }
+  }
+
+  await Promise.all(operations);
 }
