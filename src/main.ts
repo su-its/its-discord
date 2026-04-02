@@ -1,6 +1,5 @@
 import { initializeScheduledMessagesFromConfig } from "./application/usecases/initializeScheduledMessagesFromConfig";
 import { loadConfig } from "./config/environment";
-import type AuthData from "./domain/types/authData";
 import { CustomClient } from "./domain/types/customClient";
 import {
   setupDependencyInjection,
@@ -19,7 +18,6 @@ process.on("unhandledRejection", (reason, promise) => {
 });
 
 const client = new CustomClient();
-const userStates = new Map<string, AuthData>();
 
 async function main() {
   try {
@@ -38,7 +36,7 @@ async function main() {
     }
 
     // イベントハンドラを設定
-    setupEventHandlers(client, userStates, config.guildId);
+    setupEventHandlers(client, config.guildId);
 
     // クライアントをログイン
     await client.login(config.discordToken);
