@@ -2,12 +2,16 @@ import type Member from "../../domain/entities/member";
 
 /**
  * ITSCoreとの連携に必要な最小限のデータ型
+ * courseType / selections / year はプリミティブで表現し、
+ * 具体的な所属型への変換は adapter 側が担当する
  */
-export interface MemberRegistrationData<TAffiliation = unknown> {
+export interface MemberRegistrationData {
   email: string;
   name: string;
   studentId: string;
-  affiliation: TAffiliation;
+  courseType: string;
+  affiliationSelections: Record<string, string>;
+  year: number;
 }
 
 export interface MemberConnectionData {
@@ -23,15 +27,12 @@ export interface MemberNicknameUpdateData {
 /**
  * ITSCoreへのアクセスを抽象化するPort（ヘキサゴナルアーキテクチャ）
  * Application層はこのインターフェースのみに依存し、Infrastructure層の詳細を知らない
- *
- * @typeParam TAffiliation registerMember で使用する所属データの型。
- * adapter が具体型（CompleteAffiliation 等）をバインドする。
  */
-export interface ITSCorePort<TAffiliation = unknown> {
+export interface ITSCorePort {
   /**
    * 新しいメンバーを登録する
    */
-  registerMember(data: MemberRegistrationData<TAffiliation>): Promise<void>;
+  registerMember(data: MemberRegistrationData): Promise<void>;
 
   /**
    * DiscordIDでメンバーを取得する

@@ -15,17 +15,20 @@ import { memberWithDiscordToInternal, toMember } from "./mapper";
  * ITSCoreのメンバー機能へのアクセスを提供するAdapter（ヘキサゴナルアーキテクチャ）
  * v3のMemberService facadeを使用
  */
-export class ITSCoreAdaptor implements ITSCorePort<CompleteAffiliation> {
+export class ITSCoreAdaptor implements ITSCorePort {
   private service = createMemberService();
 
-  async registerMember(
-    data: MemberRegistrationData<CompleteAffiliation>,
-  ): Promise<void> {
+  async registerMember(data: MemberRegistrationData): Promise<void> {
+    const affiliation: CompleteAffiliation = {
+      type: data.courseType,
+      value: { ...data.affiliationSelections, year: data.year },
+    } as CompleteAffiliation;
+
     await this.service.register({
       name: data.name,
       studentId: data.studentId,
       email: data.email,
-      affiliation: data.affiliation,
+      affiliation,
     });
   }
 

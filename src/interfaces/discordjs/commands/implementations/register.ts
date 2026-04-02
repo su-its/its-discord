@@ -1,5 +1,4 @@
 import {
-  type CompleteAffiliation,
   getAffiliationSteps,
   getMaxYear,
   UNIVERSITY_STRUCTURE,
@@ -189,16 +188,13 @@ async function registerCommandHandler(
   await interaction.deferReply({ ephemeral: true });
 
   try {
-    const affiliation: CompleteAffiliation = {
-      type: entry.courseType,
-      value: { ...entry.selections, year },
-    } as CompleteAffiliation;
-
     await deps.itsCorePort.registerMember({
       email,
       name,
       studentId: studentNumber,
-      affiliation,
+      courseType: entry.courseType,
+      affiliationSelections: entry.selections,
+      year,
     });
 
     await interaction.editReply(`${name} さんを登録しました。`);
