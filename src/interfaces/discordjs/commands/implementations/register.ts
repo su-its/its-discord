@@ -13,9 +13,60 @@ import { itsCoreService } from "../../../../application/services/itsCoreService"
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
 
-const COURSE_TYPES = Object.keys(UNIVERSITY_STRUCTURE) as Array<
-  keyof typeof UNIVERSITY_STRUCTURE
->;
+type CourseType = keyof typeof UNIVERSITY_STRUCTURE;
+const COURSE_TYPES = Object.keys(UNIVERSITY_STRUCTURE) as CourseType[];
+const SEPARATOR = " / ";
+
+/**
+ * 全 CourseType × 所属の組み合わせをフラットに列挙する
+ * 例: "学士課程 / 情報学部 / 昼間コース / 情報科学科"
+ */
+interface AffiliationEntry {
+  label: string;
+  courseType: CourseType;
+  selections: Record<string, string>;
+}
+
+// TODO: core に getAllAffiliations() が追加されたらこの関数を置き換える (su-its/core#138)
+function enumerateAffiliations(): AffiliationEntry[] {
+  const entries: AffiliationEntry[] = [];
+
+  for (const courseType of COURSE_TYPES) {
+    const courseLabel = UNIVERSITY_STRUCTURE[courseType].label;
+    recurse(courseType, courseLabel, {}, 0, entries);
+  }
+
+  return entries;
+}
+
+function recurse(
+  courseType: CourseType,
+  prefix: string,
+  selections: Record<string, string>,
+  depth: number,
+  entries: AffiliationEntry[],
+): void {
+  const steps = getAffiliationSteps(courseType, selections);
+  const currentStep = steps[depth];
+
+  if (!currentStep) {
+    entries.push({ label: prefix, courseType, selections });
+    return;
+  }
+
+  for (const option of currentStep.options) {
+    const newSelections = { ...selections, [currentStep.field]: option };
+    recurse(
+      courseType,
+      `${prefix}${SEPARATOR}${option}`,
+      newSelections,
+      depth + 1,
+      entries,
+    );
+  }
+}
+
+const ALL_AFFILIATIONS = enumerateAffiliations();
 
 const registerCommand: AdminCommand = {
   data: new SlashCommandBuilder()
@@ -38,27 +89,11 @@ const registerCommand: AdminCommand = {
     )
     .addStringOption((option) =>
       option
-        .setName("course_type")
-        .setDescription("課程区分")
+        .setName("affiliation")
+        .setDescription(
+          "所属（例: 学士課程 / 情報学部 / 昼間コース / 情報科学科）",
+        )
         .setRequired(true)
-        .addChoices(
-          ...COURSE_TYPES.map((type) => ({
-            name: UNIVERSITY_STRUCTURE[type].label,
-            value: type,
-          })),
-        ),
-    )
-    .addStringOption((option) =>
-      option
-        .setName("institution")
-        .setDescription("学部 / 研究科")
-        .setRequired(true)
-        .setAutocomplete(true),
-    )
-    .addStringOption((option) =>
-      option
-        .setName("subdivision")
-        .setDescription("学科 / 専攻 / コース")
         .setAutocomplete(true),
     )
     .addIntegerOption((option) =>
@@ -66,8 +101,7 @@ const registerCommand: AdminCommand = {
         .setName("year")
         .setDescription("在学年次")
         .setRequired(true)
-        .setMinValue(1)
-        .setMaxValue(6),
+        .setAutocomplete(true),
     ) as SlashCommandBuilder,
   execute: registerCommandHandler,
   autocomplete: registerAutocompleteHandler,
@@ -79,107 +113,39 @@ async function registerAutocompleteHandler(
   interaction: AutocompleteInteraction,
 ): Promise<void> {
   const focused = interaction.options.getFocused(true);
-  const courseType = interaction.options.getString("course_type");
 
-  if (
-    !courseType ||
-    !COURSE_TYPES.includes(courseType as keyof typeof UNIVERSITY_STRUCTURE)
-  ) {
-    await interaction.respond([]);
-    return;
-  }
-
-  const typedCourseType = courseType as keyof typeof UNIVERSITY_STRUCTURE;
-
-  if (focused.name === "institution") {
-    const steps = getAffiliationSteps(typedCourseType, {});
-    const firstStep = steps[0];
-    if (!firstStep) {
-      await interaction.respond([]);
-      return;
-    }
-    const filtered = firstStep.options
-      .filter((opt) => opt.includes(focused.value))
-      .slice(0, 25);
+  if (focused.name === "affiliation") {
+    const query = focused.value.toLowerCase();
+    const filtered = ALL_AFFILIATIONS.filter((entry) =>
+      entry.label.toLowerCase().includes(query),
+    ).slice(0, 25);
     await interaction.respond(
-      filtered.map((opt) => ({ name: opt, value: opt })),
+      filtered.map((entry) => ({ name: entry.label, value: entry.label })),
     );
     return;
   }
 
-  if (focused.name === "subdivision") {
-    const institution = interaction.options.getString("institution") ?? "";
-    const steps = getAffiliationSteps(
-      typedCourseType,
-      buildSelections(typedCourseType, institution),
-    );
-    const remainingSteps = steps.slice(1);
-    if (remainingSteps.length === 0) {
+  if (focused.name === "year") {
+    const affiliationLabel = interaction.options.getString("affiliation") ?? "";
+    const entry = ALL_AFFILIATIONS.find((e) => e.label === affiliationLabel);
+    if (!entry) {
       await interaction.respond([]);
       return;
     }
-    const allOptions = remainingSteps.flatMap((step) =>
-      step.options.map((opt) => `${step.label}: ${opt}`),
-    );
-    const filtered = allOptions
-      .filter((opt) => opt.includes(focused.value))
-      .slice(0, 25);
-    await interaction.respond(
-      filtered.map((opt) => ({ name: opt, value: opt })),
-    );
+    const maxYear = getMaxYear(entry.courseType);
+    const choices = Array.from({ length: maxYear }, (_, i) => ({
+      name: `${i + 1}年`,
+      value: i + 1,
+    }));
+    await interaction.respond(choices);
     return;
   }
 
   await interaction.respond([]);
 }
 
-function buildSelections(
-  courseType: keyof typeof UNIVERSITY_STRUCTURE,
-  institution: string,
-): Record<string, string> {
-  const firstStep = getAffiliationSteps(courseType, {})[0];
-  if (!firstStep) return {};
-  return { [firstStep.field]: institution };
-}
-
-function buildAffiliation(
-  courseType: string,
-  institution: string,
-  subdivision: string | null,
-  year: number,
-): CompleteAffiliation {
-  const typedCourseType = courseType as keyof typeof UNIVERSITY_STRUCTURE;
-  const steps = getAffiliationSteps(
-    typedCourseType,
-    buildSelections(typedCourseType, institution),
-  );
-
-  const value: Record<string, string | number> = {};
-
-  const firstStep = steps[0];
-  if (firstStep) {
-    value[firstStep.field] = institution;
-  }
-
-  if (subdivision) {
-    const parts = subdivision.split(": ");
-    if (parts.length === 2) {
-      const remainingSteps = steps.slice(1);
-      for (const step of remainingSteps) {
-        if (step.label === parts[0]) {
-          value[step.field] = parts[1];
-          break;
-        }
-      }
-    }
-  }
-
-  value.year = year;
-
-  return {
-    type: typedCourseType,
-    value,
-  } as CompleteAffiliation;
+function parseAffiliationEntry(label: string): AffiliationEntry | undefined {
+  return ALL_AFFILIATIONS.find((entry) => entry.label === label);
 }
 
 async function registerCommandHandler(
@@ -188,9 +154,7 @@ async function registerCommandHandler(
   const name = interaction.options.getString("name", true);
   const email = interaction.options.getString("email", true);
   const studentNumber = interaction.options.getString("student_number", true);
-  const courseType = interaction.options.getString("course_type", true);
-  const institution = interaction.options.getString("institution", true);
-  const subdivision = interaction.options.getString("subdivision");
+  const affiliationLabel = interaction.options.getString("affiliation", true);
   const year = interaction.options.getInteger("year", true);
 
   if (!email.endsWith("@shizuoka.ac.jp")) {
@@ -201,7 +165,17 @@ async function registerCommandHandler(
     return;
   }
 
-  const maxYear = getMaxYear(courseType as keyof typeof UNIVERSITY_STRUCTURE);
+  const entry = parseAffiliationEntry(affiliationLabel);
+  if (!entry) {
+    await interaction.reply({
+      content:
+        "所属の選択が正しくありません。オートコンプリートの候補から選択してください。",
+      ephemeral: true,
+    });
+    return;
+  }
+
+  const maxYear = getMaxYear(entry.courseType);
   if (year < 1 || year > maxYear) {
     await interaction.reply({
       content: `在学年次は 1〜${maxYear} の範囲で指定してください。`,
@@ -213,12 +187,10 @@ async function registerCommandHandler(
   await interaction.deferReply();
 
   try {
-    const affiliation = buildAffiliation(
-      courseType,
-      institution,
-      subdivision,
-      year,
-    );
+    const affiliation: CompleteAffiliation = {
+      type: entry.courseType,
+      value: { ...entry.selections, year },
+    } as CompleteAffiliation;
 
     await itsCoreService.registerMember({
       email,
