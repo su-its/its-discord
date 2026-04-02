@@ -1,3 +1,4 @@
+import type Affiliation from "../../../../../entities/affiliation";
 import biRole, { biRoleKey } from "./implementations/bi";
 import csRole, { csRoleKey } from "./implementations/cs";
 import engineeringRole, {
@@ -23,4 +24,14 @@ export const departmentRoleKeys = {
   graduateRoleKey,
   engineeringRoleKey,
   othersRoleKey,
+};
+
+/** 所属（Affiliation）からロールキーへのマッピング */
+export const affiliationRoleMap: Record<Affiliation, string> = {
+  情報科学科: csRoleKey,
+  行動情報学科: biRoleKey,
+  情報社会学科: iaRoleKey,
+  工学部: engineeringRoleKey,
+  大学院: graduateRoleKey,
+  その他: othersRoleKey,
 };

@@ -1,7 +1,7 @@
-import type Affiliation from "../../domain/entities/affiliation";
 import type Member from "../../domain/entities/member";
 import type Role from "../../domain/types/role";
 import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
+import { affiliationRoleMap } from "../../domain/types/roles/implementations/categories/departments";
 import logger from "../../infrastructure/logger";
 import type { AppDeps } from "../ports/deps";
 import type { DiscordMember } from "../ports/discordMemberPort";
@@ -12,15 +12,6 @@ export interface RoleRefreshResult {
   failureCount: number;
   failedMembers: DiscordMember[];
 }
-
-const AFFILIATION_ROLE_MAP: Record<Affiliation, string> = {
-  情報科学科: roleRegistryKeys.csRoleKey,
-  行動情報学科: roleRegistryKeys.biRoleKey,
-  情報社会学科: roleRegistryKeys.iaRoleKey,
-  工学部: roleRegistryKeys.engineeringRoleKey,
-  大学院: roleRegistryKeys.graduateRoleKey,
-  その他: roleRegistryKeys.othersRoleKey,
-};
 
 /** bot が管理するロールのうちリフレッシュ対象（administrator を除く） */
 const MANAGED_ROLE_KEYS = [
@@ -130,7 +121,7 @@ function getStatusRole(member: Member): Role {
     case "unconfirmed":
       return roleRegistry.getRole(roleRegistryKeys.unconfirmedRoleKey);
     case "active":
-      return roleRegistry.getRole(AFFILIATION_ROLE_MAP[member.affiliation]);
+      return roleRegistry.getRole(affiliationRoleMap[member.affiliation]);
   }
 }
 
