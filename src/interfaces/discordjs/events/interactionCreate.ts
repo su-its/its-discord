@@ -54,7 +54,8 @@ export function setupInteractionCreateHandler(client: CustomClient): void {
       }
     } catch (error) {
       logger.error(
-        `Command failed: ${interaction.commandName} | User: ${userId} | Guild: ${guildId} | Error: ${error}`,
+        `Command failed: ${interaction.commandName} | User: ${userId} | Guild: ${guildId}`,
+        error,
       );
 
       // TODO: Adminにメンション付きで通知する # https://github.com/su-its/its-discord/issues/83
