@@ -6,6 +6,7 @@ const authorizedRole: Role = buildRoleByCategory({
   roleCategory: AuthenticationRoleCategory,
   role: {
     name: "認証済み",
+    previousNames: ["Authorized"],
     color: "Green",
     reason: "認証済みメンバーロール",
   },

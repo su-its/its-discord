@@ -18,6 +18,7 @@ function buildRoleByCategory({
   const fullName = `${BOT_PREFIX}${roleCategory.prefix}${role.name}`;
   return {
     name: fullName,
+    ...(role.previousNames && { previousNames: role.previousNames }),
     color: role.color,
     reason: role.reason,
   };

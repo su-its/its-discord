@@ -6,6 +6,7 @@ const unauthorizedRole: Role = buildRoleByCategory({
   roleCategory: AuthenticationRoleCategory,
   role: {
     name: "メール未認証",
+    previousNames: ["Unauthorized"],
     color: "Grey",
     reason: "メール未認証メンバーロール",
   },

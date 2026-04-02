@@ -10,6 +10,7 @@ import type { ColorResolvable, RoleCreateOptions } from "discord.js";
  */
 export default interface Role extends RoleCreateOptions {
   name: string;
+  previousNames?: string[];
   color: ColorResolvable;
   reason: string;
 }

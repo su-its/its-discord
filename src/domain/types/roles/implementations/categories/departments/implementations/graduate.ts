@@ -6,6 +6,7 @@ const graduateRole: Role = buildRoleByCategory({
   roleCategory: DepartmentRoleCategory,
   role: {
     name: "大学院",
+    previousNames: ["DP:GRADUATE"],
     color: [255, 215, 0],
     reason: "大学院ロール",
   },
