@@ -45,7 +45,7 @@ export async function linkAndSendVerification(
       };
     }
 
-    if (member.discordId) {
+    if (member.discord) {
       return {
         success: false,
         message:

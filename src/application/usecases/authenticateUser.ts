@@ -3,7 +3,7 @@ import logger from "../../infrastructure/logger";
 import { discordServerService } from "../services/discordServerService";
 import { emailAuthService } from "../services/emailAuthService";
 import { itsCoreService } from "../services/itsCoreService";
-import { assignDepartmentRole } from "./assignDepartmentRole";
+import { assignMemberRole } from "./assignDepartmentRole";
 
 /**
  * ユーザー認証処理の結果
@@ -38,9 +38,11 @@ export async function authenticateUser(
     }
 
     // 2. EmailAuthServiceでメール認証状況を確認
-    const isEmailVerified = await emailAuthService.isEmailVerified(member.mail);
+    const isEmailVerified = await emailAuthService.isEmailVerified(
+      member.universityEmail,
+    );
     if (!isEmailVerified) {
-      logger.warn(`Email not verified for user: ${member.mail}`);
+      logger.warn(`Email not verified for user: ${member.universityEmail}`);
       return {
         success: false,
         message:
@@ -51,15 +53,15 @@ export async function authenticateUser(
 
     // 3. 認証成功 - ロールとニックネームを設定
     await Promise.all([
-      // 部署ロールの付与
-      assignDepartmentRole(guildId, discordUserId, member),
-      // 承認済みロールの付与
+      // ステータス・所属ロールの付与
+      assignMemberRole(guildId, discordUserId, member),
+      // 認証済みロールの付与
       discordServerService.addRoleToMember(
         guildId,
         discordUserId,
         roleRegistry.getRole(roleRegistryKeys.authorizedRoleKey),
       ),
-      // 未承認ロールの削除
+      // メール未認証ロールの削除
       discordServerService.removeRoleFromMember(
         guildId,
         discordUserId,
@@ -76,7 +78,7 @@ export async function authenticateUser(
     ]);
 
     logger.info(
-      `User authenticated successfully: ${member.name} (${member.mail})`,
+      `User authenticated successfully: ${member.name} (${member.universityEmail})`,
     );
     return {
       success: true,

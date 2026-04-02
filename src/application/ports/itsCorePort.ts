@@ -1,7 +1,7 @@
-// TODO: Port が @shizuoka-its/core に直接依存している。InternalMember リモデリング時に
+// TODO: Port が @shizuoka-its/core に直接依存している。Member リモデリング時に
 // domain 層の型として再定義し、adapter でマッピングする設計に移行を検討する
 import type { CompleteAffiliation } from "@shizuoka-its/core";
-import type InternalMember from "../../domain/entities/member";
+import type Member from "../../domain/entities/member";
 
 /**
  * ITSCoreとの連携に必要な最小限のデータ型
@@ -36,12 +36,12 @@ export interface ITSCorePort {
   /**
    * DiscordIDでメンバーを取得する
    */
-  getMemberByDiscordId(discordId: string): Promise<InternalMember | undefined>;
+  getMemberByDiscordId(discordId: string): Promise<Member | undefined>;
 
   /**
    * メールアドレスでメンバーを取得する
    */
-  getMemberByEmail(email: string): Promise<InternalMember | undefined>;
+  getMemberByEmail(email: string): Promise<Member | undefined>;
 
   /**
    * DiscordアカウントとITSCoreアカウントを紐づける
@@ -51,7 +51,7 @@ export interface ITSCorePort {
   /**
    * 全メンバーのリストを取得する
    */
-  getMemberList(): Promise<InternalMember[]>;
+  getMemberList(): Promise<Member[]>;
 
   /**
    * メンバーのDiscordニックネームを変更する

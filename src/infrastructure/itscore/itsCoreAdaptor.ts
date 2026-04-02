@@ -5,8 +5,8 @@ import type {
   MemberNicknameUpdateData,
   MemberRegistrationData,
 } from "../../application/ports/itsCorePort";
-import type InternalMember from "../../domain/entities/member";
-import { memberWithDiscordToInternal, toInternalMember } from "./mapper";
+import type Member from "../../domain/entities/member";
+import { memberWithDiscordToInternal, toMember } from "./mapper";
 
 /**
  * ITSCoreのメンバー機能へのアクセスを提供するAdapter（ヘキサゴナルアーキテクチャ）
@@ -24,18 +24,22 @@ export class ITSCoreAdaptor implements ITSCorePort {
     });
   }
 
-  async getMemberByDiscordId(
-    discordId: string,
-  ): Promise<InternalMember | undefined> {
+  async getMemberByDiscordId(discordId: string): Promise<Member | undefined> {
     const result = await this.service.getByDiscordId(discordId);
-    return result.member
-      ? toInternalMember(result.member, { discordId })
-      : undefined;
+    return result.member ? toMember(result.member, { discordId }) : undefined;
   }
 
-  async getMemberByEmail(email: string): Promise<InternalMember | undefined> {
+  async getMemberByEmail(email: string): Promise<Member | undefined> {
     const result = await this.service.getByEmail(email);
-    return result.member ? toInternalMember(result.member) : undefined;
+    if (!result.member) return undefined;
+
+    // discord 紐付け情報を含めて返す
+    const withDiscord = await this.service.getMemberWithDiscordAccounts(
+      result.member.id,
+    );
+    return withDiscord.member
+      ? memberWithDiscordToInternal(withDiscord.member)
+      : toMember(result.member);
   }
 
   async connectDiscordAccount(data: MemberConnectionData): Promise<void> {
@@ -45,7 +49,7 @@ export class ITSCoreAdaptor implements ITSCorePort {
     });
   }
 
-  async getMemberList(): Promise<InternalMember[]> {
+  async getMemberList(): Promise<Member[]> {
     const result = await this.service.listMembersWithDiscordAccounts();
     return result.entries.map(memberWithDiscordToInternal);
   }

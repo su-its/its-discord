@@ -26,13 +26,13 @@ export async function renameAllMembersInGuild(
   const memberNameMap = new Map<string, string>();
 
   for (const member of members) {
-    if (member.discordId) {
+    if (member.discord) {
       // Discord表示名ルールに従って表示名を決定
       const displayName = getDiscordDisplayName(
         member.name,
-        member.discordNickname,
+        member.discord.nickname,
       );
-      memberNameMap.set(member.discordId, displayName);
+      memberNameMap.set(member.discord.id, displayName);
     }
   }
 

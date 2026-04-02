@@ -36,9 +36,14 @@ async function whoCommandHandler(interaction: ChatInputCommandInteraction) {
     return;
   }
 
-  await interaction.reply(
-    `名前: ${member.name}\n学部: ${member.department}\n学籍番号: ${member.student_number}\nメールアドレス: ${member.mail}`,
-  );
+  const lines = [`名前: ${member.name}`, `ステータス: ${member.status}`];
+  if (member.status === "active") {
+    lines.push(`所属: ${member.affiliation}`);
+    lines.push(`学籍番号: ${member.studentId}`);
+  }
+  lines.push(`メールアドレス: ${member.universityEmail}`);
+
+  await interaction.reply(lines.join("\n"));
 }
 
 export default whoCommand;
