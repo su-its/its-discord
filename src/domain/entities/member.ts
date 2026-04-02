@@ -1,17 +1,31 @@
-import type department from "./department";
+import type Affiliation from "./affiliation";
 
-// TODO: v3 の Member モデルに合わせてリモデリングを検討する。
-// - department を status + CompleteAffiliation ベースに変更
-// - discordAccounts を配列に（1:N 対応）
-// - status（active/unconfirmed/former）を明示的に持つ
-interface Member {
+export interface DiscordAccount {
+  id: string;
+  nickname?: string;
+}
+
+interface MemberBase {
   id: string;
   name: string;
-  student_number?: string;
-  department: department;
-  mail: string;
-  discordId?: string;
-  discordNickname?: string;
+  universityEmail: string;
+  discord: DiscordAccount | null;
 }
+
+export interface ActiveMember extends MemberBase {
+  status: "active";
+  studentId: string;
+  affiliation: Affiliation;
+}
+
+export interface UnconfirmedMember extends MemberBase {
+  status: "unconfirmed";
+}
+
+export interface FormerMember extends MemberBase {
+  status: "former";
+}
+
+type Member = ActiveMember | UnconfirmedMember | FormerMember;
 
 export default Member;

@@ -1,45 +1,45 @@
-import Department from "../../domain/entities/department";
-import type InternalMember from "../../domain/entities/member";
+import type Affiliation from "../../domain/entities/affiliation";
+import type Member from "../../domain/entities/member";
 import type Role from "../../domain/types/role";
 import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
 import logger from "../../infrastructure/logger";
 import { discordServerService } from "../services/discordServerService";
 
+const AFFILIATION_ROLE_MAP: Record<Affiliation, string> = {
+  情報科学科: roleRegistryKeys.csRoleKey,
+  行動情報学科: roleRegistryKeys.biRoleKey,
+  情報社会学科: roleRegistryKeys.iaRoleKey,
+  工学部: roleRegistryKeys.engineeringRoleKey,
+  大学院: roleRegistryKeys.graduateRoleKey,
+  その他: roleRegistryKeys.othersRoleKey,
+};
+
 /**
- * メンバーの部署に応じたロールを付与するUsecase
- * ビジネスルール（部署→ロールマッピング）をApplication層で管理
+ * メンバーのステータスと所属に応じたロールを付与するUsecase
  */
-export async function assignDepartmentRole(
+export async function assignMemberRole(
   guildId: string,
   memberId: string,
-  member: InternalMember,
+  member: Member,
 ): Promise<void> {
-  // 部署に対応するロールマッピング（ビジネスルール）
-  const departmentRoleMap: Record<string, Role> = {
-    [Department.CS]: roleRegistry.getRole(roleRegistryKeys.csRoleKey),
-    [Department.IA]: roleRegistry.getRole(roleRegistryKeys.iaRoleKey),
-    [Department.BI]: roleRegistry.getRole(roleRegistryKeys.biRoleKey),
-    [Department.GRADUATE]: roleRegistry.getRole(
-      roleRegistryKeys.graduateRoleKey,
-    ),
-    [Department.ENGINEERING]: roleRegistry.getRole(
-      roleRegistryKeys.engineeringRoleKey,
-    ),
-    [Department.OTHERS]: roleRegistry.getRole(roleRegistryKeys.othersRoleKey),
-    [Department.OBOG]: roleRegistry.getRole(
-      roleRegistryKeys.formerMemberRoleKey,
-    ),
-  };
+  let role: Role;
 
-  const role = departmentRoleMap[member.department];
-  if (role) {
-    await discordServerService.addRoleToMember(guildId, memberId, role);
-    logger.info(
-      `Assigned department role ${role.name} to member ${member.name} (${memberId})`,
-    );
-  } else {
-    logger.warn(
-      `No role mapping found for department: ${member.department} (member: ${member.name})`,
-    );
+  switch (member.status) {
+    case "former":
+      role = roleRegistry.getRole(roleRegistryKeys.formerMemberRoleKey);
+      break;
+    case "unconfirmed":
+      role = roleRegistry.getRole(roleRegistryKeys.unconfirmedRoleKey);
+      break;
+    case "active": {
+      const roleKey = AFFILIATION_ROLE_MAP[member.affiliation];
+      role = roleRegistry.getRole(roleKey);
+      break;
+    }
   }
+
+  await discordServerService.addRoleToMember(guildId, memberId, role);
+  logger.info(
+    `Assigned role ${role.name} to member ${member.name} (${memberId})`,
+  );
 }
