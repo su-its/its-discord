@@ -46,7 +46,7 @@ export async function updateMemberNickname(
         `ITSCore nickname updated for ${member.name} (${discordUserId}): ${newNickname}`,
       );
     } catch (error) {
-      logger.error(`Failed to update nickname in ITSCore: ${error}`);
+      logger.error("Failed to update nickname in ITSCore:", error);
       return {
         success: false,
         message: "ITSCoreでニックネームの更新に失敗しました。",
@@ -69,7 +69,7 @@ export async function updateMemberNickname(
         `Discord nickname updated for ${member.name} (${discordUserId}): ${discordDisplayName}`,
       );
     } catch (error) {
-      logger.error(`Failed to update nickname in Discord: ${error}`);
+      logger.error("Failed to update nickname in Discord:", error);
       return {
         success: false,
         message: "Discordでニックネームの更新に失敗しました。",
