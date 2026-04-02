@@ -31,7 +31,15 @@ export class ITSCoreAdaptor implements ITSCorePort {
 
   async getMemberByEmail(email: string): Promise<Member | undefined> {
     const result = await this.service.getByEmail(email);
-    return result.member ? toMember(result.member) : undefined;
+    if (!result.member) return undefined;
+
+    // discord 紐付け情報を含めて返す
+    const withDiscord = await this.service.getMemberWithDiscordAccounts(
+      result.member.id,
+    );
+    return withDiscord.member
+      ? memberWithDiscordToInternal(withDiscord.member)
+      : toMember(result.member);
   }
 
   async connectDiscordAccount(data: MemberConnectionData): Promise<void> {
