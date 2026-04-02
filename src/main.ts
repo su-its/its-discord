@@ -38,7 +38,7 @@ async function main() {
     }
 
     // イベントハンドラを設定
-    setupEventHandlers(client, userStates);
+    setupEventHandlers(client, userStates, config.guildId);
 
     // クライアントをログイン
     await client.login(config.discordToken);

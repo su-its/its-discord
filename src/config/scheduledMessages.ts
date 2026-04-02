@@ -1,4 +1,3 @@
-import { discordServerService } from "../application/services/discordServerService";
 import { createHotChannelsEmbed } from "../application/usecases/createHotChannelsEmbed";
 import { getHotChannels } from "../application/usecases/getHotChannels";
 import type { ScheduledMessageCreate } from "../domain/entities/scheduledMessage";
@@ -20,9 +19,8 @@ export const SCHEDULED_MESSAGE_CONFIGS: Array<
     description: "毎日のホットチャンネル投稿",
     channelId: config.hotChannelId,
     messageContent: async () => {
-      const guildId = await discordServerService.getFirstGuild();
-      const channelActivities = await getHotChannels(guildId);
-      return createHotChannelsEmbed(guildId, channelActivities);
+      const channelActivities = await getHotChannels(config.guildId);
+      return createHotChannelsEmbed(config.guildId, channelActivities);
     },
     // 深夜0時
     cronSchedule: "0 0 * * *",

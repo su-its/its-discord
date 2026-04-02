@@ -40,7 +40,7 @@ async function main() {
       logger.debug(`Loaded command: ${command.data.name}`);
     }
 
-    setupEventHandlers(client, userStates);
+    setupEventHandlers(client, userStates, config.guildId);
 
     await client.login(config.discordToken);
 

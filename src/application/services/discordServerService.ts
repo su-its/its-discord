@@ -150,10 +150,6 @@ export class DiscordServerService {
   }
 
   // Guild operations
-  async getFirstGuild(): Promise<string> {
-    return discordServerServiceContainer.getDiscordGuildPort().getFirstGuild();
-  }
-
   async ensureRoleExists(guildId: string, role: Role): Promise<void> {
     return discordServerServiceContainer
       .getDiscordGuildPort()

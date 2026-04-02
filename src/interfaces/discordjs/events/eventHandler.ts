@@ -8,8 +8,9 @@ import { setupMessageCreate } from "./messageCreate";
 export function setupEventHandlers(
   client: CustomClient,
   userStates: Map<string, AuthData>,
+  guildId: string,
 ) {
-  setupClientReadyHandler(client);
+  setupClientReadyHandler(client, guildId);
   setupInteractionCreateHandler(client);
   setupGuildMemberAddHandler(client);
   setupMessageCreate(client, userStates);
