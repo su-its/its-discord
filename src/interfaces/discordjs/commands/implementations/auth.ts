@@ -6,6 +6,7 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from "discord.js";
+import type { AppDeps } from "../../../../application/ports/deps";
 import type Command from "../../../../domain/types/command";
 
 export const AUTH_MODAL_ID = "auth-email-modal";
@@ -21,7 +22,7 @@ const authCommand: Command = {
 
 async function authCommandHandler(
   interaction: ChatInputCommandInteraction,
-  _deps: unknown,
+  _deps: AppDeps,
 ) {
   if (!interaction.guild) {
     throw new Error("Guild not found");

@@ -2,6 +2,7 @@ import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import type { AppDeps } from "../../../../application/ports/deps";
 import type Command from "../../../../domain/types/command";
 
 const healthCheckCommand: Command = {
@@ -14,7 +15,7 @@ const healthCheckCommand: Command = {
 
 async function healthCheckHandler(
   interaction: ChatInputCommandInteraction,
-  _deps: unknown,
+  _deps: AppDeps,
 ) {
   await interaction.reply("I am healthy!");
 }

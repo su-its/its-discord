@@ -2,6 +2,7 @@ import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import type { AppDeps } from "../../../../application/ports/deps";
 import { getProcessInfo } from "../../../../application/usecases/getProcessInfo";
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
@@ -17,7 +18,7 @@ const psCommand: AdminCommand = {
 
 async function psCommandHandler(
   interaction: ChatInputCommandInteraction,
-  _deps: unknown,
+  _deps: AppDeps,
 ) {
   const processInfo = await getProcessInfo();
   await interaction.reply(

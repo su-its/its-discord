@@ -110,7 +110,7 @@ const registerCommand: AdminCommand = {
 
 async function registerAutocompleteHandler(
   interaction: AutocompleteInteraction,
-  _deps: unknown,
+  _deps: AppDeps,
 ): Promise<void> {
   const focused = interaction.options.getFocused(true);
 
