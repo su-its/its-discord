@@ -1,3 +1,5 @@
+// TODO: Port が @shizuoka-its/core に直接依存している。InternalMember リモデリング時に
+// domain 層の型として再定義し、adapter でマッピングする設計に移行を検討する
 import type { CompleteAffiliation } from "@shizuoka-its/core";
 import type InternalMember from "../../domain/entities/member";
 
