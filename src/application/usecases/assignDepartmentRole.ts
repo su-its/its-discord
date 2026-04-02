@@ -3,7 +3,7 @@ import type Member from "../../domain/entities/member";
 import type Role from "../../domain/types/role";
 import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
 import logger from "../../infrastructure/logger";
-import { discordServerService } from "../services/discordServerService";
+import type { AppDeps } from "../ports/deps";
 
 const AFFILIATION_ROLE_MAP: Record<Affiliation, string> = {
   情報科学科: roleRegistryKeys.csRoleKey,
@@ -21,6 +21,7 @@ export async function assignMemberRole(
   guildId: string,
   memberId: string,
   member: Member,
+  deps: Pick<AppDeps, "discordMemberPort">,
 ): Promise<void> {
   let role: Role;
 
@@ -38,7 +39,7 @@ export async function assignMemberRole(
     }
   }
 
-  await discordServerService.addRoleToMember(guildId, memberId, role);
+  await deps.discordMemberPort.addRoleToMember(guildId, memberId, role);
   logger.info(
     `Assigned role ${role.name} to member ${member.name} (${memberId})`,
   );

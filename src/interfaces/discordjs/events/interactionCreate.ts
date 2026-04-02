@@ -1,15 +1,19 @@
 import { Events } from "discord.js";
+import type { AppDeps } from "../../../application/ports/deps";
 import type AdminCommand from "../../../domain/types/adminCommand";
 import type { CustomClient } from "../../../domain/types/customClient";
 import logger from "../../../infrastructure/logger";
 
-export function setupInteractionCreateHandler(client: CustomClient): void {
+export function setupInteractionCreateHandler(
+  client: CustomClient,
+  deps: AppDeps,
+): void {
   client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.isAutocomplete()) {
       const command = client.commands.get(interaction.commandName);
       if (command?.autocomplete) {
         try {
-          await command.autocomplete(interaction);
+          await command.autocomplete(interaction, deps);
         } catch (error) {
           logger.error(
             `Autocomplete failed: ${interaction.commandName}`,
@@ -51,7 +55,7 @@ export function setupInteractionCreateHandler(client: CustomClient): void {
           interaction,
         );
         if (ok) {
-          await command.execute(interaction);
+          await command.execute(interaction, deps);
           logger.info(
             `Command completed: ${interaction.commandName} | User: ${userId} | Guild: ${guildId}`,
           );
@@ -62,7 +66,7 @@ export function setupInteractionCreateHandler(client: CustomClient): void {
           );
         }
       } else {
-        await command.execute(interaction);
+        await command.execute(interaction, deps);
         logger.info(
           `Command completed: ${interaction.commandName} | User: ${userId} | Guild: ${guildId}`,
         );

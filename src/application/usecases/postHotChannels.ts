@@ -1,12 +1,12 @@
-import { discordServerService } from "../services/discordServerService";
+import type { AppDeps } from "../ports/deps";
 import { getHotChannels } from "./getHotChannels";
 
-// TODO: Usecaseからdiscord.jsの依存を排除する
 export async function postHotChannels(
   channelId: string,
   guildId: string,
+  deps: Pick<AppDeps, "discordChannelPort">,
 ): Promise<void> {
-  const channelActivities = await getHotChannels(guildId);
+  const channelActivities = await getHotChannels(guildId, deps);
 
   // アクティブなチャンネルのみフィルタリング・ソート
   const activeChannels = channelActivities.filter(
@@ -42,5 +42,5 @@ export async function postHotChannels(
     fields,
   };
 
-  await discordServerService.sendEmbedToChannel(channelId, embed);
+  await deps.discordChannelPort.sendEmbedToChannel(channelId, embed);
 }

@@ -2,6 +2,7 @@ import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import type { AppDeps } from "../../../../application/ports/deps";
 import { killSelf } from "../../../../application/usecases/killSelf";
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
@@ -21,7 +22,10 @@ const killCommand: AdminCommand = {
   isDMAllowed: true,
 };
 
-async function killCommandHandler(interaction: ChatInputCommandInteraction) {
+async function killCommandHandler(
+  interaction: ChatInputCommandInteraction,
+  _deps: AppDeps,
+) {
   const targetPid = interaction.options.get("pid", true).value as string;
 
   await interaction.reply(`プロセス ${targetPid} を終了します...`);

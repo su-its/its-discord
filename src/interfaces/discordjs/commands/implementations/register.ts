@@ -1,74 +1,11 @@
-// TODO: interface 層が @shizuoka-its/core に直接依存している。
-// application 層のサービスとして wrap するか、core をドメイン依存として許容するか検討する
-import {
-  type CompleteAffiliation,
-  getAffiliationSteps,
-  getMaxYear,
-  UNIVERSITY_STRUCTURE,
-} from "@shizuoka-its/core";
 import {
   type AutocompleteInteraction,
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
-import { itsCoreService } from "../../../../application/services/itsCoreService";
+import type { AppDeps } from "../../../../application/ports/deps";
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
-
-type CourseType = keyof typeof UNIVERSITY_STRUCTURE;
-const COURSE_TYPES = Object.keys(UNIVERSITY_STRUCTURE) as CourseType[];
-const SEPARATOR = " / ";
-
-/**
- * 全 CourseType × 所属の組み合わせをフラットに列挙する
- * 例: "学士課程 / 情報学部 / 昼間コース / 情報科学科"
- */
-interface AffiliationEntry {
-  label: string;
-  courseType: CourseType;
-  selections: Record<string, string>;
-}
-
-// TODO: core に getAllAffiliations() が追加されたらこの関数を置き換える (su-its/core#138)
-function enumerateAffiliations(): AffiliationEntry[] {
-  const entries: AffiliationEntry[] = [];
-
-  for (const courseType of COURSE_TYPES) {
-    const courseLabel = UNIVERSITY_STRUCTURE[courseType].label;
-    recurse(courseType, courseLabel, {}, 0, entries);
-  }
-
-  return entries;
-}
-
-function recurse(
-  courseType: CourseType,
-  prefix: string,
-  selections: Record<string, string>,
-  depth: number,
-  entries: AffiliationEntry[],
-): void {
-  const steps = getAffiliationSteps(courseType, selections);
-  const currentStep = steps[depth];
-
-  if (!currentStep) {
-    entries.push({ label: prefix, courseType, selections });
-    return;
-  }
-
-  for (const option of currentStep.options) {
-    const newSelections = { ...selections, [currentStep.field]: option };
-    recurse(
-      courseType,
-      `${prefix}${SEPARATOR}${option}`,
-      newSelections,
-      depth + 1,
-      entries,
-    );
-  }
-}
-
-const ALL_AFFILIATIONS = enumerateAffiliations();
 
 const registerCommand: AdminCommand = {
   data: new SlashCommandBuilder()
@@ -113,14 +50,16 @@ const registerCommand: AdminCommand = {
 
 async function registerAutocompleteHandler(
   interaction: AutocompleteInteraction,
+  deps: AppDeps,
 ): Promise<void> {
+  const options = deps.itsCorePort.getAllAffiliationOptions();
   const focused = interaction.options.getFocused(true);
 
   if (focused.name === "affiliation") {
     const query = focused.value.toLowerCase();
-    const filtered = ALL_AFFILIATIONS.filter((entry) =>
-      entry.label.toLowerCase().includes(query),
-    ).slice(0, 25);
+    const filtered = options
+      .filter((entry) => entry.label.toLowerCase().includes(query))
+      .slice(0, 25);
     await interaction.respond(
       filtered.map((entry) => ({ name: entry.label, value: entry.label })),
     );
@@ -129,13 +68,12 @@ async function registerAutocompleteHandler(
 
   if (focused.name === "year") {
     const affiliationLabel = interaction.options.getString("affiliation") ?? "";
-    const entry = ALL_AFFILIATIONS.find((e) => e.label === affiliationLabel);
+    const entry = options.find((e) => e.label === affiliationLabel);
     if (!entry) {
       await interaction.respond([]);
       return;
     }
-    const maxYear = getMaxYear(entry.courseType);
-    const choices = Array.from({ length: maxYear }, (_, i) => ({
+    const choices = Array.from({ length: entry.maxYear }, (_, i) => ({
       name: `${i + 1}年`,
       value: i + 1,
     }));
@@ -146,13 +84,11 @@ async function registerAutocompleteHandler(
   await interaction.respond([]);
 }
 
-function parseAffiliationEntry(label: string): AffiliationEntry | undefined {
-  return ALL_AFFILIATIONS.find((entry) => entry.label === label);
-}
-
 async function registerCommandHandler(
   interaction: ChatInputCommandInteraction,
+  deps: AppDeps,
 ): Promise<void> {
+  const options = deps.itsCorePort.getAllAffiliationOptions();
   const name = interaction.options.getString("name", true);
   const email = interaction.options.getString("email", true);
   const studentNumber = interaction.options.getString("student_number", true);
@@ -167,7 +103,7 @@ async function registerCommandHandler(
     return;
   }
 
-  const entry = parseAffiliationEntry(affiliationLabel);
+  const entry = options.find((e) => e.label === affiliationLabel);
   if (!entry) {
     await interaction.reply({
       content:
@@ -177,10 +113,9 @@ async function registerCommandHandler(
     return;
   }
 
-  const maxYear = getMaxYear(entry.courseType);
-  if (year < 1 || year > maxYear) {
+  if (year < 1 || year > entry.maxYear) {
     await interaction.reply({
-      content: `在学年次は 1〜${maxYear} の範囲で指定してください。`,
+      content: `在学年次は 1〜${entry.maxYear} の範囲で指定してください。`,
       ephemeral: true,
     });
     return;
@@ -189,16 +124,13 @@ async function registerCommandHandler(
   await interaction.deferReply({ ephemeral: true });
 
   try {
-    const affiliation: CompleteAffiliation = {
-      type: entry.courseType,
-      value: { ...entry.selections, year },
-    } as CompleteAffiliation;
-
-    await itsCoreService.registerMember({
+    await deps.itsCorePort.registerMember({
       email,
       name,
       studentId: studentNumber,
-      affiliation,
+      courseType: entry.courseType,
+      affiliationSelections: entry.selections,
+      year,
     });
 
     await interaction.editReply(`${name} さんを登録しました。`);

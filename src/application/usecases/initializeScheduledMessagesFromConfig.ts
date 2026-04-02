@@ -1,19 +1,20 @@
-import { SCHEDULED_MESSAGE_CONFIGS } from "../../config/scheduledMessages";
+import { createScheduledMessageConfigs } from "../../config/scheduledMessages";
 import logger from "../../infrastructure/logger";
 import { addScheduledMessageJob } from "../../interfaces/cron/scheduledMessageCron";
-import { scheduledMessageService } from "../services/scheduledMessageService";
+import type { AppDeps } from "../ports/deps";
 
 /**
  * 設定ファイルからスケジュールメッセージを初期化するユースケース
  * アプリケーション起動時に呼び出される
  */
-export async function initializeScheduledMessagesFromConfig(): Promise<void> {
+export async function initializeScheduledMessagesFromConfig(
+  deps: AppDeps,
+): Promise<void> {
   try {
     logger.info("Initializing scheduled messages from configuration...");
 
     // 既存のアクティブなメッセージを取得
-    const existingMessages =
-      await scheduledMessageService.getAllActiveScheduledMessages();
+    const existingMessages = await deps.scheduledMessagePort.getAllActive();
     const existingIds = new Set(existingMessages.map((msg) => msg.id));
 
     logger.info(
@@ -24,7 +25,7 @@ export async function initializeScheduledMessagesFromConfig(): Promise<void> {
     let skippedCount = 0;
 
     // 設定からスケジュールメッセージを作成
-    for (const config of SCHEDULED_MESSAGE_CONFIGS) {
+    for (const config of createScheduledMessageConfigs(deps)) {
       // チャンネルIDが空の場合はスキップ
       if (!config.channelId) {
         logger.warn(
@@ -45,15 +46,14 @@ export async function initializeScheduledMessagesFromConfig(): Promise<void> {
 
       try {
         // IDを指定してスケジュールメッセージを作成
-        const scheduledMessage =
-          await scheduledMessageService.createScheduledMessageWithId(
-            config.id,
-            {
-              channelId: config.channelId,
-              messageContent: config.messageContent,
-              cronSchedule: config.cronSchedule,
-            },
-          );
+        const scheduledMessage = await deps.scheduledMessagePort.createWithId(
+          config.id,
+          {
+            channelId: config.channelId,
+            messageContent: config.messageContent,
+            cronSchedule: config.cronSchedule,
+          },
+        );
 
         // Cronジョブを追加
         addScheduledMessageJob(
@@ -70,7 +70,6 @@ export async function initializeScheduledMessagesFromConfig(): Promise<void> {
           `Failed to create scheduled message '${config.id}':`,
           error,
         );
-        // 個別のエラーは続行可能とする
       }
     }
 

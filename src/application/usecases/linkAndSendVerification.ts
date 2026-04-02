@@ -1,8 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { loadConfig } from "../../config/environment";
 import logger from "../../infrastructure/logger";
-import { emailAuthService } from "../services/emailAuthService";
-import { itsCoreService } from "../services/itsCoreService";
+import type { AppDeps } from "../ports/deps";
 
 export interface LinkAndVerifyResult {
   success: boolean;
@@ -22,9 +21,10 @@ export interface LinkAndVerifyResult {
 export async function linkAndSendVerification(
   discordUserId: string,
   email: string,
+  deps: Pick<AppDeps, "itsCorePort" | "emailAuthPort">,
 ): Promise<LinkAndVerifyResult> {
   try {
-    const member = await itsCoreService.getMemberByEmail(email);
+    const member = await deps.itsCorePort.getMemberByEmail(email);
     if (!member) {
       return {
         success: false,
@@ -35,7 +35,7 @@ export async function linkAndSendVerification(
     }
 
     const existingLink =
-      await itsCoreService.getMemberByDiscordId(discordUserId);
+      await deps.itsCorePort.getMemberByDiscordId(discordUserId);
     if (existingLink) {
       return {
         success: false,
@@ -54,9 +54,9 @@ export async function linkAndSendVerification(
       };
     }
 
-    const existingUser = await emailAuthService.getUserByEmail(email);
+    const existingUser = await deps.emailAuthPort.getUserByEmail(email);
     if (existingUser?.emailVerified) {
-      await itsCoreService.connectDiscordAccount({
+      await deps.itsCorePort.connectDiscordAccount({
         memberId: member.id,
         discordAccountId: discordUserId,
       });
@@ -68,9 +68,26 @@ export async function linkAndSendVerification(
       };
     }
 
-    await sendVerificationEmail(email, existingUser);
+    const config = loadConfig();
+    const verificationOptions = {
+      url: config.authRedirectUrl,
+      handleCodeInApp: true,
+    };
 
-    await itsCoreService.connectDiscordAccount({
+    if (existingUser) {
+      await deps.emailAuthPort.sendEmailVerification(
+        existingUser,
+        verificationOptions,
+      );
+    } else {
+      const user = await deps.emailAuthPort.createUserWithEmailAndPassword({
+        email,
+        password: randomUUID(),
+      });
+      await deps.emailAuthPort.sendEmailVerification(user, verificationOptions);
+    }
+
+    await deps.itsCorePort.connectDiscordAccount({
       memberId: member.id,
       discordAccountId: discordUserId,
     });
@@ -94,33 +111,4 @@ export async function linkAndSendVerification(
       reason: "TECHNICAL_ERROR",
     };
   }
-}
-
-async function sendVerificationEmail(
-  email: string,
-  existingUser: {
-    uid: string;
-    email: string | null;
-    emailVerified: boolean;
-  } | null,
-): Promise<void> {
-  const config = loadConfig();
-  const verificationOptions = {
-    url: config.authRedirectUrl,
-    handleCodeInApp: true,
-  };
-
-  if (existingUser) {
-    await emailAuthService.sendEmailVerification(
-      existingUser,
-      verificationOptions,
-    );
-    return;
-  }
-
-  const user = await emailAuthService.createUserWithEmailAndPassword({
-    email,
-    password: randomUUID(),
-  });
-  await emailAuthService.sendEmailVerification(user, verificationOptions);
 }

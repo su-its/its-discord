@@ -1,8 +1,6 @@
 import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
 import logger from "../../infrastructure/logger";
-import { discordServerService } from "../services/discordServerService";
-import { emailAuthService } from "../services/emailAuthService";
-import { itsCoreService } from "../services/itsCoreService";
+import type { AppDeps } from "../ports/deps";
 import { assignMemberRole } from "./assignDepartmentRole";
 
 /**
@@ -21,10 +19,11 @@ export interface AuthenticationResult {
 export async function authenticateUser(
   discordUserId: string,
   guildId: string,
+  deps: Pick<AppDeps, "itsCorePort" | "emailAuthPort" | "discordMemberPort">,
 ): Promise<AuthenticationResult> {
   try {
     // 1. ITSCoreからメンバー情報を取得
-    const member = await itsCoreService.getMemberByDiscordId(discordUserId);
+    const member = await deps.itsCorePort.getMemberByDiscordId(discordUserId);
     if (!member) {
       logger.warn(
         `Member not found in ITSCore for Discord ID: ${discordUserId}`,
@@ -38,7 +37,7 @@ export async function authenticateUser(
     }
 
     // 2. EmailAuthServiceでメール認証状況を確認
-    const isEmailVerified = await emailAuthService.isEmailVerified(
+    const isEmailVerified = await deps.emailAuthPort.isEmailVerified(
       member.universityEmail,
     );
     if (!isEmailVerified) {
@@ -54,21 +53,21 @@ export async function authenticateUser(
     // 3. 認証成功 - ロールとニックネームを設定
     await Promise.all([
       // ステータス・所属ロールの付与
-      assignMemberRole(guildId, discordUserId, member),
+      assignMemberRole(guildId, discordUserId, member, deps),
       // 認証済みロールの付与
-      discordServerService.addRoleToMember(
+      deps.discordMemberPort.addRoleToMember(
         guildId,
         discordUserId,
         roleRegistry.getRole(roleRegistryKeys.authorizedRoleKey),
       ),
       // メール未認証ロールの削除
-      discordServerService.removeRoleFromMember(
+      deps.discordMemberPort.removeRoleFromMember(
         guildId,
         discordUserId,
         roleRegistry.getRole(roleRegistryKeys.unauthorizedRoleKey),
       ),
       // ニックネーム設定（サーバーオーナー等、権限不足で失敗しても認証自体は続行する）
-      discordServerService
+      deps.discordMemberPort
         .setMemberNickname(guildId, discordUserId, member.name)
         .catch((error) => {
           logger.warn(

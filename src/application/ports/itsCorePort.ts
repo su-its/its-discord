@@ -1,16 +1,17 @@
-// TODO: Port が @shizuoka-its/core に直接依存している。Member リモデリング時に
-// domain 層の型として再定義し、adapter でマッピングする設計に移行を検討する
-import type { CompleteAffiliation } from "@shizuoka-its/core";
 import type Member from "../../domain/entities/member";
 
 /**
  * ITSCoreとの連携に必要な最小限のデータ型
+ * courseType / selections / year はプリミティブで表現し、
+ * 具体的な所属型への変換は adapter 側が担当する
  */
 export interface MemberRegistrationData {
   email: string;
   name: string;
   studentId: string;
-  affiliation: CompleteAffiliation;
+  courseType: string;
+  affiliationSelections: Record<string, string>;
+  year: number;
 }
 
 export interface MemberConnectionData {
@@ -24,10 +25,25 @@ export interface MemberNicknameUpdateData {
 }
 
 /**
+ * 所属の選択肢を表すデータ型
+ * オートコンプリート等で使用する
+ */
+export interface AffiliationOption {
+  label: string;
+  courseType: string;
+  selections: Record<string, string>;
+  maxYear: number;
+}
+
+/**
  * ITSCoreへのアクセスを抽象化するPort（ヘキサゴナルアーキテクチャ）
  * Application層はこのインターフェースのみに依存し、Infrastructure層の詳細を知らない
  */
 export interface ITSCorePort {
+  /**
+   * 全所属の選択肢を取得する
+   */
+  getAllAffiliationOptions(): AffiliationOption[];
   /**
    * 新しいメンバーを登録する
    */

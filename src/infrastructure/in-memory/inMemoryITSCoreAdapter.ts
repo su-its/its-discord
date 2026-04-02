@@ -1,12 +1,29 @@
 import type {
+  AffiliationOption,
   ITSCorePort,
   MemberConnectionData,
   MemberNicknameUpdateData,
   MemberRegistrationData,
 } from "../../application/ports/itsCorePort";
+import type Affiliation from "../../domain/entities/affiliation";
 import type Member from "../../domain/entities/member";
 import type { ActiveMember } from "../../domain/entities/member";
 import logger from "../logger";
+
+const AFFILIATION_VALUES: readonly Affiliation[] = [
+  "情報科学科",
+  "行動情報学科",
+  "情報社会学科",
+  "工学部",
+  "大学院",
+  "その他",
+] as const;
+
+function toAffiliation(data: MemberRegistrationData): Affiliation {
+  const values = Object.values(data.affiliationSelections);
+  const match = AFFILIATION_VALUES.find((a) => values.includes(a));
+  return match ?? "その他";
+}
 
 /**
  * ITSCorePort の in-memory 実装（ローカル検証用）
@@ -17,6 +34,15 @@ export class InMemoryITSCoreAdapter implements ITSCorePort {
   private discordIdToMemberId = new Map<string, string>();
   private nextId = 1;
 
+  getAllAffiliationOptions(): AffiliationOption[] {
+    return AFFILIATION_VALUES.map((affiliation) => ({
+      label: affiliation,
+      courseType: "in-memory",
+      selections: { affiliation },
+      maxYear: 6,
+    }));
+  }
+
   async registerMember(data: MemberRegistrationData): Promise<void> {
     const id = `mem_${this.nextId++}`;
     const member: ActiveMember = {
@@ -24,7 +50,7 @@ export class InMemoryITSCoreAdapter implements ITSCorePort {
       id,
       name: data.name,
       studentId: data.studentId,
-      affiliation: "その他",
+      affiliation: toAffiliation(data),
       universityEmail: data.email,
       discord: null,
     };

@@ -1,5 +1,5 @@
 import { Events, type ModalSubmitInteraction } from "discord.js";
-import { itsCoreService } from "../../../application/services/itsCoreService";
+import type { AppDeps } from "../../../application/ports/deps";
 import { authenticateUser } from "../../../application/usecases/authenticateUser";
 import { linkAndSendVerification } from "../../../application/usecases/linkAndSendVerification";
 import type { CustomClient } from "../../../domain/types/customClient";
@@ -9,13 +9,16 @@ import {
   AUTH_MODAL_ID,
 } from "../commands/implementations/auth";
 
-export function setupModalSubmitHandler(client: CustomClient): void {
+export function setupModalSubmitHandler(
+  client: CustomClient,
+  deps: AppDeps,
+): void {
   client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isModalSubmit()) return;
     if (interaction.customId !== AUTH_MODAL_ID) return;
 
     try {
-      await handleAuthModalSubmit(interaction);
+      await handleAuthModalSubmit(interaction, deps);
     } catch (error) {
       logger.error("Unhandled error in modal submit handler:", error);
       if (!interaction.replied && !interaction.deferred) {
@@ -32,6 +35,7 @@ export function setupModalSubmitHandler(client: CustomClient): void {
 
 async function handleAuthModalSubmit(
   interaction: ModalSubmitInteraction,
+  deps: AppDeps,
 ): Promise<void> {
   const email = interaction.fields
     .getTextInputValue(AUTH_EMAIL_INPUT_ID)
@@ -48,7 +52,7 @@ async function handleAuthModalSubmit(
 
   await interaction.deferReply({ ephemeral: true });
 
-  const existingMember = await itsCoreService.getMemberByDiscordId(
+  const existingMember = await deps.itsCorePort.getMemberByDiscordId(
     interaction.user.id,
   );
 
@@ -63,11 +67,16 @@ async function handleAuthModalSubmit(
     const result = await authenticateUser(
       interaction.user.id,
       interaction.guildId,
+      deps,
     );
     await interaction.editReply(result.message);
     return;
   }
 
-  const result = await linkAndSendVerification(interaction.user.id, email);
+  const result = await linkAndSendVerification(
+    interaction.user.id,
+    email,
+    deps,
+  );
   await interaction.editReply(result.message);
 }
