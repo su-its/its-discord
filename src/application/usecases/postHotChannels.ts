@@ -2,8 +2,7 @@ import { discordServerService } from "../services/discordServerService";
 import { getHotChannels } from "./getHotChannels";
 
 // TODO: Usecaseからdiscord.jsの依存を排除する
-export async function postHotChannels(channelId: string): Promise<void> {
-  const guildId = await discordServerService.getFirstGuild();
+export async function postHotChannels(channelId: string, guildId: string): Promise<void> {
   const channelActivities = await getHotChannels(guildId);
 
   // アクティブなチャンネルのみフィルタリング・ソート

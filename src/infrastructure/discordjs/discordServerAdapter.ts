@@ -170,13 +170,6 @@ export class DiscordServerAdapter
   }
 
   // DiscordGuildPort implementation
-  async getFirstGuild(): Promise<string> {
-    const guild = this.client.guilds.cache.first();
-    if (!guild) throw new Error("No guild found");
-
-    return guild.id;
-  }
-
   async ensureRoleExists(guildId: string, role: Role): Promise<void> {
     const guild = this.client.guilds.cache.get(guildId);
     if (!guild) throw new Error(`Guild not found: ${guildId}`);

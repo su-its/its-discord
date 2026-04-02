@@ -22,7 +22,7 @@ async function hotChannelsHandler(interaction: ChatInputCommandInteraction) {
   // interaction.channelIdを使用して現在のチャンネルに送信
   if (!interaction.channelId) throw new Error("Channel ID not found");
 
-  await postHotChannels(interaction.channelId);
+  await postHotChannels(interaction.channelId, interaction.guild.id);
   await interaction.reply({
     content: "ホットチャンネルランキングを投稿しました！",
     ephemeral: true,

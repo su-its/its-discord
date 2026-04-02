@@ -28,7 +28,6 @@ export async function initializeGuildRoles(guildId: string): Promise<void> {
 
 /**
  * 設定された GUILD_ID に対してロール初期化を実行するUsecase
- * TODO: getFirstGuild() を使用している他の箇所（postHotChannels, scheduledMessages）も GUILD_ID ベースに変更する #160
  */
 export async function initializeAllGuildsRoles(guildId: string): Promise<void> {
   try {
