@@ -34,9 +34,6 @@ async function main() {
       logger.debug(`Loaded command: ${command.data.name}`);
     }
 
-    // クライアントをログイン
-    await client.login(config.discordToken);
-
     // Composition Root: adapter を生成し依存オブジェクトを組み立てる
     const discordServerAdapter = new DiscordServerAdapter(client);
     const deps: AppDeps = {
@@ -52,8 +49,11 @@ async function main() {
     // Cron manager に依存オブジェクトを設定
     scheduledMessageCronManager.setDeps(deps);
 
-    // イベントハンドラを設定
+    // イベントハンドラを設定（ClientReady を捕捉するため login の前に登録する）
     setupEventHandlers(client, config.guildId, deps);
+
+    // クライアントをログイン
+    await client.login(config.discordToken);
 
     // 設定ファイルからスケジュールメッセージを初期化
     await initializeScheduledMessagesFromConfig(deps);
