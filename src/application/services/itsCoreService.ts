@@ -1,4 +1,4 @@
-import type { ITSCorePort } from "../ports/itsCorePort";
+import type { ITSCorePort, MemberRegistrationData } from "../ports/itsCorePort";
 
 /**
  * DIコンテナ - ITSCorePortの実装を注入するためのシングルトン
@@ -38,21 +38,19 @@ export class ITSCoreService {
     return itsCoreServiceContainer.getITSCorePort();
   }
 
-  async registerMember(
-    data: Parameters<ITSCorePort["registerMember"]>[0],
-  ): Promise<void> {
+  async registerMember(data: MemberRegistrationData): Promise<void> {
     return this.port.registerMember(data);
   }
 
   async getMemberByDiscordId(
     discordId: string,
-  ): Promise<ReturnType<ITSCorePort["getMemberByDiscordId"]>> {
+  ): ReturnType<ITSCorePort["getMemberByDiscordId"]> {
     return this.port.getMemberByDiscordId(discordId);
   }
 
   async getMemberByEmail(
     email: string,
-  ): Promise<ReturnType<ITSCorePort["getMemberByEmail"]>> {
+  ): ReturnType<ITSCorePort["getMemberByEmail"]> {
     return this.port.getMemberByEmail(email);
   }
 
@@ -62,7 +60,7 @@ export class ITSCoreService {
     return this.port.connectDiscordAccount(data);
   }
 
-  async getMemberList(): Promise<ReturnType<ITSCorePort["getMemberList"]>> {
+  async getMemberList(): ReturnType<ITSCorePort["getMemberList"]> {
     return this.port.getMemberList();
   }
 
