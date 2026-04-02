@@ -59,6 +59,7 @@ async function handleAuthModalSubmit(
       );
       return;
     }
+    // 認証処理を実行（ロール付与等は冪等なので再実行しても問題ない）
     const result = await authenticateUser(
       interaction.user.id,
       interaction.guildId,

@@ -65,12 +65,14 @@ export async function authenticateUser(
         discordUserId,
         roleRegistry.getRole(roleRegistryKeys.unAuthorizedRoleKey),
       ),
-      // ニックネーム設定
-      discordServerService.setMemberNickname(
-        guildId,
-        discordUserId,
-        member.name,
-      ),
+      // ニックネーム設定（サーバーオーナー等、権限不足で失敗しても認証自体は続行する）
+      discordServerService
+        .setMemberNickname(guildId, discordUserId, member.name)
+        .catch((error) => {
+          logger.warn(
+            `Failed to set nickname for ${discordUserId}: ${error.message}`,
+          );
+        }),
     ]);
 
     logger.info(
@@ -78,7 +80,7 @@ export async function authenticateUser(
     );
     return {
       success: true,
-      message: "認証が完了しました！ロールが付与されました。",
+      message: `認証が完了しました！ようこそ、<@${discordUserId}>さん。`,
     };
   } catch (error) {
     logger.error(
