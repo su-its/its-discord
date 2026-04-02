@@ -184,7 +184,7 @@ async function registerCommandHandler(
     return;
   }
 
-  await interaction.deferReply();
+  await interaction.deferReply({ ephemeral: true });
 
   try {
     const affiliation: CompleteAffiliation = {

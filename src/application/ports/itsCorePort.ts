@@ -1,3 +1,4 @@
+import type { CompleteAffiliation } from "@shizuoka-its/core";
 import type InternalMember from "../../domain/entities/member";
 
 /**
@@ -7,7 +8,7 @@ export interface MemberRegistrationData {
   email: string;
   name: string;
   studentId: string;
-  affiliation: import("@shizuoka-its/core").CompleteAffiliation;
+  affiliation: CompleteAffiliation;
 }
 
 export interface MemberConnectionData {

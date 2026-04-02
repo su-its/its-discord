@@ -12,7 +12,8 @@ export function setupInteractionCreateHandler(client: CustomClient): void {
           await command.autocomplete(interaction);
         } catch (error) {
           logger.error(
-            `Autocomplete failed: ${interaction.commandName} | Error: ${error}`,
+            `Autocomplete failed: ${interaction.commandName}`,
+            error,
           );
         }
       }
