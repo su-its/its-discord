@@ -16,6 +16,7 @@ export interface AdapterConfig {
 export interface AppConfig {
   environment: Environment;
   discordToken: string;
+  guildId: string;
   hotChannelId: string;
   generalChannelId: string;
   authRedirectUrl: string;
@@ -71,12 +72,17 @@ function parseAdapterType(
 export function loadConfig(): AppConfig {
   const environment = (process.env.ENVIRONMENT ?? "production") as Environment;
   const discordToken = process.env.TOKEN;
+  const guildId = process.env.GUILD_ID;
   const hotChannelId = process.env.HOT_CHANNEL_ID;
   const generalChannelId = process.env.GENERAL_CHANNEL_ID;
   const authRedirectUrl = process.env.AUTH_REDIRECT_URL;
 
   if (!discordToken) {
     throw new Error("Missing required environment variable: TOKEN");
+  }
+
+  if (!guildId) {
+    throw new Error("Missing required environment variable: GUILD_ID");
   }
 
   if (!hotChannelId) {
@@ -96,6 +102,7 @@ export function loadConfig(): AppConfig {
   return {
     environment,
     discordToken,
+    guildId,
     hotChannelId,
     generalChannelId,
     authRedirectUrl,

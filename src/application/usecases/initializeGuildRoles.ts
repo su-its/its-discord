@@ -29,9 +29,9 @@ export async function initializeGuildRoles(guildId: string): Promise<void> {
 /**
  * すべてのギルドでロール初期化を実行するUsecase
  */
-export async function initializeAllGuildsRoles(): Promise<void> {
+export async function initializeAllGuildsRoles(guildId: string): Promise<void> {
   try {
-    const guildId = await discordServerService.getFirstGuild();
+    // TODO: #160 - Check other callers of getFirstGuild() and ensure they use GUILD_ID env var as well
     await initializeGuildRoles(guildId);
   } catch (error) {
     logger.error("Failed to initialize guild roles:", error);
