@@ -28,26 +28,30 @@ process.on("unhandledRejection", (reason, promise) => {
 
 const client = new CustomClient();
 
-function createITSCorePort(adapterType: AdapterConfig["itsCore"]): ITSCorePort {
+async function createITSCorePort(
+  adapterType: AdapterConfig["itsCore"],
+): Promise<ITSCorePort> {
   if (adapterType === "in-memory") {
     logger.info("ITSCore: in-memory adapter");
     return new InMemoryITSCoreAdapter();
   }
-  const { ITSCoreAdaptor } = require("./infrastructure/itscore/itsCoreAdaptor");
+  const { ITSCoreAdaptor } = await import(
+    "./infrastructure/itscore/itsCoreAdaptor"
+  );
   logger.info("ITSCore: production adapter");
   return new ITSCoreAdaptor();
 }
 
-function createEmailAuthPort(
+async function createEmailAuthPort(
   adapterType: AdapterConfig["emailAuth"],
-): EmailAuthPort {
+): Promise<EmailAuthPort> {
   if (adapterType === "in-memory") {
     logger.info("EmailAuth: in-memory adapter");
     return new InMemoryEmailAuthAdapter();
   }
-  const {
-    FirebaseEmailAuthAdapter,
-  } = require("./infrastructure/firebase/firebaseEmailAuthAdapter");
+  const { FirebaseEmailAuthAdapter } = await import(
+    "./infrastructure/firebase/firebaseEmailAuthAdapter"
+  );
   logger.info("EmailAuth: firebase adapter");
   return new FirebaseEmailAuthAdapter();
 }
@@ -70,8 +74,8 @@ async function main() {
     // Composition Root: adapter を生成し依存オブジェクトを組み立てる
     const discordServerAdapter = new DiscordServerAdapter(client);
     const deps: AppDeps = {
-      itsCorePort: createITSCorePort(config.adapters.itsCore),
-      emailAuthPort: createEmailAuthPort(config.adapters.emailAuth),
+      itsCorePort: await createITSCorePort(config.adapters.itsCore),
+      emailAuthPort: await createEmailAuthPort(config.adapters.emailAuth),
       discordMemberPort: discordServerAdapter,
       discordChannelPort: discordServerAdapter,
       discordGuildPort: discordServerAdapter,
