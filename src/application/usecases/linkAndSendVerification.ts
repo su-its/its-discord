@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { loadConfig } from "../../config/environment";
 import logger from "../../infrastructure/logger";
 import { emailAuthService } from "../services/emailAuthService";
 import { itsCoreService } from "../services/itsCoreService";
@@ -13,9 +14,6 @@ export interface LinkAndVerifyResult {
     | "ALREADY_VERIFIED"
     | "TECHNICAL_ERROR";
 }
-
-const VERIFICATION_REDIRECT_URL =
-  "https://discord.com/channels/1224047445714010143/1224047445714010146";
 
 /**
  * メールアドレスで core の会員を検索し、認証メールを送信してから
@@ -106,8 +104,9 @@ async function sendVerificationEmail(
     emailVerified: boolean;
   } | null,
 ): Promise<void> {
+  const config = loadConfig();
   const verificationOptions = {
-    url: VERIFICATION_REDIRECT_URL,
+    url: config.authRedirectUrl,
     handleCodeInApp: true,
   };
 
