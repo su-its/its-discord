@@ -2,13 +2,13 @@ import type Role from "../../../../../role";
 import { DepartmentRoleCategory } from "../departmentRoleCategory";
 import buildRoleByCategory from "../utils/buildRoleByCategory";
 
-const obOgRole: Role = buildRoleByCategory({
+const engineeringRole: Role = buildRoleByCategory({
   roleCategory: DepartmentRoleCategory,
   role: {
-    name: "OB/OG",
-    color: [0, 128, 128],
-    reason: "Role for OB/OG",
+    name: "工学部",
+    color: [100, 100, 255],
+    reason: "工学部ロール",
   },
 });
-export default obOgRole;
-export const obOgRoleKey = obOgRole.name;
+export default engineeringRole;
+export const engineeringRoleKey = engineeringRole.name;

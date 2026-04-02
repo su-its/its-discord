@@ -5,9 +5,9 @@ import buildRoleByCategory from "../utils/buildRoleByCategory";
 const othersRole: Role = buildRoleByCategory({
   roleCategory: DepartmentRoleCategory,
   role: {
-    name: "OTHERS",
+    name: "その他",
     color: [128, 0, 128],
-    reason: "Role for non informatics major students",
+    reason: "その他の所属ロール",
   },
 });
 export default othersRole;

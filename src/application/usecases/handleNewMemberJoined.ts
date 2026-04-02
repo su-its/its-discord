@@ -1,5 +1,4 @@
-import roleRegistry from "../../domain/types/roles";
-import { unAuthorizedRoleKey } from "../../domain/types/roles/implementations/unAuthorized";
+import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
 import logger from "../../infrastructure/logger";
 import { discordServerService } from "../services/discordServerService";
 
@@ -21,7 +20,7 @@ export async function handleNewMemberJoined(
     logger.info(`Sent welcome DM to ${memberDisplayName} (${memberId})`);
 
     // 未承認ロールを付与
-    const role = roleRegistry.getRole(unAuthorizedRoleKey);
+    const role = roleRegistry.getRole(roleRegistryKeys.unauthorizedRoleKey);
     await discordServerService.addRoleToMember(guildId, memberId, role);
     logger.info(
       `Assigned Unauthorized role (${role.name}) to ${memberDisplayName} (${memberId})`,

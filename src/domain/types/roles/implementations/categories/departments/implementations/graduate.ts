@@ -5,9 +5,9 @@ import buildRoleByCategory from "../utils/buildRoleByCategory";
 const graduateRole: Role = buildRoleByCategory({
   roleCategory: DepartmentRoleCategory,
   role: {
-    name: "GRADUATE",
+    name: "大学院",
     color: [255, 215, 0],
-    reason: "Graduate student Role",
+    reason: "大学院ロール",
   },
 });
 export default graduateRole;

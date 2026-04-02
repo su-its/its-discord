@@ -22,8 +22,13 @@ export async function assignDepartmentRole(
     [Department.GRADUATE]: roleRegistry.getRole(
       roleRegistryKeys.graduateRoleKey,
     ),
+    [Department.ENGINEERING]: roleRegistry.getRole(
+      roleRegistryKeys.engineeringRoleKey,
+    ),
     [Department.OTHERS]: roleRegistry.getRole(roleRegistryKeys.othersRoleKey),
-    [Department.OBOG]: roleRegistry.getRole(roleRegistryKeys.obOgRoleKey),
+    [Department.OBOG]: roleRegistry.getRole(
+      roleRegistryKeys.formerMemberRoleKey,
+    ),
   };
 
   const role = departmentRoleMap[member.department];

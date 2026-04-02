@@ -1,27 +1,32 @@
 import RoleRegistry from "./core/roleRegistry";
 import administratorRole from "./implementations/administrator";
-import authorizedRole from "./implementations/authorized";
+import {
+  authenticationRoleKeys,
+  authenticationRoles,
+} from "./implementations/categories/authentication";
 import {
   departmentRoleKeys,
   departmentRoles,
 } from "./implementations/categories/departments";
-import unAuthorizedRole from "./implementations/unAuthorized";
+import formerMemberRole, {
+  formerMemberRoleKey,
+} from "./implementations/formerMember";
 
 const roleRegistry = new RoleRegistry();
 
 // 管理者ロール
 roleRegistry.register(administratorRole);
-// 認証済みルール
-roleRegistry.register(authorizedRole);
-// 未認証ロール
-roleRegistry.register(unAuthorizedRole);
-// 学部カテゴリのロール
+// 旧室員ロール
+roleRegistry.register(formerMemberRole);
+// 認証カテゴリのロール
+roleRegistry.registerRoles(authenticationRoles);
+// 所属カテゴリのロール
 roleRegistry.registerRoles(departmentRoles);
 
 export const roleRegistryKeys = {
   administratorRoleKey: administratorRole.name,
-  authorizedRoleKey: authorizedRole.name,
-  unAuthorizedRoleKey: unAuthorizedRole.name,
+  formerMemberRoleKey,
+  ...authenticationRoleKeys,
   ...departmentRoleKeys,
 };
 
