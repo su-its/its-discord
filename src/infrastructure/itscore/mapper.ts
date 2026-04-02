@@ -54,11 +54,6 @@ export function toMember(
   };
 }
 
-type HasStatusAndAffiliation =
-  | { status: "former" }
-  | { status: "unconfirmed" }
-  | { status: "active"; affiliation: CompleteAffiliation };
-
 function completeAffiliationToAffiliation(
   affiliation: CompleteAffiliation,
 ): Affiliation {
@@ -77,11 +72,6 @@ function completeAffiliationToAffiliation(
   }
 
   return "その他";
-}
-
-function statusToAffiliation(member: HasStatusAndAffiliation): Affiliation {
-  if (member.status !== "active") return "その他";
-  return completeAffiliationToAffiliation(member.affiliation);
 }
 
 export function memberWithDiscordToInternal(
@@ -118,7 +108,7 @@ export function memberWithDiscordToInternal(
     name: entry.name,
     universityEmail: entry.email,
     studentId: entry.studentId ?? "",
-    affiliation: statusToAffiliation(entry),
+    affiliation: completeAffiliationToAffiliation(entry.affiliation),
     discord,
   };
 }
