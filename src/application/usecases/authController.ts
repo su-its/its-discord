@@ -1,3 +1,4 @@
+import { loadConfig } from "../../config/environment";
 import type AuthData from "../../domain/types/authData";
 import { itsCoreService } from "../services/itsCoreService";
 import sendAuthMail from "./sendAuthMail";
@@ -19,10 +20,12 @@ interface MemberRegistrationInfo {
 async function handleMemberRegistration(userInfo: AuthData) {
   const memberRegistrationInfo =
     convertAuthDataToMemberRegistrationInfo(userInfo);
+  const config = loadConfig();
   await sendAuthMail(
     memberRegistrationInfo.mail,
     memberRegistrationInfo.student_number,
     memberRegistrationInfo.department,
+    config.authRedirectUrl,
   );
 
   const member = await itsCoreService.getMemberByEmail(

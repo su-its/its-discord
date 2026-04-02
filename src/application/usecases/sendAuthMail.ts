@@ -6,10 +6,11 @@ async function sendAuthMail(
   mail: string,
   student_number: string,
   department: string,
+  redirectUrl: string,
 ) {
   try {
     const actionCodeSettings: EmailVerificationOptions = {
-      url: "https://discord.com/channels/1224047445714010143/1224047445714010146",
+      url: redirectUrl,
       handleCodeInApp: true,
     };
 

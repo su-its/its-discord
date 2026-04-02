@@ -4,9 +4,10 @@
   "description": "A Discord authentication service built with TypeScript.",
   "scripts": {
     "start": "nodemon --exec ts-node src/main.ts",
-    "dev": "nodemon --exec ts-node src/main.ts",
+    "start:local": "nodemon --exec ts-node src/main.local.ts",
     "test": "vitest run --coverage",
-    "deploy-commands": "ts-node src/scripts/deployCommands.ts",
+    "deploy-commands": "ts-node src/scripts/deployCommands.production.ts",
+    "deploy-commands:local": "ts-node src/scripts/deployCommands.local.ts",
     "format": "biome format src/**/*.ts",
     "lint": "biome lint src/**/*.ts",
     "check": "biome check src/**/*.ts",
