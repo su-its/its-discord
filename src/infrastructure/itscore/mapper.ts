@@ -11,6 +11,12 @@ interface DiscordInfo {
   discordNickname?: string;
 }
 
+/**
+ * core v3 の Member から InternalMember に変換する。
+ * v3 では DiscordAccount が別集約のため、discordInfo は呼び出し元が別途取得して渡す必要がある。
+ * discordInfo を省略した場合、discordId / discordNickname は undefined になる。
+ * TODO: InternalMember リモデリング（Epic C）で discordAccounts を配列に変更し、この暫定構造を解消する。
+ */
 export function toInternalMember(
   member: ItsCoreMember,
   discordInfo?: DiscordInfo,
