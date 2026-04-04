@@ -1,7 +1,9 @@
 import type {
+  AutocompleteInteraction,
   ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import type { AppDeps } from "../../application/ports/deps";
 
 /**
  * Discord Slash Command の実装に必要な基本インターフェース
@@ -21,6 +23,13 @@ import type {
  */
 export default interface Command {
   data: SlashCommandBuilder;
-  execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
+  execute: (
+    interaction: ChatInputCommandInteraction,
+    deps: AppDeps,
+  ) => Promise<void>;
+  autocomplete?: (
+    interaction: AutocompleteInteraction,
+    deps: AppDeps,
+  ) => Promise<void>;
   isDMAllowed: boolean;
 }

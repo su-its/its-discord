@@ -2,6 +2,7 @@ import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import type { AppDeps } from "../../../../application/ports/deps";
 import { postHotChannels } from "../../../../application/usecases/postHotChannels";
 import type AdminCommand from "../../../../domain/types/adminCommand";
 import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
@@ -15,14 +16,14 @@ const hotChannelsCommand: AdminCommand = {
   isDMAllowed: false,
 };
 
-async function hotChannelsHandler(interaction: ChatInputCommandInteraction) {
+async function hotChannelsHandler(
+  interaction: ChatInputCommandInteraction,
+  deps: AppDeps,
+) {
   if (!interaction.guild) throw new Error("Guild not found");
-
-  // postHotChannels Usecaseを使用してチャンネルにランキングを投稿
-  // interaction.channelIdを使用して現在のチャンネルに送信
   if (!interaction.channelId) throw new Error("Channel ID not found");
 
-  await postHotChannels(interaction.channelId);
+  await postHotChannels(interaction.channelId, interaction.guild.id, deps);
   await interaction.reply({
     content: "ホットチャンネルランキングを投稿しました！",
     ephemeral: true,

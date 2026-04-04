@@ -1,7 +1,6 @@
-import roleRegistry from "../../domain/types/roles";
-import { unAuthorizedRoleKey } from "../../domain/types/roles/implementations/unAuthorized";
+import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
 import logger from "../../infrastructure/logger";
-import { discordServerService } from "../services/discordServerService";
+import type { AppDeps } from "../ports/deps";
 
 /**
  * 新規メンバーが参加した際の初期化処理を行うUsecase
@@ -11,22 +10,19 @@ export async function handleNewMemberJoined(
   guildId: string,
   memberId: string,
   memberDisplayName: string,
+  deps: Pick<AppDeps, "discordMemberPort" | "discordMessagePort">,
 ): Promise<void> {
   try {
     // ウェルカムDMを送信
-    await discordServerService.sendDirectMessage(
+    await deps.discordMessagePort.sendDirectMessage(
       memberId,
-      `ようこそ ${memberDisplayName} さん！ ITS discord 認証botです!`,
-    );
-    await discordServerService.sendDirectMessage(
-      memberId,
-      "名前(フルネーム)を教えてください",
+      `ようこそ ${memberDisplayName} さん！\nサーバーで \`/auth\` コマンドを実行して認証を行ってください。`,
     );
     logger.info(`Sent welcome DM to ${memberDisplayName} (${memberId})`);
 
     // 未承認ロールを付与
-    const role = roleRegistry.getRole(unAuthorizedRoleKey);
-    await discordServerService.addRoleToMember(guildId, memberId, role);
+    const role = roleRegistry.getRole(roleRegistryKeys.unauthorizedRoleKey);
+    await deps.discordMemberPort.addRoleToMember(guildId, memberId, role);
     logger.info(
       `Assigned Unauthorized role (${role.name}) to ${memberDisplayName} (${memberId})`,
     );

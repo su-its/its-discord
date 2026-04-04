@@ -1,14 +1,31 @@
-import type department from "./department";
+import type Affiliation from "./affiliation";
 
-// TODO: インラインドキュメント https://github.com/su-its/its-discord/issues/25
-interface Member {
+export interface DiscordAccount {
+  id: string;
+  nickname?: string;
+}
+
+interface MemberBase {
   id: string;
   name: string;
-  student_number: string;
-  department: department;
-  mail: string;
-  discordId?: string;
-  discordNickname?: string;
+  universityEmail: string;
+  discord: DiscordAccount | null;
 }
+
+export interface ActiveMember extends MemberBase {
+  status: "active";
+  studentId: string;
+  affiliation: Affiliation;
+}
+
+export interface UnconfirmedMember extends MemberBase {
+  status: "unconfirmed";
+}
+
+export interface FormerMember extends MemberBase {
+  status: "former";
+}
+
+type Member = ActiveMember | UnconfirmedMember | FormerMember;
 
 export default Member;

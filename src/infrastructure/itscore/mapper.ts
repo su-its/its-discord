@@ -1,40 +1,114 @@
 import type {
-  Department as ItsCoreDepartment,
+  CompleteAffiliation,
   Member as ItsCoreMember,
+  MemberWithDiscordAccounts,
 } from "@shizuoka-its/core";
-import InternalDepartment from "../../domain/entities/department";
-import type InternalMember from "../../domain/entities/member";
+import type Affiliation from "../../domain/entities/affiliation";
+import type Member from "../../domain/entities/member";
+import type { DiscordAccount } from "../../domain/entities/member";
 
-export function toInternalMember(member: ItsCoreMember): InternalMember {
-  const discordAccounts = member.getDiscordAccounts();
-  const firstDiscordAccount = discordAccounts[0];
+interface DiscordInfo {
+  discordId?: string;
+  discordNickname?: string;
+}
+
+function toDiscordAccount(info?: DiscordInfo): DiscordAccount | null {
+  if (!info?.discordId) return null;
+  return { id: info.discordId, nickname: info.discordNickname };
+}
+
+export function toMember(
+  member: ItsCoreMember,
+  discordInfo?: DiscordInfo,
+): Member {
+  const discord = toDiscordAccount(discordInfo);
+
+  if (member.status === "former") {
+    return {
+      status: "former",
+      id: member.id,
+      name: member.name,
+      universityEmail: member.email.getValue(),
+      discord,
+    };
+  }
+
+  if (member.status === "unconfirmed") {
+    return {
+      status: "unconfirmed",
+      id: member.id,
+      name: member.name,
+      universityEmail: member.email.getValue(),
+      discord,
+    };
+  }
 
   return {
+    status: "active",
     id: member.id,
-    name: member.getName(),
-    student_number: member.getStudentId(),
-    department: mapDepartment(member.getDepartment()),
-    mail: member.getEmail().getValue(),
-    discordId: firstDiscordAccount?.id,
-    discordNickname: firstDiscordAccount?.getNickName(),
+    name: member.name,
+    universityEmail: member.email.getValue(),
+    studentId: String(member.studentId),
+    affiliation: completeAffiliationToAffiliation(member.affiliation),
+    discord,
   };
 }
 
-function mapDepartment(department: ItsCoreDepartment): InternalDepartment {
-  // 部署の値に基づいて適切な内部部署列挙型にマッピング
-  const deptString = String(department.getValue()).toUpperCase();
+function completeAffiliationToAffiliation(
+  affiliation: CompleteAffiliation,
+): Affiliation {
+  if (affiliation.type !== "undergraduate") return "大学院";
 
-  if (deptString.includes("CS")) return InternalDepartment.CS;
-  if (deptString.includes("BI")) return InternalDepartment.BI;
-  if (deptString.includes("IA")) return InternalDepartment.IA;
-  if (deptString.includes("GRADUATE")) return InternalDepartment.GRADUATE;
-  if (deptString.includes("ALUMNI")) return InternalDepartment.OBOG;
-  if (deptString.includes("OTHERS")) return InternalDepartment.OTHERS;
-  throw new Error(`Invalid department: ${department}`);
+  const value = affiliation.value;
+  if ("faculty" in value) {
+    const faculty = value.faculty as string;
+    if (faculty === "情報学部" && "department" in value) {
+      const dept = value.department as string;
+      if (dept === "情報科学科") return "情報科学科";
+      if (dept === "行動情報学科") return "行動情報学科";
+      if (dept === "情報社会学科") return "情報社会学科";
+    }
+    if (faculty === "工学部") return "工学部";
+  }
+
+  return "その他";
 }
 
-export function toInternalDepartment(
-  department: ItsCoreDepartment,
-): InternalDepartment {
-  return mapDepartment(department);
+export function memberWithDiscordToInternal(
+  entry: MemberWithDiscordAccounts,
+): Member {
+  const firstAccount = entry.discordAccounts[0];
+  const discord: DiscordAccount | null = firstAccount
+    ? { id: firstAccount.discordId, nickname: firstAccount.nickName }
+    : null;
+
+  if (entry.status === "former") {
+    return {
+      status: "former",
+      id: entry.id,
+      name: entry.name,
+      universityEmail: entry.email,
+      discord,
+    };
+  }
+
+  if (entry.status === "unconfirmed") {
+    return {
+      status: "unconfirmed",
+      id: entry.id,
+      name: entry.name,
+      universityEmail: entry.email,
+      discord,
+    };
+  }
+
+  return {
+    status: "active",
+    id: entry.id,
+    name: entry.name,
+    universityEmail: entry.email,
+    studentId: entry.studentId ?? "",
+    affiliation: completeAffiliationToAffiliation(entry.affiliation),
+    discord,
+  };
 }

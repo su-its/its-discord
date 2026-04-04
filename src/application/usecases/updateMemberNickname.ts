@@ -1,6 +1,5 @@
 import logger from "../../infrastructure/logger";
-import { discordServerService } from "../services/discordServerService";
-import { itsCoreService } from "../services/itsCoreService";
+import type { AppDeps } from "../ports/deps";
 import { getDiscordDisplayName } from "../utils/memberDisplayName";
 
 /**
@@ -20,10 +19,11 @@ export async function updateMemberNickname(
   discordUserId: string,
   guildId: string,
   newNickname: string,
+  deps: Pick<AppDeps, "itsCorePort" | "discordMemberPort">,
 ): Promise<NicknameUpdateResult> {
   try {
     // 1. ITSCoreでメンバー情報を確認
-    const member = await itsCoreService.getMemberByDiscordId(discordUserId);
+    const member = await deps.itsCorePort.getMemberByDiscordId(discordUserId);
     if (!member) {
       logger.warn(
         `Member not found in ITSCore for Discord ID: ${discordUserId}`,
@@ -38,7 +38,7 @@ export async function updateMemberNickname(
 
     // 2. ITSCoreでニックネームを更新
     try {
-      await itsCoreService.updateMemberNickname({
+      await deps.itsCorePort.updateMemberNickname({
         discordAccountId: discordUserId,
         discordNickName: newNickname,
       });
@@ -46,7 +46,7 @@ export async function updateMemberNickname(
         `ITSCore nickname updated for ${member.name} (${discordUserId}): ${newNickname}`,
       );
     } catch (error) {
-      logger.error(`Failed to update nickname in ITSCore: ${error}`);
+      logger.error("Failed to update nickname in ITSCore:", error);
       return {
         success: false,
         message: "ITSCoreでニックネームの更新に失敗しました。",
@@ -60,7 +60,7 @@ export async function updateMemberNickname(
         member.name,
         newNickname,
       );
-      await discordServerService.setMemberNickname(
+      await deps.discordMemberPort.setMemberNickname(
         guildId,
         discordUserId,
         discordDisplayName,
@@ -69,7 +69,7 @@ export async function updateMemberNickname(
         `Discord nickname updated for ${member.name} (${discordUserId}): ${discordDisplayName}`,
       );
     } catch (error) {
-      logger.error(`Failed to update nickname in Discord: ${error}`);
+      logger.error("Failed to update nickname in Discord:", error);
       return {
         success: false,
         message: "Discordでニックネームの更新に失敗しました。",

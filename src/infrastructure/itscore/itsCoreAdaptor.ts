@@ -1,73 +1,127 @@
-import { createMemberUseCases } from "@shizuoka-its/core";
+import {
+  type CompleteAffiliation,
+  createMemberService,
+  getAffiliationSteps,
+  getMaxYear,
+  UNIVERSITY_STRUCTURE,
+} from "@shizuoka-its/core";
 import type {
+  AffiliationOption,
   ITSCorePort,
   MemberConnectionData,
   MemberNicknameUpdateData,
   MemberRegistrationData,
 } from "../../application/ports/itsCorePort";
-import type InternalMember from "../../domain/entities/member";
-import { toInternalMember } from "./mapper";
+import type Member from "../../domain/entities/member";
+import { memberWithDiscordToInternal, toMember } from "./mapper";
 
-/**
- * ITSCoreのメンバー機能へのアクセスを提供するAdapter（ヘキサゴナルアーキテクチャ）
- * YAGNIの原則に従い、実際に使用される機能のみを公開
- * ITSCoreのモデルを内部モデルに変換して返す責務も持つ
- */
-export class ITSCoreAdaptor implements ITSCorePort {
-  private useCases = createMemberUseCases();
+type CourseType = keyof typeof UNIVERSITY_STRUCTURE;
+const SEPARATOR = " / ";
 
-  /**
-   * 新しいメンバーを登録する
-   */
-  async registerMember(data: MemberRegistrationData): Promise<void> {
-    await this.useCases.registerMember.execute(data);
+function enumerateAffiliations(): AffiliationOption[] {
+  const entries: AffiliationOption[] = [];
+  const courseTypes = Object.keys(UNIVERSITY_STRUCTURE) as CourseType[];
+
+  for (const courseType of courseTypes) {
+    const courseLabel = UNIVERSITY_STRUCTURE[courseType].label;
+    recurse(courseType, courseLabel, {}, 0, entries);
   }
 
-  /**
-   * DiscordIDでメンバーを取得する
-   */
-  async getMemberByDiscordId(
-    discordId: string,
-  ): Promise<InternalMember | undefined> {
-    const result = await this.useCases.getMemberByDiscordId.execute({
-      discordId,
+  return entries;
+}
+
+function recurse(
+  courseType: CourseType,
+  prefix: string,
+  selections: Record<string, string>,
+  depth: number,
+  entries: AffiliationOption[],
+): void {
+  const steps = getAffiliationSteps(courseType, selections);
+  const currentStep = steps[depth];
+
+  if (!currentStep) {
+    entries.push({
+      label: prefix,
+      courseType,
+      selections,
+      maxYear: getMaxYear(courseType),
     });
-    return result.member ? toInternalMember(result.member) : undefined;
+    return;
   }
 
-  /**
-   * メールアドレスでメンバーを取得する
-   */
-  async getMemberByEmail(email: string): Promise<InternalMember | undefined> {
-    const result = await this.useCases.getMemberByEmail.execute({ email });
-    return result.member ? toInternalMember(result.member) : undefined;
-  }
-
-  /**
-   * DiscordアカウントとITSCoreアカウントを紐づける
-   */
-  async connectDiscordAccount(data: MemberConnectionData): Promise<void> {
-    await this.useCases.connectDiscordAccount.execute(data);
-  }
-
-  /**
-   * 全メンバーのリストを取得する
-   */
-  async getMemberList(): Promise<InternalMember[]> {
-    const result = await this.useCases.getMemberList.execute({});
-    return result.members.map((member) => toInternalMember(member));
-  }
-
-  /**
-   * メンバーのDiscordニックネームを変更する
-   */
-  async updateMemberNickname(
-    data: MemberNicknameUpdateData,
-  ): Promise<InternalMember> {
-    const result = await this.useCases.changeDiscordNickName.execute(data);
-    return toInternalMember(result.member);
+  for (const option of currentStep.options) {
+    const newSelections = { ...selections, [currentStep.field]: option };
+    recurse(
+      courseType,
+      `${prefix}${SEPARATOR}${option}`,
+      newSelections,
+      depth + 1,
+      entries,
+    );
   }
 }
 
-// シングルトンとしてエクスポート
-export const itsCoreMemberRepository = new ITSCoreAdaptor();
+/**
+ * ITSCoreのメンバー機能へのアクセスを提供するAdapter（ヘキサゴナルアーキテクチャ）
+ * v3のMemberService facadeを使用
+ */
+export class ITSCoreAdaptor implements ITSCorePort {
+  private service = createMemberService();
+  private affiliationOptions = enumerateAffiliations();
+
+  getAllAffiliationOptions(): AffiliationOption[] {
+    return this.affiliationOptions;
+  }
+
+  async registerMember(data: MemberRegistrationData): Promise<void> {
+    const affiliation: CompleteAffiliation = {
+      type: data.courseType,
+      value: { ...data.affiliationSelections, year: data.year },
+    } as CompleteAffiliation;
+
+    await this.service.register({
+      name: data.name,
+      studentId: data.studentId,
+      email: data.email,
+      affiliation,
+    });
+  }
+
+  async getMemberByDiscordId(discordId: string): Promise<Member | undefined> {
+    const result = await this.service.getByDiscordId(discordId);
+    return result.member ? toMember(result.member, { discordId }) : undefined;
+  }
+
+  async getMemberByEmail(email: string): Promise<Member | undefined> {
+    const result = await this.service.getByEmail(email);
+    if (!result.member) return undefined;
+
+    // discord 紐付け情報を含めて返す
+    const withDiscord = await this.service.getMemberWithDiscordAccounts(
+      result.member.id,
+    );
+    return withDiscord.member
+      ? memberWithDiscordToInternal(withDiscord.member)
+      : toMember(result.member);
+  }
+
+  async connectDiscordAccount(data: MemberConnectionData): Promise<void> {
+    await this.service.connectDiscordAccount({
+      memberId: data.memberId,
+      discordAccountId: data.discordAccountId,
+    });
+  }
+
+  async getMemberList(): Promise<Member[]> {
+    const result = await this.service.listMembersWithDiscordAccounts();
+    return result.entries.map(memberWithDiscordToInternal);
+  }
+
+  async updateMemberNickname(data: MemberNicknameUpdateData): Promise<void> {
+    await this.service.changeDiscordNickName({
+      discordAccountId: data.discordAccountId,
+      discordNickName: data.discordNickName,
+    });
+  }
+}

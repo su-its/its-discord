@@ -1,11 +1,13 @@
-import type AuthData from "./domain/types/authData";
-import { CustomClient } from "./domain/types/customClient";
-import logger from "./infrastructure/logger";
-// DIコンテナの初期化（アプリケーション起動時に実行される）
-import "./infrastructure/di/container";
+import type { AppDeps } from "./application/ports/deps";
 import { initializeScheduledMessagesFromConfig } from "./application/usecases/initializeScheduledMessagesFromConfig";
 import { loadConfig } from "./config/environment";
-import { setupDependencyInjection } from "./infrastructure/di/container";
+import { CustomClient } from "./domain/types/customClient";
+import { DiscordServerAdapter } from "./infrastructure/discordjs/discordServerAdapter";
+import { FirebaseEmailAuthAdapter } from "./infrastructure/firebase/firebaseEmailAuthAdapter";
+import { ITSCoreAdaptor } from "./infrastructure/itscore/itsCoreAdaptor";
+import logger from "./infrastructure/logger";
+import { memoryScheduledMessageRepository } from "./infrastructure/memory/scheduledMessageRepository";
+import { scheduledMessageCronManager } from "./interfaces/cron/scheduledMessageCron";
 import registry from "./interfaces/discordjs/commands";
 import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
 
@@ -18,7 +20,6 @@ process.on("unhandledRejection", (reason, promise) => {
 });
 
 const client = new CustomClient();
-const userStates = new Map<string, AuthData>();
 
 async function main() {
   try {
@@ -33,17 +34,29 @@ async function main() {
       logger.debug(`Loaded command: ${command.data.name}`);
     }
 
-    // イベントハンドラを設定
-    setupEventHandlers(client, userStates);
+    // Composition Root: adapter を生成し依存オブジェクトを組み立てる
+    const discordServerAdapter = new DiscordServerAdapter(client);
+    const deps: AppDeps = {
+      itsCorePort: new ITSCoreAdaptor(),
+      emailAuthPort: new FirebaseEmailAuthAdapter(),
+      discordMemberPort: discordServerAdapter,
+      discordChannelPort: discordServerAdapter,
+      discordGuildPort: discordServerAdapter,
+      discordMessagePort: discordServerAdapter,
+      scheduledMessagePort: memoryScheduledMessageRepository,
+    };
+
+    // Cron manager に依存オブジェクトを設定
+    scheduledMessageCronManager.setDeps(deps);
+
+    // イベントハンドラを設定（ClientReady を捕捉するため login の前に登録する）
+    setupEventHandlers(client, config.guildId, deps);
 
     // クライアントをログイン
     await client.login(config.discordToken);
 
-    // クライアント初期化後にDiscordServerAdapterを設定
-    setupDependencyInjection(client);
-
     // 設定ファイルからスケジュールメッセージを初期化
-    await initializeScheduledMessagesFromConfig();
+    await initializeScheduledMessagesFromConfig(deps);
 
     logger.info("Bot is running...");
   } catch (error) {

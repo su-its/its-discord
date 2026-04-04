@@ -7,6 +7,7 @@ export interface DiscordMember {
   id: string;
   displayName: string;
   nickname?: string;
+  isBot: boolean;
 }
 
 /**

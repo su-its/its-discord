@@ -2,6 +2,7 @@ import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import type { AppDeps } from "../../../../application/ports/deps";
 import { updateMemberNickname } from "../../../../application/usecases/updateMemberNickname";
 import type Command from "../../../../domain/types/command";
 
@@ -19,7 +20,10 @@ const nickCommand: Command = {
   isDMAllowed: false,
 };
 
-async function nickCommandHandler(interaction: ChatInputCommandInteraction) {
+async function nickCommandHandler(
+  interaction: ChatInputCommandInteraction,
+  deps: AppDeps,
+) {
   if (!interaction.guild) {
     await interaction.reply("このコマンドはサーバー内でのみ使用できます。");
     return;
@@ -45,10 +49,11 @@ async function nickCommandHandler(interaction: ChatInputCommandInteraction) {
       interaction.user.id,
       interaction.guild.id,
       nickname.trim(),
+      deps,
     );
 
     await interaction.followUp(result.message);
-  } catch (error) {
+  } catch (_error) {
     await interaction.followUp(
       "ニックネームの変更中にエラーが発生しました。後でもう一度お試しください。",
     );

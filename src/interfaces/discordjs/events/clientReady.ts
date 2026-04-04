@@ -1,4 +1,5 @@
 import { Events } from "discord.js";
+import type { AppDeps } from "../../../application/ports/deps";
 import { initializeAllGuildsRoles } from "../../../application/usecases/initializeGuildRoles";
 import type { CustomClient } from "../../../domain/types/customClient";
 import logger from "../../../infrastructure/logger";
@@ -7,7 +8,11 @@ import logger from "../../../infrastructure/logger";
  * ClientReady イベント発生時のハンドラを設定する。
  * クライアントのログイン状態を確認し、各ギルドに対してロール初期化処理を実施する。
  */
-export function setupClientReadyHandler(client: CustomClient): void {
+export function setupClientReadyHandler(
+  client: CustomClient,
+  guildId: string,
+  deps: AppDeps,
+): void {
   client.once(Events.ClientReady, async () => {
     logger.info("Client ready");
 
@@ -25,7 +30,7 @@ export function setupClientReadyHandler(client: CustomClient): void {
 
     // ロール初期化を実施
     try {
-      await initializeAllGuildsRoles();
+      await initializeAllGuildsRoles(guildId, deps);
       logger.info("Guild roles initialization completed");
     } catch (error) {
       logger.error("Failed to initialize guild roles:", error);

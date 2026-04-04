@@ -23,7 +23,6 @@ import type Command from "./command";
  */
 export default interface AdminCommand extends Command {
   data: SlashCommandBuilder;
-  execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
   authorization: AuthorizationSpecification;
 }
 

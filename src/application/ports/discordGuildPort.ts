@@ -6,11 +6,6 @@ import type Role from "../../domain/types/role";
  */
 export interface DiscordGuildPort {
   /**
-   * Botが参加している最初のギルドを取得する
-   */
-  getFirstGuild(): Promise<string>;
-
-  /**
    * 指定されたロールが存在することを確認し、なければ作成する
    */
   ensureRoleExists(guildId: string, role: Role): Promise<void>;
