@@ -1,10 +1,6 @@
-FROM node:latest
+FROM node:24-slim
 
-ENV YARN_VERSION=4.3.1
-ENV PRISMA_CLIENT_ENGINE_TYPE=binary
-ENV PRISMA_ENABLE_TRACING=false
-
-RUN corepack enable && corepack prepare yarn@${YARN_VERSION} --activate
+RUN corepack enable
 
 WORKDIR /usr/src/app
 
