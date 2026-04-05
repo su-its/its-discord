@@ -31,7 +31,7 @@
     "vitest": "^4.1.2"
   },
   "dependencies": {
-    "@shizuoka-its/core": "3.0.0-rc.3",
+    "@shizuoka-its/core": "3.0.1",
     "cron": "^4.4.0",
     "discord.js": "^14.26.0",
     "dotenv": "^17.4.0",
