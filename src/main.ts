@@ -44,9 +44,9 @@ async function main() {
       discordGuildPort: discordServerAdapter,
       discordMessagePort: discordServerAdapter,
       scheduledMessagePort: memoryScheduledMessageRepository,
+      cronSchedulerPort: scheduledMessageCronManager,
     };
 
-    // Cron manager に依存オブジェクトを設定
     scheduledMessageCronManager.setDeps(deps);
 
     // イベントハンドラを設定（ClientReady を捕捉するため login の前に登録する）

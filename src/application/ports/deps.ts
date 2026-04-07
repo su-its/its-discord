@@ -1,3 +1,4 @@
+import type { CronSchedulerPort } from "./cronSchedulerPort";
 import type { DiscordChannelPort } from "./discordChannelPort";
 import type { DiscordGuildPort } from "./discordGuildPort";
 import type { DiscordMemberPort } from "./discordMemberPort";
@@ -18,4 +19,5 @@ export interface AppDeps {
   discordGuildPort: DiscordGuildPort;
   discordMessagePort: DiscordMessagePort;
   scheduledMessagePort: ScheduledMessagePort;
+  cronSchedulerPort: CronSchedulerPort;
 }

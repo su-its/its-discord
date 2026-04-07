@@ -1,6 +1,5 @@
 import { createScheduledMessageConfigs } from "../../config/scheduledMessages";
 import logger from "../../infrastructure/logger";
-import { addScheduledMessageJob } from "../../interfaces/cron/scheduledMessageCron";
 import type { AppDeps } from "../ports/deps";
 
 /**
@@ -55,8 +54,7 @@ export async function initializeScheduledMessagesFromConfig(
           },
         );
 
-        // Cronジョブを追加
-        addScheduledMessageJob(
+        deps.cronSchedulerPort.scheduleJob(
           scheduledMessage.id,
           scheduledMessage.cronSchedule,
         );
