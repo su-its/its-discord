@@ -73,6 +73,7 @@ async function main() {
       discordGuildPort: discordServerAdapter,
       discordMessagePort: discordServerAdapter,
       scheduledMessagePort: memoryScheduledMessageRepository,
+      cronSchedulerPort: scheduledMessageCronManager,
     };
 
     scheduledMessageCronManager.setDeps(deps);

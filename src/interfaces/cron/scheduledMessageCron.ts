@@ -1,4 +1,5 @@
 import { CronJob } from "cron";
+import type { CronSchedulerPort } from "../../application/ports/cronSchedulerPort";
 import type { AppDeps } from "../../application/ports/deps";
 import { sendScheduledMessage } from "../../application/usecases/sendScheduledMessage";
 import logger from "../../infrastructure/logger";
@@ -6,7 +7,7 @@ import logger from "../../infrastructure/logger";
 /**
  * アクティブなスケジュールメッセージのCronジョブを管理するクラス
  */
-class ScheduledMessageCronManager {
+class ScheduledMessageCronManager implements CronSchedulerPort {
   private jobs: Map<string, CronJob> = new Map();
   private deps: AppDeps | null = null;
 
@@ -15,6 +16,14 @@ class ScheduledMessageCronManager {
    */
   setDeps(deps: AppDeps): void {
     this.deps = deps;
+  }
+
+  scheduleJob(id: string, cronSchedule: string): void {
+    this.createJobForMessage(id, cronSchedule);
+  }
+
+  cancelJob(id: string): void {
+    this.stopJob(id);
   }
 
   /**
@@ -109,23 +118,3 @@ class ScheduledMessageCronManager {
 
 // シングルトンインスタンス
 export const scheduledMessageCronManager = new ScheduledMessageCronManager();
-
-/**
- * 新しいスケジュールメッセージのCronジョブを追加する
- * @param messageId メッセージID
- * @param cronSchedule Cron式
- */
-export function addScheduledMessageJob(
-  messageId: string,
-  cronSchedule: string,
-): void {
-  scheduledMessageCronManager.createJobForMessage(messageId, cronSchedule);
-}
-
-/**
- * スケジュールメッセージのCronジョブを削除する
- * @param messageId メッセージID
- */
-export function removeScheduledMessageJob(messageId: string): void {
-  scheduledMessageCronManager.stopJob(messageId);
-}
