@@ -1,5 +1,6 @@
 import CommandRegistry from "./core/commandRegistry";
 import auth from "./implementations/auth";
+import door from "./implementations/door";
 import healthCheck from "./implementations/healthCheck";
 import hotChannels from "./implementations/hotChannels";
 import kill from "./implementations/kill";
@@ -9,7 +10,6 @@ import refreshRoles from "./implementations/refreshRoles";
 import register from "./implementations/register";
 import renameAll from "./implementations/renameAll";
 import who from "./implementations/who";
-import door from "./implementations/door";
 
 const registry = new CommandRegistry();
 
