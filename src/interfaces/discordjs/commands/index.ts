@@ -9,6 +9,7 @@ import refreshRoles from "./implementations/refreshRoles";
 import register from "./implementations/register";
 import renameAll from "./implementations/renameAll";
 import who from "./implementations/who";
+import door from "./implementations/door";
 
 const registry = new CommandRegistry();
 
@@ -22,5 +23,6 @@ registry.register(refreshRoles);
 registry.register(register);
 registry.register(renameAll);
 registry.register(who);
+registry.register(door);
 
 export default registry;
