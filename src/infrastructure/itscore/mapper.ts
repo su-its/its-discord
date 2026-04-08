@@ -48,7 +48,7 @@ export function toMember(
     id: member.id,
     name: member.name,
     universityEmail: member.email.getValue(),
-    studentId: String(member.studentId),
+    studentId: member.studentId.getValue(),
     affiliation: completeAffiliationToAffiliation(member.affiliation),
     discord,
   };
