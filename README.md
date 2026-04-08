@@ -1,17 +1,32 @@
 # its-discord bot
 
 ITSのディスコードサーバーで使用するbotです。
-開発前に管理者からクレデンシャルを受け取ってください。
 
-## Getting started
+## ローカル開発のはじめかた
+
+開発用の Discord Bot を [Discord Developer Portal](https://discord.com/developers/applications) で作成し、トークンを発行してください。
 
 ```bash
 corepack enable
 yarn
-yarn start
+cp .env.example .env.local   # クレデンシャルを設定
+yarn deploy-commands:local    # テスト用ギルドにコマンドを登録
+yarn start:local              # ローカルモードで起動
 ```
 
-その他詳細は[`docs`ディレクトリ](docs/README.md)を参照してください。
+In-memory モードやアダプタの切り替えなど、詳しくは[ローカル開発ガイド](docs/local-development.md)を参照してください。
+
+その他のドキュメントは[`docs`ディレクトリ](docs/README.md)にあります。
+
+## デプロイ
+
+本番用のクレデンシャル（`.env`）は管理者から受け取ってください。
+Docker イメージをビルドして実行します。詳しくは[デプロイガイド](docs/deploy.md)を参照してください。
+
+```bash
+docker build -t its-discord .
+docker run --env-file .env its-discord
+```
 
 ## コマンド一覧
 
