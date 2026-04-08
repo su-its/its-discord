@@ -1,6 +1,6 @@
-import type { Embed } from "../../domain/entities/scheduledMessage";
-import logger from "../../infrastructure/logger";
-import type { AppDeps } from "../ports/deps";
+import type { AppDeps } from "@application/ports";
+import type { Embed } from "@domain/entities";
+import logger from "@infrastructure/logger";
 
 /**
  * スケジュールされたメッセージを送信するユースケース

@@ -1,7 +1,7 @@
 import type {
   ScheduledMessage,
   ScheduledMessageCreate,
-} from "../../domain/entities/scheduledMessage";
+} from "@domain/entities";
 
 /**
  * スケジュールメッセージ管理を抽象化するPort（簡素版）
