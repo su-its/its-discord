@@ -1,4 +1,4 @@
-import type { AppDeps } from "../ports/deps";
+import type { AppDeps } from "@application/ports";
 import { getHotChannels } from "./getHotChannels";
 
 export async function postHotChannels(

@@ -1,3 +1,14 @@
+import type {
+  AuthUser,
+  EmailAuthCredentials,
+  EmailAuthPort,
+  EmailVerificationOptions,
+} from "@application/ports";
+import {
+  loadFirebaseConfig,
+  loadFirebaseServiceAccount,
+} from "@config/environment";
+import logger from "@infrastructure/logger";
 import { type FirebaseApp, initializeApp } from "firebase/app";
 import {
   type Auth,
@@ -7,17 +18,6 @@ import {
   type UserCredential,
 } from "firebase/auth";
 import admin from "firebase-admin";
-import type {
-  AuthUser,
-  EmailAuthCredentials,
-  EmailAuthPort,
-  EmailVerificationOptions,
-} from "../../application/ports/emailAuthPort";
-import {
-  loadFirebaseConfig,
-  loadFirebaseServiceAccount,
-} from "../../config/environment";
-import logger from "../logger";
 
 /**
  * FirebaseによるEmailAuthPortの実装

@@ -1,7 +1,7 @@
+import type Command from "@domain/types/command";
+import logger from "@infrastructure/logger";
+import registry from "@interfaces/discordjs/commands";
 import { REST, Routes, type SlashCommandBuilder } from "discord.js";
-import type Command from "../domain/types/command";
-import logger from "../infrastructure/logger";
-import registry from "../interfaces/discordjs/commands";
 
 export function loadDeployEnv() {
   const token = process.env.TOKEN;

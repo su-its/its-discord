@@ -1,6 +1,6 @@
-import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
-import logger from "../../infrastructure/logger";
-import type { AppDeps } from "../ports/deps";
+import type { AppDeps } from "@application/ports";
+import roleRegistry, { roleRegistryKeys } from "@domain/types/roles";
+import logger from "@infrastructure/logger";
 import { assignMemberRole } from "./assignDepartmentRole";
 
 /**

@@ -1,6 +1,6 @@
+import type { AuthorizationSpecification } from "@domain/types/adminCommand";
+import administratorRoleProperty from "@domain/types/roles/implementations/administrator";
 import type { ChatInputCommandInteraction } from "discord.js";
-import type { AuthorizationSpecification } from "../../domain/types/adminCommand";
-import administratorRoleProperty from "../../domain/types/roles/implementations/administrator";
 
 export class AdminRoleSpecification implements AuthorizationSpecification {
   constructor(

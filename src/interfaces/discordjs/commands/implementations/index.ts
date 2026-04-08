@@ -4,6 +4,7 @@ export * from "./hotChannels";
 export * from "./kill";
 export * from "./nick";
 export * from "./ps";
+export * from "./refreshRoles";
 export * from "./register";
 export * from "./renameAll";
 export * from "./who";

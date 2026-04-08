@@ -1,7 +1,7 @@
-import { createScheduledMessageConfigs } from "../../config/scheduledMessages";
-import logger from "../../infrastructure/logger";
-import { addScheduledMessageJob } from "../../interfaces/cron/scheduledMessageCron";
-import type { AppDeps } from "../ports/deps";
+import type { AppDeps } from "@application/ports";
+import { createScheduledMessageConfigs } from "@config/scheduledMessages";
+import logger from "@infrastructure/logger";
+import { addScheduledMessageJob } from "@interfaces/cron";
 
 /**
  * 設定ファイルからスケジュールメッセージを初期化するユースケース

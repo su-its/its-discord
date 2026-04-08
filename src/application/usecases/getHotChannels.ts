@@ -1,4 +1,4 @@
-import type { AppDeps } from "../ports/deps";
+import type { AppDeps } from "@application/ports";
 
 export interface ChannelActivity {
   id: string;

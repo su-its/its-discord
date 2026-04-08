@@ -1,10 +1,10 @@
+import type { AppDeps } from "@application/ports";
+import { updateMemberNickname } from "@application/usecases";
+import type Command from "@domain/types/command";
 import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
-import type { AppDeps } from "../../../../application/ports/deps";
-import { updateMemberNickname } from "../../../../application/usecases/updateMemberNickname";
-import type Command from "../../../../domain/types/command";
 
 const nickCommand: Command = {
   data: new SlashCommandBuilder()

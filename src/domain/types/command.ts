@@ -1,9 +1,9 @@
+import type { AppDeps } from "@application/ports";
 import type {
   AutocompleteInteraction,
   ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
-import type { AppDeps } from "../../application/ports/deps";
 
 /**
  * Discord Slash Command の実装に必要な基本インターフェース

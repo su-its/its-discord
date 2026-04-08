@@ -1,4 +1,4 @@
-import type Role from "../../domain/types/role";
+import type Role from "@domain/types/role";
 
 /**
  * Discord Member関連の型

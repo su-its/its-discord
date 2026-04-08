@@ -1,10 +1,9 @@
-import type Member from "../../domain/entities/member";
-import type Role from "../../domain/types/role";
-import roleRegistry, { roleRegistryKeys } from "../../domain/types/roles";
-import { affiliationRoleMap } from "../../domain/types/roles/implementations/categories/departments";
-import logger from "../../infrastructure/logger";
-import type { AppDeps } from "../ports/deps";
-import type { DiscordMember } from "../ports/discordMemberPort";
+import type { AppDeps, DiscordMember } from "@application/ports";
+import type Member from "@domain/entities/member";
+import type Role from "@domain/types/role";
+import roleRegistry, { roleRegistryKeys } from "@domain/types/roles";
+import { affiliationRoleMap } from "@domain/types/roles/implementations/categories/departments";
+import logger from "@infrastructure/logger";
 
 export interface RoleRefreshResult {
   successCount: number;
