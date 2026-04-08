@@ -6,7 +6,7 @@ import {
   sendEmailVerification,
   type UserCredential,
 } from "firebase/auth";
-import * as admin from "firebase-admin";
+import admin from "firebase-admin";
 import type {
   AuthUser,
   EmailAuthCredentials,
