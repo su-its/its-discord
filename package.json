@@ -38,7 +38,7 @@
     "dotenv": "^17.4.0",
     "firebase": "^12.11.0",
     "firebase-admin": "^13.7.0",
-    "uuid": "^13.0.0",
+    "uuid": "^14.0.0",
     "winston": "^3.19.0"
   },
   "packageManager": "yarn@4.9.1"
