@@ -3,7 +3,6 @@ export type { DiscordChannel, DiscordChannelPort } from "./discordChannelPort";
 export type { DiscordGuildPort } from "./discordGuildPort";
 export type { DiscordMember, DiscordMemberPort } from "./discordMemberPort";
 export type { DiscordMessagePort } from "./discordMessagePort";
-export type { DoorStatus, DoorStatusPort } from "./doorStatusPort";
 export type {
   AuthUser,
   EmailAuthCredentials,
