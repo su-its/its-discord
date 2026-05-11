@@ -67,7 +67,7 @@ async function main() {
     // Composition Root: adapter を生成し依存オブジェクトを組み立てる
     const discordServerAdapter = new DiscordServerAdapter(client);
     const doorStatusUrl =
-      process.env.DOOR_STATUS_WS_URL ?? "wss://its-status.woody1227.com/";
+      process.env.DOOR_STATUS_WS_URL ?? "wss://its-status-ws.woody1227.com/";
     const deps: AppDeps = {
       itsCorePort: createITSCorePort(config.adapters.itsCore),
       emailAuthPort: createEmailAuthPort(config.adapters.emailAuth),

@@ -3,15 +3,14 @@ import type { DoorStatus, DoorStatusPort } from "@application/ports";
 const WS_TIMEOUT_MS = 8000;
 
 interface WoodyStatusMessage {
-  open?: boolean;
-  isOpen?: boolean;
-  status?: string;
+  state: "open" | "closed";
+  battery: number;
+  updated_at: string;
 }
 
 function parseMessage(data: string): DoorStatus {
   const parsed: WoodyStatusMessage = JSON.parse(data);
-  const isOpen = parsed.open ?? parsed.isOpen ?? parsed.status === "open";
-  return { isOpen };
+  return { isOpen: parsed.state === "open" };
 }
 
 /**
