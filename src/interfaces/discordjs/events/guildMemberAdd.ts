@@ -1,8 +1,8 @@
+import type { AppDeps } from "@application/ports";
+import { handleNewMemberJoined } from "@application/usecases";
+import type { CustomClient } from "@domain/types";
+import logger from "@infrastructure/logger";
 import { Events, type GuildMember } from "discord.js";
-import type { AppDeps } from "../../../application/ports/deps";
-import { handleNewMemberJoined } from "../../../application/usecases/handleNewMemberJoined";
-import type { CustomClient } from "../../../domain/types/customClient";
-import logger from "../../../infrastructure/logger";
 
 /**
  * GuildMemberAdd イベントハンドラを設定する。

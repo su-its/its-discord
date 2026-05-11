@@ -1,4 +1,4 @@
-import type { Embed } from "../../domain/entities/scheduledMessage";
+import type { Embed } from "@domain/entities";
 import type { ChannelActivity } from "./getHotChannels";
 
 /**

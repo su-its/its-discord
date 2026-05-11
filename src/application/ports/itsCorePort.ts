@@ -1,4 +1,4 @@
-import type Member from "../../domain/entities/member";
+import type Member from "@domain/entities/member";
 
 /**
  * ITSCoreとの連携に必要な最小限のデータ型

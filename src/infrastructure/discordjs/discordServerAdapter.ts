@@ -1,3 +1,14 @@
+import type {
+  DiscordChannel,
+  DiscordChannelPort,
+  DiscordGuildPort,
+  DiscordMember,
+  DiscordMemberPort,
+  DiscordMessagePort,
+} from "@application/ports";
+import type { CustomClient } from "@domain/types";
+import type Role from "@domain/types/role";
+import logger from "@infrastructure/logger";
 import {
   ChannelType,
   type Role as DiscordRole,
@@ -6,19 +17,6 @@ import {
   SnowflakeUtil,
   type TextChannel,
 } from "discord.js";
-import type {
-  DiscordChannel,
-  DiscordChannelPort,
-} from "../../application/ports/discordChannelPort";
-import type { DiscordGuildPort } from "../../application/ports/discordGuildPort";
-import type {
-  DiscordMember,
-  DiscordMemberPort,
-} from "../../application/ports/discordMemberPort";
-import type { DiscordMessagePort } from "../../application/ports/discordMessagePort";
-import type { CustomClient } from "../../domain/types/customClient";
-import type Role from "../../domain/types/role";
-import logger from "../logger";
 
 /**
  * 複数のDiscord Portを実装するAdapter（ヘキサゴナルアーキテクチャ）

@@ -1,6 +1,6 @@
-import type Role from "../../../../../role";
-import buildRoleByCategory from "../../../../utils/buildRoleByCategory";
-import { DepartmentRoleCategory } from "../departmentRoleCategory";
+import type Role from "@domain/types/role";
+import { DepartmentRoleCategory } from "@domain/types/roles/implementations/categories/departments/departmentRoleCategory";
+import buildRoleByCategory from "@domain/types/roles/utils/buildRoleByCategory";
 
 const csRole: Role = buildRoleByCategory({
   roleCategory: DepartmentRoleCategory,
