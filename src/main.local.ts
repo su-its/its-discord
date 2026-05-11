@@ -8,6 +8,7 @@ import type { AdapterConfig } from "@config/environment";
 import { loadConfig } from "@config/environment";
 import { CustomClient } from "@domain/types";
 import { DiscordServerAdapter } from "@infrastructure/discordjs";
+import { WebSocketDoorStatusAdapter } from "@infrastructure/door-status";
 import { FirebaseEmailAuthAdapter } from "@infrastructure/firebase";
 import {
   InMemoryEmailAuthAdapter,
@@ -65,6 +66,8 @@ async function main() {
 
     // Composition Root: adapter を生成し依存オブジェクトを組み立てる
     const discordServerAdapter = new DiscordServerAdapter(client);
+    const doorStatusUrl =
+      process.env.DOOR_STATUS_WS_URL ?? "wss://its-status.woody1227.com/";
     const deps: AppDeps = {
       itsCorePort: createITSCorePort(config.adapters.itsCore),
       emailAuthPort: createEmailAuthPort(config.adapters.emailAuth),
@@ -73,6 +76,7 @@ async function main() {
       discordGuildPort: discordServerAdapter,
       discordMessagePort: discordServerAdapter,
       scheduledMessagePort: memoryScheduledMessageRepository,
+      doorStatusPort: new WebSocketDoorStatusAdapter(doorStatusUrl),
     };
 
     scheduledMessageCronManager.setDeps(deps);
