@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 
-import logger from "@infrastructure/logger";
+import logger from "../infrastructure/logger";
 import { deployCommands, loadDeployEnv } from "./deployCommands";
 
 async function main() {

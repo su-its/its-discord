@@ -1,8 +1,8 @@
-import type { AppDeps } from "@application/ports";
-import { initializeAllGuildsRoles } from "@application/usecases";
-import type { CustomClient } from "@domain/types";
-import logger from "@infrastructure/logger";
 import { Events } from "discord.js";
+import type { AppDeps } from "../../../application/ports/deps";
+import { initializeAllGuildsRoles } from "../../../application/usecases/initializeGuildRoles";
+import type { CustomClient } from "../../../domain/types/customClient";
+import logger from "../../../infrastructure/logger";
 
 /**
  * ClientReady イベント発生時のハンドラを設定する。

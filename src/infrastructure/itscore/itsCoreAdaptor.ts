@@ -1,11 +1,3 @@
-import type {
-  AffiliationOption,
-  ITSCorePort,
-  MemberConnectionData,
-  MemberNicknameUpdateData,
-  MemberRegistrationData,
-} from "@application/ports";
-import type Member from "@domain/entities/member";
 import {
   type CompleteAffiliation,
   createMemberService,
@@ -13,6 +5,14 @@ import {
   getMaxYear,
   UNIVERSITY_STRUCTURE,
 } from "@shizuoka-its/core";
+import type {
+  AffiliationOption,
+  ITSCorePort,
+  MemberConnectionData,
+  MemberNicknameUpdateData,
+  MemberRegistrationData,
+} from "../../application/ports/itsCorePort";
+import type Member from "../../domain/entities/member";
 import { memberWithDiscordToInternal, toMember } from "./mapper";
 
 type CourseType = keyof typeof UNIVERSITY_STRUCTURE;

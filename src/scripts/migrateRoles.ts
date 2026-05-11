@@ -1,7 +1,7 @@
-import type Role from "@domain/types/role";
-import roleRegistry from "@domain/types/roles";
-import logger from "@infrastructure/logger";
 import { Client, Events, GatewayIntentBits } from "discord.js";
+import type Role from "../domain/types/role";
+import roleRegistry from "../domain/types/roles";
+import logger from "../infrastructure/logger";
 
 export function loadMigrateEnv() {
   const token = process.env.TOKEN;

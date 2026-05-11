@@ -1,5 +1,5 @@
-import type Role from "@domain/types/role";
-import { BOT_PREFIX } from "@domain/types/roles/constants";
+import type Role from "../../role";
+import { BOT_PREFIX } from "../constants";
 
 const formerMemberRole: Role = {
   name: `${BOT_PREFIX}旧室員`,

@@ -1,10 +1,10 @@
-import type { ScheduledMessagePort } from "@application/ports";
+import { v4 as uuidv4 } from "uuid";
+import type { ScheduledMessagePort } from "../../application/ports/scheduledMessagePort";
 import type {
   ScheduledMessage,
   ScheduledMessageCreate,
-} from "@domain/entities";
-import logger from "@infrastructure/logger";
-import { v4 as uuidv4 } from "uuid";
+} from "../../domain/entities/scheduledMessage";
+import logger from "../logger";
 
 /**
  * メモリベースのスケジュールメッセージリポジトリ（簡素版）

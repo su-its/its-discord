@@ -2,24 +2,23 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 
-import type { AppDeps, EmailAuthPort, ITSCorePort } from "@application/ports";
-import { initializeScheduledMessagesFromConfig } from "@application/usecases";
-import type { AdapterConfig } from "@config/environment";
-import { loadConfig } from "@config/environment";
-import { CustomClient } from "@domain/types";
-import { DiscordServerAdapter } from "@infrastructure/discordjs";
-import { WoodyDoorStatusAdapter } from "@infrastructure/door-status";
-import { FirebaseEmailAuthAdapter } from "@infrastructure/firebase";
-import {
-  InMemoryEmailAuthAdapter,
-  InMemoryITSCoreAdapter,
-} from "@infrastructure/in-memory";
-import { ITSCoreAdaptor } from "@infrastructure/itscore";
-import logger from "@infrastructure/logger";
-import { memoryScheduledMessageRepository } from "@infrastructure/memory";
-import { scheduledMessageCronManager } from "@interfaces/cron";
-import registry from "@interfaces/discordjs/commands";
-import { setupEventHandlers } from "@interfaces/discordjs/events";
+import type { AppDeps } from "./application/ports/deps";
+import type { EmailAuthPort } from "./application/ports/emailAuthPort";
+import type { ITSCorePort } from "./application/ports/itsCorePort";
+import { initializeScheduledMessagesFromConfig } from "./application/usecases/initializeScheduledMessagesFromConfig";
+import type { AdapterConfig } from "./config/environment";
+import { loadConfig } from "./config/environment";
+import { CustomClient } from "./domain/types/customClient";
+import { DiscordServerAdapter } from "./infrastructure/discordjs/discordServerAdapter";
+import { FirebaseEmailAuthAdapter } from "./infrastructure/firebase/firebaseEmailAuthAdapter";
+import { InMemoryEmailAuthAdapter } from "./infrastructure/in-memory/inMemoryEmailAuthAdapter";
+import { InMemoryITSCoreAdapter } from "./infrastructure/in-memory/inMemoryITSCoreAdapter";
+import { ITSCoreAdaptor } from "./infrastructure/itscore/itsCoreAdaptor";
+import logger from "./infrastructure/logger";
+import { memoryScheduledMessageRepository } from "./infrastructure/memory/scheduledMessageRepository";
+import { scheduledMessageCronManager } from "./interfaces/cron/scheduledMessageCron";
+import registry from "./interfaces/discordjs/commands";
+import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
 
 process.on("uncaughtException", (error) => {
   logger.error("Uncaught Exception:", error);
@@ -66,8 +65,6 @@ async function main() {
 
     // Composition Root: adapter を生成し依存オブジェクトを組み立てる
     const discordServerAdapter = new DiscordServerAdapter(client);
-    const doorStatusUrl =
-      process.env.DOOR_STATUS_WS_URL ?? "wss://its-status-ws.woody1227.com/";
     const deps: AppDeps = {
       itsCorePort: createITSCorePort(config.adapters.itsCore),
       emailAuthPort: createEmailAuthPort(config.adapters.emailAuth),
@@ -76,7 +73,6 @@ async function main() {
       discordGuildPort: discordServerAdapter,
       discordMessagePort: discordServerAdapter,
       scheduledMessagePort: memoryScheduledMessageRepository,
-      doorStatusPort: new WoodyDoorStatusAdapter(doorStatusUrl),
     };
 
     scheduledMessageCronManager.setDeps(deps);

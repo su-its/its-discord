@@ -1,8 +1,8 @@
-import type { AppDeps } from "@application/ports";
-import type { CustomClient } from "@domain/types";
-import type AdminCommand from "@domain/types/adminCommand";
-import logger from "@infrastructure/logger";
 import { Events } from "discord.js";
+import type { AppDeps } from "../../../application/ports/deps";
+import type AdminCommand from "../../../domain/types/adminCommand";
+import type { CustomClient } from "../../../domain/types/customClient";
+import logger from "../../../infrastructure/logger";
 
 export function setupInteractionCreateHandler(
   client: CustomClient,

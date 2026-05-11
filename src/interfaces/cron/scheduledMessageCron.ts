@@ -1,7 +1,7 @@
-import type { AppDeps } from "@application/ports";
-import { sendScheduledMessage } from "@application/usecases";
-import logger from "@infrastructure/logger";
 import { CronJob } from "cron";
+import type { AppDeps } from "../../application/ports/deps";
+import { sendScheduledMessage } from "../../application/usecases/sendScheduledMessage";
+import logger from "../../infrastructure/logger";
 
 /**
  * アクティブなスケジュールメッセージのCronジョブを管理するクラス

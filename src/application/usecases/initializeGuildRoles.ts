@@ -1,6 +1,6 @@
-import type { AppDeps } from "@application/ports";
-import roleRegistry from "@domain/types/roles";
-import logger from "@infrastructure/logger";
+import roleRegistry from "../../domain/types/roles";
+import logger from "../../infrastructure/logger";
+import type { AppDeps } from "../ports/deps";
 
 /**
  * 指定されたギルドのロールを初期化するUsecase

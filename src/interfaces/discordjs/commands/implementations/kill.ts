@@ -1,11 +1,11 @@
-import type { AppDeps } from "@application/ports";
-import { killSelf } from "@application/usecases";
-import type AdminCommand from "@domain/types/adminCommand";
-import { AdminRoleSpecification } from "@infrastructure/authorization";
 import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import type { AppDeps } from "../../../../application/ports/deps";
+import { killSelf } from "../../../../application/usecases/killSelf";
+import type AdminCommand from "../../../../domain/types/adminCommand";
+import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
 
 const killCommand: AdminCommand = {
   data: new SlashCommandBuilder()

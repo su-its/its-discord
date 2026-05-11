@@ -1,6 +1,6 @@
-import type Role from "@domain/types/role";
-import type RoleCategory from "@domain/types/roleCategory";
-import { BOT_PREFIX } from "@domain/types/roles/constants";
+import type Role from "../../role";
+import type RoleCategory from "../../roleCategory";
+import { BOT_PREFIX } from "../constants";
 
 interface BuildRoleByCategoryProps {
   roleCategory: RoleCategory;

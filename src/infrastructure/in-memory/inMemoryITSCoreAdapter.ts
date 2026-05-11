@@ -4,11 +4,11 @@ import type {
   MemberConnectionData,
   MemberNicknameUpdateData,
   MemberRegistrationData,
-} from "@application/ports";
-import type Affiliation from "@domain/entities/affiliation";
-import type Member from "@domain/entities/member";
-import type { ActiveMember } from "@domain/entities/member";
-import logger from "@infrastructure/logger";
+} from "../../application/ports/itsCorePort";
+import type Affiliation from "../../domain/entities/affiliation";
+import type Member from "../../domain/entities/member";
+import type { ActiveMember } from "../../domain/entities/member";
+import logger from "../logger";
 
 const AFFILIATION_VALUES: readonly Affiliation[] = [
   "情報科学科",

@@ -1,6 +1,7 @@
-import type { AppDeps, DiscordMember } from "@application/ports";
-import { getDiscordDisplayName } from "@application/utils";
-import logger from "@infrastructure/logger";
+import logger from "../../infrastructure/logger";
+import type { AppDeps } from "../ports/deps";
+import type { DiscordMember } from "../ports/discordMemberPort";
+import { getDiscordDisplayName } from "../utils/memberDisplayName";
 
 /**
  * メンバーリネーム結果

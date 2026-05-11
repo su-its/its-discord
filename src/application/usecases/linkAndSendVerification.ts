@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import type { AppDeps } from "@application/ports";
-import { loadConfig } from "@config/environment";
-import logger from "@infrastructure/logger";
+import { loadConfig } from "../../config/environment";
+import logger from "../../infrastructure/logger";
+import type { AppDeps } from "../ports/deps";
 
 export interface LinkAndVerifyResult {
   success: boolean;

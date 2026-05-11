@@ -3,8 +3,8 @@ import type {
   EmailAuthCredentials,
   EmailAuthPort,
   EmailVerificationOptions,
-} from "@application/ports";
-import logger from "@infrastructure/logger";
+} from "../../application/ports/emailAuthPort";
+import logger from "../logger";
 
 /**
  * EmailAuthPort の in-memory 実装（ローカル検証用）

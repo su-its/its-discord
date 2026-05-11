@@ -1,6 +1,6 @@
-import type Role from "@domain/types/role";
-import { AuthenticationRoleCategory } from "@domain/types/roles/implementations/categories/authentication/authenticationRoleCategory";
-import buildRoleByCategory from "@domain/types/roles/utils/buildRoleByCategory";
+import type Role from "../../../../../role";
+import buildRoleByCategory from "../../../../utils/buildRoleByCategory";
+import { AuthenticationRoleCategory } from "../authenticationRoleCategory";
 
 const authorizedRole: Role = buildRoleByCategory({
   roleCategory: AuthenticationRoleCategory,

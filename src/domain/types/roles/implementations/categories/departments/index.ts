@@ -1,4 +1,4 @@
-import type Affiliation from "@domain/entities/affiliation";
+import type Affiliation from "../../../../../entities/affiliation";
 import biRole, { biRoleKey } from "./implementations/bi";
 import csRole, { csRoleKey } from "./implementations/cs";
 import engineeringRole, {

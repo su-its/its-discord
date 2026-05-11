@@ -1,15 +1,13 @@
-import type { AppDeps } from "@application/ports";
-import {
-  authenticateUser,
-  linkAndSendVerification,
-} from "@application/usecases";
-import type { CustomClient } from "@domain/types";
-import logger from "@infrastructure/logger";
+import { Events, type ModalSubmitInteraction } from "discord.js";
+import type { AppDeps } from "../../../application/ports/deps";
+import { authenticateUser } from "../../../application/usecases/authenticateUser";
+import { linkAndSendVerification } from "../../../application/usecases/linkAndSendVerification";
+import type { CustomClient } from "../../../domain/types/customClient";
+import logger from "../../../infrastructure/logger";
 import {
   AUTH_EMAIL_INPUT_ID,
   AUTH_MODAL_ID,
-} from "@interfaces/discordjs/commands/implementations";
-import { Events, type ModalSubmitInteraction } from "discord.js";
+} from "../commands/implementations/auth";
 
 export function setupModalSubmitHandler(
   client: CustomClient,

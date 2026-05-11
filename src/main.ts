@@ -1,16 +1,15 @@
-import type { AppDeps } from "@application/ports";
-import { initializeScheduledMessagesFromConfig } from "@application/usecases";
-import { loadConfig } from "@config/environment";
-import { CustomClient } from "@domain/types";
-import { DiscordServerAdapter } from "@infrastructure/discordjs";
-import { WoodyDoorStatusAdapter } from "@infrastructure/door-status";
-import { FirebaseEmailAuthAdapter } from "@infrastructure/firebase";
-import { ITSCoreAdaptor } from "@infrastructure/itscore";
-import logger from "@infrastructure/logger";
-import { memoryScheduledMessageRepository } from "@infrastructure/memory";
-import { scheduledMessageCronManager } from "@interfaces/cron";
-import registry from "@interfaces/discordjs/commands";
-import { setupEventHandlers } from "@interfaces/discordjs/events";
+import type { AppDeps } from "./application/ports/deps";
+import { initializeScheduledMessagesFromConfig } from "./application/usecases/initializeScheduledMessagesFromConfig";
+import { loadConfig } from "./config/environment";
+import { CustomClient } from "./domain/types/customClient";
+import { DiscordServerAdapter } from "./infrastructure/discordjs/discordServerAdapter";
+import { FirebaseEmailAuthAdapter } from "./infrastructure/firebase/firebaseEmailAuthAdapter";
+import { ITSCoreAdaptor } from "./infrastructure/itscore/itsCoreAdaptor";
+import logger from "./infrastructure/logger";
+import { memoryScheduledMessageRepository } from "./infrastructure/memory/scheduledMessageRepository";
+import { scheduledMessageCronManager } from "./interfaces/cron/scheduledMessageCron";
+import registry from "./interfaces/discordjs/commands";
+import { setupEventHandlers } from "./interfaces/discordjs/events/eventHandler";
 
 process.on("uncaughtException", (error) => {
   logger.error("Uncaught Exception:", error);
@@ -37,8 +36,6 @@ async function main() {
 
     // Composition Root: adapter を生成し依存オブジェクトを組み立てる
     const discordServerAdapter = new DiscordServerAdapter(client);
-    const doorStatusUrl =
-      process.env.DOOR_STATUS_WS_URL ?? "wss://its-status-ws.woody1227.com/";
     const deps: AppDeps = {
       itsCorePort: new ITSCoreAdaptor(),
       emailAuthPort: new FirebaseEmailAuthAdapter(),
@@ -47,7 +44,6 @@ async function main() {
       discordGuildPort: discordServerAdapter,
       discordMessagePort: discordServerAdapter,
       scheduledMessagePort: memoryScheduledMessageRepository,
-      doorStatusPort: new WoodyDoorStatusAdapter(doorStatusUrl),
     };
 
     // Cron manager に依存オブジェクトを設定

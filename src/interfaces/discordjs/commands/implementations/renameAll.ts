@@ -1,11 +1,11 @@
-import type { AppDeps } from "@application/ports";
-import { renameAllMembersInGuild } from "@application/usecases";
-import type AdminCommand from "@domain/types/adminCommand";
-import { AdminRoleSpecification } from "@infrastructure/authorization";
 import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import type { AppDeps } from "../../../../application/ports/deps";
+import { renameAllMembersInGuild } from "../../../../application/usecases/renameAllMembersInGuild";
+import type AdminCommand from "../../../../domain/types/adminCommand";
+import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
 
 const renameAll: AdminCommand = {
   data: new SlashCommandBuilder()

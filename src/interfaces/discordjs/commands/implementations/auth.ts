@@ -1,5 +1,3 @@
-import type { AppDeps } from "@application/ports";
-import type Command from "@domain/types/command";
 import {
   ActionRowBuilder,
   type ChatInputCommandInteraction,
@@ -8,6 +6,8 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from "discord.js";
+import type { AppDeps } from "../../../../application/ports/deps";
+import type Command from "../../../../domain/types/command";
 
 export const AUTH_MODAL_ID = "auth-email-modal";
 export const AUTH_EMAIL_INPUT_ID = "auth-email-input";

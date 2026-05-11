@@ -1,11 +1,11 @@
-import type { AppDeps } from "@application/ports";
-import { refreshAllMemberRoles } from "@application/usecases";
-import type AdminCommand from "@domain/types/adminCommand";
-import { AdminRoleSpecification } from "@infrastructure/authorization";
 import {
   type ChatInputCommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import type { AppDeps } from "../../../../application/ports/deps";
+import { refreshAllMemberRoles } from "../../../../application/usecases/refreshAllMemberRoles";
+import type AdminCommand from "../../../../domain/types/adminCommand";
+import { AdminRoleSpecification } from "../../../../infrastructure/authorization/adminRoleSpecification";
 
 const refreshRolesCommand: AdminCommand = {
   data: new SlashCommandBuilder()
