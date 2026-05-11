@@ -1,11 +1,11 @@
+import type Affiliation from "@domain/entities/affiliation";
+import type Member from "@domain/entities/member";
+import type { DiscordAccount } from "@domain/entities/member";
 import type {
   CompleteAffiliation,
   Member as ItsCoreMember,
   MemberWithDiscordAccounts,
 } from "@shizuoka-its/core";
-import type Affiliation from "../../domain/entities/affiliation";
-import type Member from "../../domain/entities/member";
-import type { DiscordAccount } from "../../domain/entities/member";
 
 interface DiscordInfo {
   discordId?: string;

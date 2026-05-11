@@ -1,15 +1,16 @@
 {
   "name": "its-discord-auth",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "A Discord authentication service built with TypeScript.",
+  "type": "module",
   "scripts": {
-    "start": "nodemon --exec ts-node src/main.ts",
-    "start:local": "nodemon --exec ts-node src/main.local.ts",
+    "start": "nodemon --exec tsx src/main.ts",
+    "start:local": "nodemon --exec tsx src/main.local.ts",
     "test": "vitest run --coverage",
-    "deploy-commands": "ts-node src/scripts/deployCommands.production.ts",
-    "deploy-commands:local": "ts-node src/scripts/deployCommands.local.ts",
-    "migrate-roles": "ts-node src/scripts/migrateRoles.production.ts",
-    "migrate-roles:local": "ts-node src/scripts/migrateRoles.local.ts",
+    "deploy-commands": "tsx src/scripts/deployCommands.production.ts",
+    "deploy-commands:local": "tsx src/scripts/deployCommands.local.ts",
+    "migrate-roles": "tsx src/scripts/migrateRoles.production.ts",
+    "migrate-roles:local": "tsx src/scripts/migrateRoles.local.ts",
     "format": "biome format src/**/*.ts",
     "lint": "biome lint src/**/*.ts",
     "check": "biome check src/**/*.ts",
@@ -26,7 +27,7 @@
     "@types/uuid": "^11.0.0",
     "@vitest/coverage-v8": "^4.1.2",
     "nodemon": "^3.1.14",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.2",
     "vitest": "^4.1.2"
   },
@@ -37,7 +38,7 @@
     "dotenv": "^17.4.0",
     "firebase": "^12.11.0",
     "firebase-admin": "^13.7.0",
-    "uuid": "^13.0.0",
+    "uuid": "^14.0.0",
     "winston": "^3.19.0"
   },
   "packageManager": "yarn@4.9.1"

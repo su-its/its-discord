@@ -1,5 +1,5 @@
-import type Role from "../../role";
-import { BOT_PREFIX } from "../constants";
+import type Role from "@domain/types/role";
+import { BOT_PREFIX } from "@domain/types/roles/constants";
 
 const administratorRoleProperty: Role = {
   name: `${BOT_PREFIX}管理者`,

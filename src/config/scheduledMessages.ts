@@ -1,7 +1,6 @@
-import type { AppDeps } from "../application/ports/deps";
-import { createHotChannelsEmbed } from "../application/usecases/createHotChannelsEmbed";
-import { getHotChannels } from "../application/usecases/getHotChannels";
-import type { ScheduledMessageCreate } from "../domain/entities/scheduledMessage";
+import type { AppDeps } from "@application/ports";
+import { createHotChannelsEmbed, getHotChannels } from "@application/usecases";
+import type { ScheduledMessageCreate } from "@domain/entities";
 import { loadConfig } from "./environment";
 
 /**
