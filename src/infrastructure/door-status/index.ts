@@ -1,1 +1,1 @@
-export { WebSocketDoorStatusAdapter } from "./webSocketDoorStatusAdapter";
+export { WoodyDoorStatusAdapter } from "./woodyDoorStatusAdapter";

@@ -8,7 +8,7 @@ import type { AdapterConfig } from "@config/environment";
 import { loadConfig } from "@config/environment";
 import { CustomClient } from "@domain/types";
 import { DiscordServerAdapter } from "@infrastructure/discordjs";
-import { WebSocketDoorStatusAdapter } from "@infrastructure/door-status";
+import { WoodyDoorStatusAdapter } from "@infrastructure/door-status";
 import { FirebaseEmailAuthAdapter } from "@infrastructure/firebase";
 import {
   InMemoryEmailAuthAdapter,
@@ -76,7 +76,7 @@ async function main() {
       discordGuildPort: discordServerAdapter,
       discordMessagePort: discordServerAdapter,
       scheduledMessagePort: memoryScheduledMessageRepository,
-      doorStatusPort: new WebSocketDoorStatusAdapter(doorStatusUrl),
+      doorStatusPort: new WoodyDoorStatusAdapter(doorStatusUrl),
     };
 
     scheduledMessageCronManager.setDeps(deps);

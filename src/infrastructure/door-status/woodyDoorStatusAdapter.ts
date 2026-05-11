@@ -2,30 +2,25 @@ import type { DoorStatus, DoorStatusPort } from "@application/ports";
 
 const WS_TIMEOUT_MS = 8000;
 
-interface RawDoorMessage {
+interface WoodyStatusMessage {
   open?: boolean;
   isOpen?: boolean;
   status?: string;
-  message?: string;
 }
 
 function parseMessage(data: string): DoorStatus {
-  const parsed: RawDoorMessage = JSON.parse(data);
+  const parsed: WoodyStatusMessage = JSON.parse(data);
   const isOpen = parsed.open ?? parsed.isOpen ?? parsed.status === "open";
-
-  return {
-    isOpen,
-    message: parsed.message,
-  };
+  return { isOpen };
 }
 
 /**
- * WebSocket 経由で開室状況を取得するアダプタ
+ * Woody さんの its-status サーバーから開室状況を取得するアダプタ
  */
-export class WebSocketDoorStatusAdapter implements DoorStatusPort {
+export class WoodyDoorStatusAdapter implements DoorStatusPort {
   constructor(private readonly url: string) {}
 
-  fetchStatus(): Promise<DoorStatus> {
+  getStatus(): Promise<DoorStatus> {
     return new Promise((resolve, reject) => {
       const ws = new WebSocket(this.url);
 

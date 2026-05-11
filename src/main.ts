@@ -3,7 +3,7 @@ import { initializeScheduledMessagesFromConfig } from "@application/usecases";
 import { loadConfig } from "@config/environment";
 import { CustomClient } from "@domain/types";
 import { DiscordServerAdapter } from "@infrastructure/discordjs";
-import { WebSocketDoorStatusAdapter } from "@infrastructure/door-status";
+import { WoodyDoorStatusAdapter } from "@infrastructure/door-status";
 import { FirebaseEmailAuthAdapter } from "@infrastructure/firebase";
 import { ITSCoreAdaptor } from "@infrastructure/itscore";
 import logger from "@infrastructure/logger";
@@ -47,7 +47,7 @@ async function main() {
       discordGuildPort: discordServerAdapter,
       discordMessagePort: discordServerAdapter,
       scheduledMessagePort: memoryScheduledMessageRepository,
-      doorStatusPort: new WebSocketDoorStatusAdapter(doorStatusUrl),
+      doorStatusPort: new WoodyDoorStatusAdapter(doorStatusUrl),
     };
 
     // Cron manager に依存オブジェクトを設定
