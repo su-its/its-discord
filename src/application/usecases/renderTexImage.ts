@@ -1,10 +1,14 @@
-import { liteAdaptor } from "mathjax-full/js/adaptors/liteAdaptor.js";
-import { RegisterHTMLHandler } from "mathjax-full/js/handlers/html.js";
-import { AllPackages } from "mathjax-full/js/input/tex/AllPackages.js";
-import { TeX } from "mathjax-full/js/input/tex.js";
-import { mathjax } from "mathjax-full/js/mathjax.js";
-import { SVG } from "mathjax-full/js/output/svg.js";
+// MathJax v4 ではフォントデータや一部の TeX 拡張が必要に応じて動的読み込みされる。
+// この副作用 import で Node 環境向けの動的ローダ(ESM import ベース)を登録する。
+import "@mathjax/src/js/util/asyncLoad/esm.js";
+import { MathJaxMhchemFontExtension } from "@mathjax/mathjax-mhchem-font-extension/js/svg.js";
+import { liteAdaptor } from "@mathjax/src/js/adaptors/liteAdaptor.js";
+import { RegisterHTMLHandler } from "@mathjax/src/js/handlers/html.js";
+import { TeX } from "@mathjax/src/js/input/tex.js";
+import { mathjax } from "@mathjax/src/js/mathjax.js";
+import { SVG } from "@mathjax/src/js/output/svg.js";
 import sharp from "sharp";
+import { texPackages } from "./texPackages";
 
 /** 1ex あたりのピクセル数。数式画像の解像度(大きさ)を決める。 */
 const PIXELS_PER_EX = 32;
@@ -29,15 +33,21 @@ export class InvalidTexError extends Error {
 // MathJax はグローバルなハンドラ登録を伴うため、モジュール読み込み時に一度だけ初期化する。
 const adaptor = liteAdaptor();
 RegisterHTMLHandler(adaptor);
+
+const svgOutput = new SVG({ fontCache: "local" });
+// mhchem(化学式)用のグリフは v4 のフォント本体に含まれない。フォント拡張を
+// 登録しないと `\ce{}` の結合矢印などが欠落するため、ここで追加する。
+svgOutput.addExtension(MathJaxMhchemFontExtension);
+
 const mathDocument = mathjax.document("", {
   InputJax: new TeX({
-    packages: AllPackages,
+    packages: texPackages,
     // TeX の構文エラーを画像に埋め込まず、例外として扱う。
     formatError: (_jax: unknown, error: unknown) => {
       throw error;
     },
   }),
-  OutputJax: new SVG({ fontCache: "local" }),
+  OutputJax: svgOutput,
 });
 
 /**
@@ -48,18 +58,30 @@ const mathDocument = mathjax.document("", {
  * @throws {InvalidTexError} TeX の構文が不正な場合
  */
 export async function renderTexImage(tex: string): Promise<Buffer> {
-  const svg = convertTexToSvg(tex);
+  const svg = await convertTexToSvg(tex);
   return await convertSvgToPng(svg);
 }
 
 /** TeX 文字列を MathJax で SVG 文字列に変換する。 */
-function convertTexToSvg(tex: string): string {
+async function convertTexToSvg(tex: string): Promise<string> {
   try {
-    const container = mathDocument.convert(tex, { display: true });
-    return adaptor.innerHTML(container);
+    // MathJax v4 ではフォントや拡張が非同期に読み込まれることがあるため、
+    // 読み込み完了を待てる convertPromise を使う(同期版の convert では待てない)。
+    const container = await mathDocument.convertPromise(tex, { display: true });
+    return stripLatexAttributes(adaptor.innerHTML(container));
   } catch (error) {
     throw new InvalidTexError(extractErrorMessage(error));
   }
+}
+
+/**
+ * SVG から `data-latex` / `data-latex-item` 属性を取り除く。
+ * MathJax v4 は各ノードに元の TeX をこれらの属性として埋め込むが、`<` や `>`
+ * を含む入力(例: mhchem の `<=>`)では属性値が不正な XML となり、sharp の
+ * SVG 解析が失敗する。画像化には不要な属性なので除去する。
+ */
+function stripLatexAttributes(svg: string): string {
+  return svg.replace(/\s+data-latex(?:-item)?="[^"]*"/g, "");
 }
 
 /**

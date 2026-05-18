@@ -1356,6 +1356,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mathjax/mathjax-mhchem-font-extension@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "@mathjax/mathjax-mhchem-font-extension@npm:4.1.2"
+  checksum: 10c0/36a9ebbdaa1b85d1f4f518c70fe4b5c543a6d332f326d9dcef8ea446d33691ee7929446dff1909aff7cc930e8b05252db5e1754329b53c0df0a561537b256735
+  languageName: node
+  linkType: hard
+
+"@mathjax/mathjax-newcm-font@npm:4.1.2, @mathjax/mathjax-newcm-font@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "@mathjax/mathjax-newcm-font@npm:4.1.2"
+  checksum: 10c0/23867a672706a5cc1a9cfe835a188466202ff5502bd9f65a75343532638184cb53c6a11a76473c37a4e6231b38f6781b1a20a6eb3a3f1ba46144bf533bd25026
+  languageName: node
+  linkType: hard
+
+"@mathjax/src@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "@mathjax/src@npm:4.1.2"
+  dependencies:
+    "@mathjax/mathjax-newcm-font": "npm:4.1.2"
+    mhchemparser: "npm:^4.2.1"
+    mj-context-menu: "npm:^1.0.0"
+    speech-rule-engine: "npm:5.0.0-rc.1"
+  checksum: 10c0/c32dd74237e8d4580275a096f2a540f817c881b64cbfc51fa4cf7cbe8a491977c5d2d4ccd98d72b35a0bb1d4728ea4dfaa5e73fa46b6cb4bd2099e69bf78a094
+  languageName: node
+  linkType: hard
+
 "@napi-rs/wasm-runtime@npm:^1.1.1":
   version: 1.1.2
   resolution: "@napi-rs/wasm-runtime@npm:1.1.2"
@@ -1908,7 +1934,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmldom/xmldom@npm:0.9.10":
+"@xmldom/xmldom@npm:^0.9.10":
   version: 0.9.10
   resolution: "@xmldom/xmldom@npm:0.9.10"
   checksum: 10c0/38a9c9b95450d7fccebc61371c8e0b90ceaae992886484108333d29ccbd2640e3555b6af012f15ce1beb5067aeb40486659b6183fad38af179e82d28028bfc5d
@@ -2220,10 +2246,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:13.1.0":
-  version: 13.1.0
-  resolution: "commander@npm:13.1.0"
-  checksum: 10c0/7b8c5544bba704fbe84b7cab2e043df8586d5c114a4c5b607f83ae5060708940ed0b5bd5838cf8ce27539cde265c1cbd59ce3c8c6b017ed3eec8943e3a415164
+"commander@npm:^14.0.3":
+  version: 14.0.3
+  resolution: "commander@npm:14.0.3"
+  checksum: 10c0/755652564bbf56ff2ff083313912b326450d3f8d8c85f4b71416539c9a05c3c67dbd206821ca72635bf6b160e2afdefcb458e86b317827d5cb333b69ce7f1a24
   languageName: node
   linkType: hard
 
@@ -2607,13 +2633,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esm@npm:^3.2.25":
-  version: 3.2.25
-  resolution: "esm@npm:3.2.25"
-  checksum: 10c0/8e60e8075506a7ce28681c30c8f54623fe18a251c364cd481d86719fc77f58aa055b293d80632d9686d5408aaf865ffa434897dc9fd9153c8b3f469fad23f094
-  languageName: node
-  linkType: hard
-
 "estree-walker@npm:^3.0.3":
   version: 3.0.3
   resolution: "estree-walker@npm:3.0.3"
@@ -2978,7 +2997,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^13.0.0":
+"glob@npm:^13.0.0, glob@npm:^13.0.3":
   version: 13.0.6
   resolution: "glob@npm:13.0.6"
   dependencies:
@@ -3306,6 +3325,9 @@ __metadata:
   resolution: "its-discord-auth@workspace:."
   dependencies:
     "@biomejs/biome": "npm:^2.4.10"
+    "@mathjax/mathjax-mhchem-font-extension": "npm:^4.1.2"
+    "@mathjax/mathjax-newcm-font": "npm:^4.1.2"
+    "@mathjax/src": "npm:^4.1.2"
     "@shizuoka-its/core": "npm:3.0.1"
     "@types/node": "npm:^25.5.0"
     "@types/uuid": "npm:^11.0.0"
@@ -3315,7 +3337,6 @@ __metadata:
     dotenv: "npm:^17.4.0"
     firebase: "npm:^12.11.0"
     firebase-admin: "npm:^13.7.0"
-    mathjax-full: "npm:^3.2.2"
     nodemon: "npm:^3.1.14"
     sharp: "npm:^0.34.5"
     tsx: "npm:^4.21.0"
@@ -3729,19 +3750,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mathjax-full@npm:^3.2.2":
-  version: 3.2.2
-  resolution: "mathjax-full@npm:3.2.2"
-  dependencies:
-    esm: "npm:^3.2.25"
-    mhchemparser: "npm:^4.1.0"
-    mj-context-menu: "npm:^0.6.1"
-    speech-rule-engine: "npm:^4.0.6"
-  checksum: 10c0/48f55747bd91aa6bba905bab8654045e4d654a0a65869b1d446e25a89284ef37dc722c6c4a585e7fc14c5f87bb6954291f066e08e5a8245bb5ff0c4f4c54c8d4
-  languageName: node
-  linkType: hard
-
-"mhchemparser@npm:^4.1.0":
+"mhchemparser@npm:^4.2.1":
   version: 4.2.1
   resolution: "mhchemparser@npm:4.2.1"
   checksum: 10c0/5afe8b5ed918fda71a17875227050fd7e8e706305df28bd0beb5a7cd07886a393d041317e3c4b9105fc518ab75065b65886b2574cbd8dec49520de04d119e64a
@@ -3858,10 +3867,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mj-context-menu@npm:^0.6.1":
-  version: 0.6.1
-  resolution: "mj-context-menu@npm:0.6.1"
-  checksum: 10c0/2bf3564bb5cbd3915e14417e8df4a4e3013f1e281d431ee1e88976ae6529cc88e6eea7d9b3e217d1d79666f89070c3e1a193383ba9c7bf82d63075e616664ce9
+"mj-context-menu@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "mj-context-menu@npm:1.0.0"
+  dependencies:
+    rimraf: "npm:^6.0.1"
+  checksum: 10c0/92df507311ec49af9a0068b35a135f7e97f614905476b3435fe4f90ce31fcdcb86a086914ad710695de32f23cd1fa2b027f30ba21b96ca6faf5ada2d2490098a
   languageName: node
   linkType: hard
 
@@ -4033,6 +4044,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"package-json-from-dist@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "package-json-from-dist@npm:1.0.1"
+  checksum: 10c0/62ba2785eb655fec084a257af34dbe24292ab74516d6aecef97ef72d4897310bc6898f6c85b5cd22770eaa1ce60d55a0230e150fb6a966e3ecd6c511e23d164b
+  languageName: node
+  linkType: hard
+
 "path-expression-matcher@npm:^1.5.0":
   version: 1.5.0
   resolution: "path-expression-matcher@npm:1.5.0"
@@ -4188,6 +4206,18 @@ __metadata:
   version: 0.13.1
   resolution: "retry@npm:0.13.1"
   checksum: 10c0/9ae822ee19db2163497e074ea919780b1efa00431d197c7afdb950e42bf109196774b92a49fc9821f0b8b328a98eea6017410bfc5e8a0fc19c85c6d11adb3772
+  languageName: node
+  linkType: hard
+
+"rimraf@npm:^6.0.1":
+  version: 6.1.3
+  resolution: "rimraf@npm:6.1.3"
+  dependencies:
+    glob: "npm:^13.0.3"
+    package-json-from-dist: "npm:^1.0.1"
+  bin:
+    rimraf: dist/esm/bin.mjs
+  checksum: 10c0/4a56537850102e20ba5d5eb49f366b4b7b2435389734b4b8480cf0e0eb0f6f5d0c44120a171aeb0d8f9ab40312a10d2262f3f50acbad803e32caef61b6cf86fc
   languageName: node
   linkType: hard
 
@@ -4423,16 +4453,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"speech-rule-engine@npm:^4.0.6":
-  version: 4.1.4
-  resolution: "speech-rule-engine@npm:4.1.4"
+"speech-rule-engine@npm:5.0.0-rc.1":
+  version: 5.0.0-rc.1
+  resolution: "speech-rule-engine@npm:5.0.0-rc.1"
   dependencies:
-    "@xmldom/xmldom": "npm:0.9.10"
-    commander: "npm:13.1.0"
-    wicked-good-xpath: "npm:1.3.0"
+    "@xmldom/xmldom": "npm:^0.9.10"
+    commander: "npm:^14.0.3"
+    wicked-good-xpath: "npm:^1.3.0"
   bin:
     sre: bin/sre
-  checksum: 10c0/905c9e063e066eef0b5bbb64a9a3f30242860bdd5447fdbc3a7796fb62bdfed9ca62369861406f3dfe07cc8d3329866ee525fad5070b9ddf08920d9604223d8d
+  checksum: 10c0/5d38bfab952555ee6817b3ad88834050c2a8a109904903bf0f8055fd2e73dac6a6281cad9311999389baa03ea272ee1a3c7fba490c709f024c36ce9c56026784
   languageName: node
   linkType: hard
 
@@ -4953,7 +4983,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wicked-good-xpath@npm:1.3.0":
+"wicked-good-xpath@npm:^1.3.0":
   version: 1.3.0
   resolution: "wicked-good-xpath@npm:1.3.0"
   checksum: 10c0/6837e1027e75e2ad7fe0620d11def4c42235cbe6c649727258973d7d77c2c5066a5376595e0283d3ba8e2fa22deb3cfe7358db5a02a938bde273b55b9ac57832

@@ -32,13 +32,15 @@
     "vitest": "^4.1.2"
   },
   "dependencies": {
+    "@mathjax/mathjax-mhchem-font-extension": "^4.1.2",
+    "@mathjax/mathjax-newcm-font": "^4.1.2",
+    "@mathjax/src": "^4.1.2",
     "@shizuoka-its/core": "3.0.1",
     "cron": "^4.4.0",
     "discord.js": "^14.26.0",
     "dotenv": "^17.4.0",
     "firebase": "^12.11.0",
     "firebase-admin": "^13.7.0",
-    "mathjax-full": "^3.2.2",
     "sharp": "^0.34.5",
     "uuid": "^14.0.0",
     "winston": "^3.19.0"
