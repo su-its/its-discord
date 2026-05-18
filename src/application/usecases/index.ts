@@ -11,5 +11,6 @@ export * from "./linkAndSendVerification";
 export * from "./postHotChannels";
 export * from "./refreshAllMemberRoles";
 export * from "./renameAllMembersInGuild";
+export * from "./renderTexImage";
 export * from "./sendScheduledMessage";
 export * from "./updateMemberNickname";
